@@ -22,6 +22,36 @@
         #dynamicList .editField {
             padding: 5px;
             float: left;
+            width: calc(100% - 70px);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust minmax as needed */
+            grid-gap: 5px;
+        }
+
+        #dynamicList .editField .refNameDiv,
+        #dynamicList .editField .templateNameDiv,
+        #dynamicList .editField .keyValueDiv {
+            break-inside: avoid-column;
+            display: flex;
+            align-items: center;
+        }
+
+        #dynamicList .editField input {
+            min-width: 100px;
+        }
+
+        #dynamicList .editField .keyValueDiv input:first-child {
+            flex: 0 0 30%; /* Set the width of key inputs */
+            margin-right: 5px; /* Add some margin for spacing */
+        }
+
+        #dynamicList .editField .keyValueDiv input:last-child {
+            flex: 1; /* Value inputs take up the remaining space */
+        }
+
+        #dynamicList .editField input {
+            flex: 1;
+            margin: 0 5px;
         }
 
         .dialog {
@@ -76,7 +106,74 @@
     document.addEventListener('DOMContentLoaded', (event) => {
         const dynamicList = document.getElementById('dynamicList');
 
-        function createListItem(text) {
+        // Function to parse a line into structured data
+        function parseLine(line) {
+            const refRegex = /<ref name="(.*?)">{{(.*?)\|(.*?)}}<\/ref>/;
+            const match = line.match(refRegex);
+            if (match) {
+                const refName = match[1];
+                const templateName = match[2];
+                const keyValuePairs = match[3].split('|').map(kv => {
+                    const [key, value] = kv.split('=');
+                    return { key, value };
+                });
+                return { refName, templateName, keyValuePairs };
+            }
+            return null;
+        }
+
+        // Function to create a form in the editField
+        function createForm(editField, data) {
+            // Clear existing content
+            editField.innerHTML = '';
+
+            // Create inputs for refName and templateName
+            const refNameDiv = document.createElement('div');
+            refNameDiv.className = 'refNameDiv'
+            const refNameCaption = document.createElement('span');
+            refNameCaption.textContent = 'Ref name: ';
+            const refNameInput = document.createElement('input');
+            refNameInput.value = data.refName;
+
+            refNameDiv.appendChild(refNameCaption);
+            refNameDiv.appendChild(refNameInput);
+            editField.appendChild(refNameDiv);
+
+            // Create a div for templateName with a caption
+            const templateNameDiv = document.createElement('div');
+            templateNameDiv.className = 'templateNameDiv'
+            const templateNameCaption = document.createElement('span');
+            templateNameCaption.textContent = 'Template: ';
+            const templateNameInput = document.createElement('input');
+            templateNameInput.value = data.templateName;
+
+            templateNameDiv.appendChild(templateNameCaption);
+            templateNameDiv.appendChild(templateNameInput);
+            editField.appendChild(templateNameDiv);
+
+            // Create divs for each key-value pair
+            data.keyValuePairs.forEach(pair => {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'keyValueDiv';
+
+                const keyInput = document.createElement('input');
+                keyInput.value = pair.key;
+                const colonSpan = document.createElement('span');
+                colonSpan.textContent = ': ';
+                const valueInput = document.createElement('input');
+                valueInput.value = pair.value;
+
+                pairDiv.appendChild(keyInput);
+                pairDiv.appendChild(colonSpan);
+                pairDiv.appendChild(valueInput);
+                editField.appendChild(pairDiv);
+            });
+
+            // Add logic to handle changes in the form
+            // ...
+        }
+
+        function createListItem(parsedData) {
             const newItem = document.createElement('div');
             newItem.className = 'listItem';
             newItem.draggable = true;
@@ -85,11 +182,10 @@
             handle.className = 'handle';
             handle.textContent = '⋮';
 
+
             const editField = document.createElement('div');
             editField.className = 'editField';
-            editField.tabIndex = 0;
-            editField.role = 'textbox';
-            editField.textContent = text;
+            createForm(editField, parsedData);
 
             const deleteButton = document.createElement('button');
             deleteButton.className = 'deleteBtn';
@@ -213,9 +309,12 @@
             const lines = pasteDialogTextArea.value.split('\n');
             lines.forEach(line => {
                 if (line.trim() === '') return;
-                const newItem = createListItem(line);
-                dynamicList.appendChild(newItem);
-                bindEventsToItem(newItem);
+                const parsedData = parseLine(line);
+                if (parsedData) {
+                    const newItem = createListItem(parsedData);
+                    dynamicList.appendChild(newItem);
+                    bindEventsToItem(newItem);
+                }
             });
             pasteDialog.style.display = 'none';
             pasteDialogTextArea.value = '';
