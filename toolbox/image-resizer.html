@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resizes non-free images to Wikipedia Fair Use size (10,000 pixels)</title>
+    <style>
+        .button-container {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .image-container-wrapper {
+            display: flex; /* Apply Flexbox layout */
+            justify-content: center; /* Center the image containers horizontally */
+        }
+
+        .image-container {
+            box-sizing: border-box;
+            width: 50%;
+            height: 90vh; /* Adjust height as needed */
+            border: 1px solid black;
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            overflow: hidden;
+        }
+
+        .image-box {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        #convert_button, #save_button {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="button-container">
+    <input type="file" id="file_input" accept="image/*" style="display: none;" onchange="previewImage();" />
+    <button onclick="document.getElementById('file_input').click();">Upload</button>
+    <button id="convert_button" onclick="convertImage();">Convert</button>
+    <button id="save_button" onclick="saveImage();">Save</button>
+</div>
+
+<div class="image-container-wrapper">
+    <div class="image-container">
+        <img id="output_image" class="image-box" />
+    </div>
+    <div class="image-container">
+        <img id="converted_image" class="image-box" />
+    </div>
+</div>
+
+<script>
+    function previewImage() {
+        var file = document.getElementById("file_input").files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            document.getElementById("output_image").src = reader.result;
+            document.getElementById("convert_button").style.display = 'inline'; // Show convert button
+            document.getElementById("save_button").style.display = 'none'; // Hide save button
+            document.getElementById("converted_image").style.display = 'none'; // Hide converted image
+        }
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function convertImage() {
+        var img = new Image();
+        img.onload = function() {
+            var pxl = 100000.; // Target pixels
+            var originalPixelCount = img.width * img.height;
+
+            if (originalPixelCount <= pxl) {
+                alert("The selected image already has less than or equal to the target pixels. Conversion unneeded.");
+                return; // Skip the conversion process
+            }
+
+            var basewidth = Math.sqrt((pxl * img.width) / img.height);
+            var wpercent = basewidth / img.width;
+            var hsize = img.height * wpercent;
+
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.width = basewidth;
+            canvas.height = hsize;
+
+            ctx.drawImage(img, 0, 0, basewidth, hsize);
+
+            var dataURL = canvas.toDataURL("image/png");
+            document.getElementById('converted_image').src = dataURL;
+            document.getElementById('converted_image').style.display = 'inline'; // Show converted image
+            document.getElementById('save_button').style.display = 'inline'; // Show save button
+        }
+        img.src = document.getElementById("output_image").src;
+    }
+
+    function saveImage() {
+        var downloadLink = document.createElement('a');
+        downloadLink.href = document.getElementById('converted_image').src;
+        downloadLink.download = 'converted_image.png';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+</script>
+</body>
+</html>
