@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate and manage Wikipedia references</title>
+    <style>
+        #dynamicList .listItem {
+            padding: 5px;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+        }
+
+        #dynamicList .handle {
+            padding: 5px;
+            user-select: none;
+            margin-right: 5px;
+            float: left;
+            cursor: move;
+        }
+
+        #dynamicList .editField {
+            padding: 5px;
+            float: left;
+        }
+
+        .dialog {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 2px solid #ddd;
+            z-index: 1000;
+        }
+
+        .dialogButtons {
+            display: flex;
+            column-gap: 5px;
+            justify-content: flex-end; /* Aligns items to the end of the container */
+        }
+
+        #pasteDialogTextArea {
+            min-width: 300px;
+            min-height: 150px;
+            width: 100%; /* Optional, makes the textarea take full width of the dialog */
+            box-sizing: border-box; /* Optional, ensures padding and border are included in width/height */
+        }
+
+        #toolbar {
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="toolbar">
+    <button id="pasteTextBtn">Paste from Text</button>
+    <button id="clearListBtn">Clear</button>
+    <button id="newEntryBtn">Create New Entry</button>
+</div>
+
+<div id="pasteDialog" class="dialog">
+    <textarea id="pasteDialogTextArea"></textarea>
+    <div class="dialogButtons">
+        <button id="pasteDialogImportBtn" class="dialogBtn">Import</button>
+        <button id="pasteDialogCancelBtn" class="dialogBtn">Cancel</button>
+    </div>
+</div>
+
+<div id="dynamicList"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const dynamicList = document.getElementById('dynamicList');
+
+        function createListItem(text) {
+            const newItem = document.createElement('div');
+            newItem.className = 'listItem';
+            newItem.draggable = true;
+
+            const handle = document.createElement('div');
+            handle.className = 'handle';
+            handle.textContent = '⋮';
+
+            const editField = document.createElement('div');
+            editField.className = 'editField';
+            editField.tabIndex = 0;
+            editField.role = 'textbox';
+            editField.textContent = text;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'deleteBtn';
+            deleteButton.innerHTML = '🗑️';
+            deleteButton.style.float = 'right';
+            deleteButton.onclick = function() {
+                if (confirm('Are you sure you want to delete this entry?')) {
+                    newItem.remove();
+                }
+            };
+
+            const clearDiv = document.createElement('div');
+            clearDiv.style.clear = 'left';
+
+            newItem.appendChild(handle);
+            newItem.appendChild(editField);
+            newItem.appendChild(deleteButton);
+            newItem.appendChild(clearDiv);
+
+            return newItem;
+        }
+
+        function bindEventsToItem(item) {
+            item.addEventListener('dragstart', function(e) {
+                draggedItem = item;
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 0);
+            });
+
+            item.addEventListener('dragend', function(e) {
+                setTimeout(() => {
+                    item.style.display = 'block';
+                    draggedItem = null;
+                }, 0);
+            });
+
+            item.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+
+            item.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                item.style.backgroundColor = '#aaa';
+            });
+
+            item.addEventListener('dragleave', function(e) {
+                item.style.backgroundColor = '#f0f0f0';
+            });
+
+            item.addEventListener('drop', function(e) {
+                item.style.backgroundColor = '#f0f0f0';
+                if (item !== draggedItem) {
+                    let allItems = dynamicList.querySelectorAll('.listItem');
+                    let draggedIdx = Array.from(allItems).indexOf(draggedItem);
+                    let thisIdx = Array.from(allItems).indexOf(item);
+
+                    if (draggedIdx > thisIdx) {
+                        item.before(draggedItem);
+                    } else {
+                        item.after(draggedItem);
+                    }
+                }
+            });
+
+            item.addEventListener('dblclick', function(e) {
+                item.querySelector('.editField').setAttribute('contenteditable', 'true');
+                item.focus();
+            });
+
+            item.addEventListener('blur', function(e) {
+                item.querySelector('.editField').setAttribute('contenteditable', 'false');
+            });
+        }
+
+        dynamicList.querySelectorAll('.listItem').forEach(bindEventsToItem);
+
+        const newEntryBtn = document.getElementById('newEntryBtn');
+
+        newEntryBtn.addEventListener('click', function() {
+            // Create a new blank list item
+            const newItem = createListItem('');
+            dynamicList.appendChild(newItem);
+            bindEventsToItem(newItem);
+
+            // Focus on the editField of the new item to start editing
+            const editField = newItem.querySelector('.editField');
+            editField.setAttribute('contenteditable', 'true');
+            editField.focus();
+        });
+
+        const clearListBtn = document.getElementById('clearListBtn');
+
+        clearListBtn.addEventListener('click', function() {
+            if (dynamicList.firstChild && confirm('Are you sure you want to clear all entries?')) {
+                // Remove all children from dynamicList
+                while (dynamicList.firstChild) {
+                    dynamicList.removeChild(dynamicList.firstChild);
+                }
+            }
+        });
+
+        // Get references to the button and dialog
+        const pasteTextBtn = document.getElementById('pasteTextBtn');
+        const pasteDialog = document.getElementById('pasteDialog');
+        const pasteDialogCancelBtn = document.getElementById('pasteDialogCancelBtn');
+        const pasteDialogImportBtn = document.getElementById('pasteDialogImportBtn');
+        const pasteDialogTextArea = document.getElementById('pasteDialogTextArea');
+
+        // Event listener to show the dialog
+        pasteTextBtn.addEventListener('click', function() {
+            pasteDialog.style.display = 'block';
+        });
+
+        // Event listener to hide the dialog on cancel
+        pasteDialogCancelBtn.addEventListener('click', function() {
+            pasteDialog.style.display = 'none';
+        });
+
+        pasteDialogImportBtn.addEventListener('click', function() {
+            const lines = pasteDialogTextArea.value.split('\n');
+            lines.forEach(line => {
+                if (line.trim() === '') return;
+                const newItem = createListItem(line);
+                dynamicList.appendChild(newItem);
+                bindEventsToItem(newItem);
+            });
+            pasteDialog.style.display = 'none';
+            pasteDialogTextArea.value = '';
+        });
+
+    });
+
+</script>
+</body>
+</html>
