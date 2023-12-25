@@ -114,7 +114,9 @@
 <div id="dynamicList"></div>
 
 <script>
-    let dataListCounter = 0; // Global counter for unique dataList IDs
+    let dataListUniqueIDCounter = 0; // Global counter for unique dataList IDs
+    let draggedItem = null; // Current drag-and-drop item
+
     const keyOptions = {
         "cite web": ["author", "title", "url", "website", "date", "access-date"],
         "cite news": ["author", "title", "url", "work", "date", "access-date"],
@@ -143,6 +145,34 @@
             return null;
         }
 
+        function updateKeyOptions(editField, templateName) {
+            const options = keyOptions[templateName.toLowerCase()] || keyOptions['default'];
+
+            // Get all key inputs in the edit field
+            const keyInputs = editField.querySelectorAll('.keyValueDiv input:first-child');
+            keyInputs.forEach((keyInput, index) => {
+                let dataList = keyInput.nextElementSibling; // Assuming dataList follows keyInput
+                if (!dataList || dataList.tagName !== 'DATALIST') {
+                    // Create new dataList if not exist
+                    dataList = document.createElement('datalist');
+                    keyInput.parentNode.insertBefore(dataList, keyInput.nextSibling);
+                }
+
+                // Set ID for dataList and attribute for input
+                const dataListId = 'keyOptions-' + (dataListUniqueIDCounter++);
+                dataList.id = dataListId;
+                keyInput.setAttribute('list', dataListId);
+
+                // Clear existing options and add new ones
+                dataList.innerHTML = '';
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    dataList.appendChild(option);
+                });
+            });
+        }
+
         // Function to create a form in the editField
         function createForm(editField, data) {
             // Clear existing content
@@ -169,6 +199,9 @@
             templateNameInput.setAttribute('list', 'templateOptions');
             templateNameInput.value = data.templateName;
 
+            // Store a reference to templateNameInput in the listItem
+            editField.templateNameInput = templateNameInput;
+
             const templateOptions = document.createElement('datalist');
             templateOptions.id = 'templateOptions';
             Object.keys(keyOptions).filter(opt => opt !== "default").forEach(opt => {
@@ -177,33 +210,6 @@
                 templateOptions.appendChild(option);
             });
 
-            function updateKeyOptions(editField, templateName) {
-                const options = keyOptions[templateName.toLowerCase()] || keyOptions['default'];
-
-                // Get all key inputs in the edit field
-                const keyInputs = editField.querySelectorAll('.keyValueDiv input:first-child');
-                keyInputs.forEach((keyInput, index) => {
-                    let dataList = keyInput.nextElementSibling; // Assuming dataList follows keyInput
-                    if (!dataList || dataList.tagName !== 'DATALIST') {
-                        // Create new dataList if not exist
-                        dataList = document.createElement('datalist');
-                        keyInput.parentNode.insertBefore(dataList, keyInput.nextSibling);
-                    }
-
-                    // Set ID for dataList and attribute for input
-                    const dataListId = 'keyOptions-' + (dataListCounter++);
-                    dataList.id = dataListId;
-                    keyInput.setAttribute('list', dataListId);
-
-                    // Clear existing options and add new ones
-                    dataList.innerHTML = '';
-                    options.forEach(opt => {
-                        const option = document.createElement('option');
-                        option.value = opt;
-                        dataList.appendChild(option);
-                    });
-                });
-            }
             // Event listener for templateNameInput changes
             templateNameInput.addEventListener('input', () => {
                 updateKeyOptions(editField, templateNameInput.value);
@@ -216,20 +222,7 @@
 
             // Create divs for each key-value pair
             data.keyValuePairs.forEach(pair => {
-                const pairDiv = document.createElement('div');
-                pairDiv.className = 'keyValueDiv';
-
-                const keyInput = document.createElement('input');
-                keyInput.value = pair.key;
-                const colonSpan = document.createElement('span');
-                colonSpan.textContent = ': ';
-                const valueInput = document.createElement('input');
-                valueInput.value = pair.value;
-
-                pairDiv.appendChild(keyInput);
-                pairDiv.appendChild(colonSpan);
-                pairDiv.appendChild(valueInput);
-                editField.appendChild(pairDiv);
+                createKeyValuePair(pair, editField);
             });
 
             // Initialize key options based on current template
@@ -237,6 +230,58 @@
 
             // Add logic to handle changes in the form
             // ...
+        }
+
+        function createKeyValuePair(pair, editField) {
+            const pairDiv = document.createElement('div');
+            pairDiv.className = 'keyValueDiv';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'deletePairBtn';
+            deleteButton.textContent = '−';
+            deleteButton.onclick = function() {
+                // Get the values of key and value inputs
+                const key = keyInput.value.trim();
+                const value = valueInput.value.trim();
+
+                // Check if both key and value are empty
+                if (key === '' && value === '') {
+                    pairDiv.remove(); // Remove without confirmation
+                } else {
+                    // Show confirmation dialog if either field is not empty
+                    if (confirm('Are you sure you want to delete this key-value pair?')) {
+                        pairDiv.remove();
+                    }
+                }
+            };
+
+            const keyInput = document.createElement('input');
+            keyInput.value = pair.key;
+            const colonSpan = document.createElement('span');
+            colonSpan.textContent = ': ';
+            const valueInput = document.createElement('input');
+            valueInput.value = pair.value;
+
+            // Set up the dataList for keyInput
+            const dataListId = 'keyOptions-' + (dataListUniqueIDCounter++);
+            keyInput.setAttribute('list', dataListId);
+            const dataList = document.createElement('datalist');
+            dataList.id = dataListId;
+            document.body.appendChild(dataList);
+
+            const templateName = editField.templateNameInput.value.toLowerCase();
+            const options = keyOptions[templateName] || keyOptions['default'];
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                dataList.appendChild(option);
+            });
+
+            pairDiv.appendChild(deleteButton);
+            pairDiv.appendChild(keyInput);
+            pairDiv.appendChild(colonSpan);
+            pairDiv.appendChild(valueInput);
+            editField.appendChild(pairDiv);
         }
 
         function createListItem(parsedData) {
@@ -268,7 +313,8 @@
             addButton.className = 'addBtn';
             addButton.innerHTML = '+';
             addButton.onclick = function() {
-                // Implement the logic for the "+" button here
+                const newPair = { key: '', value: '' }; // Empty pair
+                createKeyValuePair(newPair, editField);
             };
 
             buttonsDiv.appendChild(deleteButton);
@@ -341,20 +387,26 @@
             });
         }
 
-        dynamicList.querySelectorAll('.listItem').forEach(bindEventsToItem);
-
         const newEntryBtn = document.getElementById('newEntryBtn');
 
         newEntryBtn.addEventListener('click', function() {
-            // Create a new blank list item
-            const newItem = createListItem('');
+            // Create a new blank data structure for the list item
+            const blankData = {
+                refName: '',
+                templateName: '',
+                keyValuePairs: []
+            };
+
+            // Create a new list item using the blank data
+            const newItem = createListItem(blankData);
             dynamicList.appendChild(newItem);
             bindEventsToItem(newItem);
 
-            // Focus on the editField of the new item to start editing
-            const editField = newItem.querySelector('.editField');
-            editField.setAttribute('contenteditable', 'true');
-            editField.focus();
+            // Optionally, you can focus on the first input field in the new item
+            const firstInput = newItem.querySelector('input');
+            if (firstInput) {
+                firstInput.focus();
+            }
         });
 
         const clearListBtn = document.getElementById('clearListBtn');
