@@ -176,12 +176,11 @@
         function createListItem(parsedData) {
             const newItem = document.createElement('div');
             newItem.className = 'listItem';
-            newItem.draggable = true;
 
             const handle = document.createElement('div');
             handle.className = 'handle';
             handle.textContent = '⋮';
-
+            handle.draggable = true;
 
             const editField = document.createElement('div');
             editField.className = 'editField';
@@ -209,36 +208,47 @@
         }
 
         function bindEventsToItem(item) {
-            item.addEventListener('dragstart', function(e) {
+            const handle = item.querySelector('.handle');
+
+            handle.addEventListener('dragstart', function(e) {
                 draggedItem = item;
                 setTimeout(() => {
-                    item.style.display = 'none';
+                    item.style.opacity = '0.5';
+                    e.dataTransfer.effectAllowed = 'move';
                 }, 0);
             });
 
             item.addEventListener('dragend', function(e) {
-                setTimeout(() => {
-                    item.style.display = 'block';
-                    draggedItem = null;
-                }, 0);
+                item.style.opacity = '1'; // Revert opacity
+                item.style.backgroundColor = '#f0f0f0'; // Revert background color
+                draggedItem = null;
             });
 
             item.addEventListener('dragover', function(e) {
                 e.preventDefault();
+                e.stopPropagation(); // Prevent event from propagating further
+                item.style.backgroundColor = '#aaa';
             });
 
             item.addEventListener('dragenter', function(e) {
                 e.preventDefault();
-                item.style.backgroundColor = '#aaa';
+                e.stopPropagation(); // Prevent event from propagating further
+                // Only change background if an item is being dragged
+                if (draggedItem) {
+                    item.style.backgroundColor = '#aaa';
+                }
             });
 
             item.addEventListener('dragleave', function(e) {
+                e.stopPropagation(); // Prevent event from propagating further
+                // Revert the background color
                 item.style.backgroundColor = '#f0f0f0';
             });
 
             item.addEventListener('drop', function(e) {
+                e.stopPropagation(); // Prevent event from propagating further
                 item.style.backgroundColor = '#f0f0f0';
-                if (item !== draggedItem) {
+                if (draggedItem && item !== draggedItem) {
                     let allItems = dynamicList.querySelectorAll('.listItem');
                     let draggedIdx = Array.from(allItems).indexOf(draggedItem);
                     let thisIdx = Array.from(allItems).indexOf(item);
@@ -249,16 +259,17 @@
                         item.after(draggedItem);
                     }
                 }
+                draggedItem = null; // Reset draggedItem after drop
             });
 
-            item.addEventListener('dblclick', function(e) {
-                item.querySelector('.editField').setAttribute('contenteditable', 'true');
-                item.focus();
-            });
+            // item.addEventListener('dblclick', function(e) {
+            //     item.querySelector('.editField').setAttribute('contenteditable', 'true');
+            //     item.focus();
+            // });
 
-            item.addEventListener('blur', function(e) {
-                item.querySelector('.editField').setAttribute('contenteditable', 'false');
-            });
+            // item.addEventListener('blur', function(e) {
+            //     item.querySelector('.editField').setAttribute('contenteditable', 'false');
+            // });
         }
 
         dynamicList.querySelectorAll('.listItem').forEach(bindEventsToItem);
