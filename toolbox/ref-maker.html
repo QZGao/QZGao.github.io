@@ -118,12 +118,12 @@
     let draggedItem = null; // Current drag-and-drop item
 
     const keyOptions = {
-        "cite web": ["author", "title", "url", "website", "date", "access-date"],
-        "cite news": ["author", "title", "url", "work", "date", "access-date"],
-        "cite book": ["author", "title", "publisher", "year"],
-        "cite journal": ["author", "title", "journal", "issue"],
+        "cite web": ["author", "title", "url", "website", "date", "access-date", "language"],
+        "cite news": ["author", "title", "url", "work", "date", "access-date", "language"],
+        "cite book": ["author", "title", "publisher", "year", "language"],
+        "cite journal": ["author", "title", "journal", "issue", "language"],
         "cite video game": ["title", "developer", "publisher", "date", "platform", "language", "version", "scene"],
-        "default": ["author", "title", "url", "website", "date", "access-date"] // Default options
+        "default": ["author", "title", "url", "website", "date", "access-date", "language"] // Default options
     };
 
     document.addEventListener('DOMContentLoaded', (event) => {
@@ -147,29 +147,15 @@
 
         function updateKeyOptions(editField, templateName) {
             const options = keyOptions[templateName.toLowerCase()] || keyOptions['default'];
+            console.log("updateKeyOptions running", options)
 
-            // Get all key inputs in the edit field
-            const keyInputs = editField.querySelectorAll('.keyValueDiv input:first-child');
-            keyInputs.forEach((keyInput, index) => {
-                let dataList = keyInput.nextElementSibling; // Assuming dataList follows keyInput
-                if (!dataList || dataList.tagName !== 'DATALIST') {
-                    // Create new dataList if not exist
-                    dataList = document.createElement('datalist');
-                    keyInput.parentNode.insertBefore(dataList, keyInput.nextSibling);
-                }
-
-                // Set ID for dataList and attribute for input
-                const dataListId = 'keyOptions-' + (dataListUniqueIDCounter++);
-                dataList.id = dataListId;
-                keyInput.setAttribute('list', dataListId);
-
-                // Clear existing options and add new ones
-                dataList.innerHTML = '';
-                options.forEach(opt => {
-                    const option = document.createElement('option');
-                    option.value = opt;
-                    dataList.appendChild(option);
-                });
+            // Update the editField's keyDataList
+            const dataList = editField.keyDataList;
+            dataList.innerHTML = ''; // Clear existing options
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                dataList.appendChild(option);
             });
         }
 
@@ -220,16 +206,20 @@
             templateNameDiv.appendChild(templateOptions);
             editField.appendChild(templateNameDiv);
 
+            // Create a single dataList for key options
+            const keyDataList = document.createElement('datalist');
+            const dataListId = 'keyDataList-' + (dataListUniqueIDCounter++);
+            keyDataList.id = dataListId;
+            document.body.appendChild(keyDataList);
+            editField.keyDataList = keyDataList; // Associate the dataList with the editField
+
             // Create divs for each key-value pair
             data.keyValuePairs.forEach(pair => {
                 createKeyValuePair(pair, editField);
             });
 
-            // Initialize key options based on current template
+            // Call updateKeyOptions initially to populate the dataList
             updateKeyOptions(editField, data.templateName);
-
-            // Add logic to handle changes in the form
-            // ...
         }
 
         function createKeyValuePair(pair, editField) {
@@ -257,25 +247,11 @@
 
             const keyInput = document.createElement('input');
             keyInput.value = pair.key;
+            keyInput.setAttribute('list', editField.keyDataList.id); // Reference the editField's keyDataList
             const colonSpan = document.createElement('span');
             colonSpan.textContent = ': ';
             const valueInput = document.createElement('input');
             valueInput.value = pair.value;
-
-            // Set up the dataList for keyInput
-            const dataListId = 'keyOptions-' + (dataListUniqueIDCounter++);
-            keyInput.setAttribute('list', dataListId);
-            const dataList = document.createElement('datalist');
-            dataList.id = dataListId;
-            document.body.appendChild(dataList);
-
-            const templateName = editField.templateNameInput.value.toLowerCase();
-            const options = keyOptions[templateName] || keyOptions['default'];
-            options.forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt;
-                dataList.appendChild(option);
-            });
 
             pairDiv.appendChild(deleteButton);
             pairDiv.appendChild(keyInput);
