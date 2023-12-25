@@ -129,20 +129,30 @@
     document.addEventListener('DOMContentLoaded', (event) => {
         const dynamicList = document.getElementById('dynamicList');
 
-        // Function to parse a line into structured data
-        function parseLine(line) {
-            const refRegex = /<ref name="(.*?)">{{(.*?)\|(.*?)}}<\/ref>/;
-            const match = line.match(refRegex);
-            if (match) {
-                const refName = match[1].trim();
-                const templateName = match[2].trim();
-                const keyValuePairs = match[3].split('|').map(kv => {
-                    const [key, value] = kv.split('=').map(s => s.trim());
-                    return { key, value };
-                });
-                return { refName, templateName, keyValuePairs };
-            }
-            return null;
+        // Function to parse text into structured data
+        function parseText(text) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const refTags = doc.querySelectorAll('ref');
+            let parsedDataBulk = [];
+
+            refTags.forEach(refTag => {
+                const refName = refTag.getAttribute('name') || ''; // Use empty string if name attribute is missing
+                const refContent = refTag.innerHTML;
+                const contentRegex = /{{(.*?)\|(.*?)}}/;
+                const match = contentRegex.exec(refContent);
+
+                if (match) {
+                    const templateName = match[1].trim();
+                    const keyValuePairs = match[2].split('|').map(kv => {
+                        const [key, value] = kv.split('=').map(s => s.trim());
+                        return { key, value };
+                    });
+                    parsedDataBulk.push({ refName, templateName, keyValuePairs });
+                }
+            });
+
+            return parsedDataBulk;
         }
 
         function updateKeyOptions(editField, templateName) {
@@ -414,16 +424,16 @@
         });
 
         pasteDialogImportBtn.addEventListener('click', function() {
-            const lines = pasteDialogTextArea.value.split('\n');
-            lines.forEach(line => {
-                if (line.trim() === '') return;
-                const parsedData = parseLine(line);
-                if (parsedData) {
-                    const newItem = createListItem(parsedData);
-                    dynamicList.appendChild(newItem);
-                    bindEventsToItem(newItem);
-                }
+            const text = pasteDialogTextArea.value;
+            if (text.trim() === '') return;
+            const parsedDataBulk = parseText(text);
+
+            parsedDataBulk.forEach(parsedData => {
+                const newItem = createListItem(parsedData);
+                dynamicList.appendChild(newItem);
+                bindEventsToItem(newItem);
             });
+
             pasteDialog.style.display = 'none';
             pasteDialogTextArea.value = '';
         });
