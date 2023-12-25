@@ -11,24 +11,24 @@
         .topAddBtn {
             display: block;
             padding: 0;
-            width: 100%; /* Adjust width as needed */
-            height: 20px; /* Same as the hover area */
-            line-height: 20px; /* For vertical centering */
-            background-color: transparent; /* Or any color you prefer */
-            border: none; /* No border */
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            background-color: transparent;
+            border: none;
             cursor: pointer;
             text-align: center;
-            opacity: 0; /* Initially hidden */
+            opacity: 0;
             transition: opacity 0.3s;
         }
 
-        .topAddBtn:hover { /* Visible when either the area or the listItem is hovered */
+        .topAddBtn:hover {
             opacity: 1;
         }
         .topAddBtn::before {
             content: '+';
-            font-size: 20px; /* Adjust size as needed */
-            color: green; /* Adjust color as needed */
+            font-size: 20px;
+            color: green;
         }
 
         #dynamicList .listItem {
@@ -43,27 +43,27 @@
 
         .midAddBtn {
             position: absolute;
-            bottom: -20px; /* Position it outside the listItem */
+            bottom: -20px; /* Position it below the listItem */
             left: 0;
             right: 0;
-            height: 20px; /* Height of the clickable area */
-            background-color: transparent; /* Or any color you prefer */
-            border: none; /* No border */
+            height: 20px;
+            background-color: transparent;
+            border: none;
             cursor: pointer;
             text-align: center;
-            line-height: 20px; /* Same as height for vertical centering */
-            opacity: 0; /* Initially hidden */
+            line-height: 20px;
+            opacity: 0;
             transition: opacity 0.3s;
         }
 
-        .midAddBtn:hover { /* Visible when either the area or the listItem is hovered */
+        .midAddBtn:hover {
             opacity: 1;
         }
 
         .midAddBtn::before {
             content: '+';
-            font-size: 20px; /* Adjust size as needed */
-            color: green; /* Adjust color as needed */
+            font-size: 20px;
+            color: green;
         }
 
         #dynamicList .handle {
@@ -85,11 +85,33 @@
         }
 
         #dynamicList .editField {
-            padding: 5px;
-            flex-grow: 1;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust minmax as needed */
-            grid-gap: 5px;
+            padding: 5px 10px 0 0;
+        }
+
+        #dynamicList .editField .templatesContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Space between each template */
+        }
+
+        #dynamicList .editField .templateDiv {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            padding: 10px 10px 5px 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+        #dynamicList .editField .templateDiv > * {
+            flex-basis: 100%; /* Each child takes full width of a row */
+            max-width: 300px; /* Set a maximum width for each child */
+        }
+        #dynamicList .editField .templateDiv .keyValueDiv {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         #dynamicList .editField .refNameDiv,
@@ -98,24 +120,50 @@
             break-inside: avoid-column;
             display: flex;
             align-items: center;
+            margin-bottom: 5px;
         }
 
-        #dynamicList .editField input {
-            min-width: 100px;
+        #dynamicList .editField .keyValueDiv .deletePairBtn {
+            margin: 0 -5px;
+            background-color: transparent;
+            color: #ff3333;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+        }
+        #dynamicList .editField .keyValueDiv .deletePairBtn:hover {
+            opacity: 1;
         }
 
-        #dynamicList .editField .keyValueDiv input:first-child {
-            flex: 0 0 30%; /* Set the width of key inputs */
-            margin-right: 5px; /* Add some margin for spacing */
+        #dynamicList .editField .keyValueDiv .keyInput {
+            flex: 0 0 30%;
+            margin-right: 5px;
         }
 
-        #dynamicList .editField .keyValueDiv input:last-child {
+        #dynamicList .editField .keyValueDiv .valueInput {
             flex: 1; /* Value inputs take up the remaining space */
         }
 
         #dynamicList .editField input {
-            flex: 1;
             margin: 0 5px;
+            min-width: 90px;
+        }
+
+        #dynamicList .editField .templateDiv .addPairBtn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            color: green;
+            font-size: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #dynamicList .editField .templateDiv .addPairBtn:hover {
+            opacity: 1;
         }
 
         .dialog {
@@ -139,8 +187,8 @@
         #pasteDialogTextArea {
             min-width: 300px;
             min-height: 150px;
-            width: 100%; /* Optional, makes the textarea take full width of the dialog */
-            box-sizing: border-box; /* Optional, ensures padding and border are included in width/height */
+            width: 100%;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -186,36 +234,111 @@
             let parsedDataBulk = [];
 
             refTags.forEach(refTag => {
-                const refName = refTag.getAttribute('name') || ''; // Use empty string if name attribute is missing
+                const refName = refTag.getAttribute('name') || '';
                 const refContent = refTag.innerHTML;
-                const contentRegex = /{{(.*?)\|(.*?)}}/;
-                const match = contentRegex.exec(refContent);
 
-                if (match) {
-                    const templateName = match[1].trim();
-                    const keyValuePairs = match[2].split('|').map(kv => {
-                        const [key, value] = kv.split('=').map(s => s.trim());
-                        return { key, value };
-                    });
-                    parsedDataBulk.push({ refName, templateName, keyValuePairs });
+                // Using a Set to store unique templates
+                let templateSet = new Set();
+
+                // Regex to match each template within the ref tag
+                const templateRegex = /{{(.*?)\|(.*?)}}/g;
+                let match;
+                while ((match = templateRegex.exec(refContent)) !== null) {
+                    templateSet.add(match[0]); // Add entire matched template string
                 }
+
+                // Process each unique template
+                templateSet.forEach(template => {
+                    const contentRegex = /{{(.*?)\|(.*?)}}/;
+                    const match = contentRegex.exec(template);
+                    if (match) {
+                        const templateName = match[1].trim();
+                        const keyValuePairs = match[2].split('|').map(kv => {
+                            const [key, value] = kv.split('=').map(s => s.trim());
+                            return { key, value };
+                        });
+                        parsedDataBulk.push({ refName, templates: [{ templateName, keyValuePairs }] });
+                    }
+                });
             });
 
             return parsedDataBulk;
         }
 
-        function updateKeyOptions(editField, templateName) {
+        function updateKeyOptions(templateDiv, templateName) {
             const options = keyOptions[templateName.toLowerCase()] || keyOptions['default'];
-            console.log("updateKeyOptions running", options)
+            console.log("updateKeyOptions running", options);
 
-            // Update the editField's keyDataList
-            const dataList = editField.keyDataList;
-            dataList.innerHTML = ''; // Clear existing options
-            options.forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt;
-                dataList.appendChild(option);
+            // Update the templateDiv's keyDataList
+            const dataList = templateDiv.keyDataList;
+            if (dataList) {
+                dataList.innerHTML = ''; // Clear existing options
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    dataList.appendChild(option);
+                });
+            }
+        }
+
+        // Shared templateOptions datalist
+        const templateOptions = document.createElement('datalist');
+        templateOptions.id = 'templateOptions';
+        Object.keys(keyOptions).filter(opt => opt !== "default").forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt;
+            templateOptions.appendChild(option);
+        });
+        document.body.appendChild(templateOptions);
+
+        function createTemplate(data, editField) {
+            const templateDiv = document.createElement('div');
+            templateDiv.className = 'templateDiv';
+
+            // Create a div for templateName with a caption
+            const templateNameDiv = document.createElement('div');
+            templateNameDiv.className = 'templateNameDiv';
+            const templateNameCaption = document.createElement('span');
+            templateNameCaption.textContent = 'Template: ';
+            const templateNameInput = document.createElement('input');
+            templateNameInput.setAttribute('list', 'templateOptions'); // Reference the shared datalist
+            templateNameInput.value = data.templateName;
+            templateNameDiv.appendChild(templateNameCaption);
+            templateNameDiv.appendChild(templateNameInput);
+
+            // Event listener for templateNameInput changes
+            templateNameInput.addEventListener('input', () => {
+                updateKeyOptions(templateDiv, templateNameInput.value);
             });
+
+            templateDiv.appendChild(templateNameDiv);
+
+            // Create a dataList for key options associated with this template
+            const keyDataList = document.createElement('datalist');
+            const dataListId = 'keyDataList-' + (dataListUniqueIDCounter++);
+            keyDataList.id = dataListId;
+            document.body.appendChild(keyDataList);
+            templateDiv.keyDataList = keyDataList; // Associate the dataList with the templateDiv
+
+            // Create divs for each key-value pair
+            data.keyValuePairs.forEach(pair => {
+                createKeyValuePair(pair, templateDiv, keyDataList.id);
+            });
+
+            // Call updateKeyOptions initially to populate the dataList
+            updateKeyOptions(templateDiv, data.templateName);
+
+            // New plus button for adding key-value pairs
+            const addPairBtn = document.createElement('button');
+            addPairBtn.className = 'addPairBtn';
+            addPairBtn.textContent = '+';
+            addPairBtn.onclick = function() {
+                const newPair = { key: '', value: '' }; // New empty pair
+                createKeyValuePair(newPair, templateDiv, keyDataList.id);
+            };
+            templateDiv.appendChild(addPairBtn);
+
+            editField.appendChild(templateDiv);
         }
 
         // Function to create a form in the editField
@@ -235,53 +358,18 @@
             refNameDiv.appendChild(refNameInput);
             editField.appendChild(refNameDiv);
 
-            // Create a div for templateName with a caption
-            const templateNameDiv = document.createElement('div');
-            templateNameDiv.className = 'templateNameDiv'
-            const templateNameCaption = document.createElement('span');
-            templateNameCaption.textContent = 'Template: ';
-            const templateNameInput = document.createElement('input');
-            templateNameInput.setAttribute('list', 'templateOptions');
-            templateNameInput.value = data.templateName;
+            const templatesContainer = document.createElement('div');
+            templatesContainer.className = 'templatesContainer';
 
-            // Store a reference to templateNameInput in the listItem
-            editField.templateNameInput = templateNameInput;
-
-            const templateOptions = document.createElement('datalist');
-            templateOptions.id = 'templateOptions';
-            Object.keys(keyOptions).filter(opt => opt !== "default").forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt;
-                templateOptions.appendChild(option);
+            const templates = Array.isArray(data.templates) ? data.templates : [data];
+            templates.forEach(templateData => {
+                createTemplate(templateData, templatesContainer);
             });
 
-            // Event listener for templateNameInput changes
-            templateNameInput.addEventListener('input', () => {
-                updateKeyOptions(editField, templateNameInput.value);
-            });
-
-            templateNameDiv.appendChild(templateNameCaption);
-            templateNameDiv.appendChild(templateNameInput);
-            templateNameDiv.appendChild(templateOptions);
-            editField.appendChild(templateNameDiv);
-
-            // Create a single dataList for key options
-            const keyDataList = document.createElement('datalist');
-            const dataListId = 'keyDataList-' + (dataListUniqueIDCounter++);
-            keyDataList.id = dataListId;
-            document.body.appendChild(keyDataList);
-            editField.keyDataList = keyDataList; // Associate the dataList with the editField
-
-            // Create divs for each key-value pair
-            data.keyValuePairs.forEach(pair => {
-                createKeyValuePair(pair, editField);
-            });
-
-            // Call updateKeyOptions initially to populate the dataList
-            updateKeyOptions(editField, data.templateName);
+            editField.appendChild(templatesContainer);
         }
 
-        function createKeyValuePair(pair, editField) {
+        function createKeyValuePair(pair, templateDiv, dataListId) {
             const pairDiv = document.createElement('div');
             pairDiv.className = 'keyValueDiv';
 
@@ -305,18 +393,21 @@
             };
 
             const keyInput = document.createElement('input');
+            keyInput.className = "keyInput";
             keyInput.value = pair.key;
-            keyInput.setAttribute('list', editField.keyDataList.id); // Reference the editField's keyDataList
+            keyInput.setAttribute('list', dataListId); // Reference the templateDiv's keyDataList
             const colonSpan = document.createElement('span');
             colonSpan.textContent = ': ';
             const valueInput = document.createElement('input');
+            valueInput.className = "valueInput";
             valueInput.value = pair.value;
 
             pairDiv.appendChild(deleteButton);
             pairDiv.appendChild(keyInput);
             pairDiv.appendChild(colonSpan);
             pairDiv.appendChild(valueInput);
-            editField.appendChild(pairDiv);
+            const addPairBtn = templateDiv.querySelector('.addPairBtn')
+            templateDiv.insertBefore(pairDiv, addPairBtn);
         }
 
         function createListItem(parsedData) {
@@ -344,40 +435,31 @@
                 }
             };
 
-            const addButton = document.createElement('button');
-            addButton.className = 'addBtn';
-            addButton.innerHTML = '+';
-            addButton.onclick = function() {
-                const newPair = { key: '', value: '' }; // Empty pair
-                createKeyValuePair(newPair, editField);
+            const rawCodeBtn = document.createElement('button');
+            rawCodeBtn.className = 'rawCodeBtn';
+            rawCodeBtn.innerHTML = 'Raw';
+            rawCodeBtn.onclick = function() {
+                // Not implemented yet
             };
 
             buttonsDiv.appendChild(deleteButton);
-            buttonsDiv.appendChild(addButton);
+            buttonsDiv.appendChild(rawCodeBtn);
 
+            // Clear div for layout purposes
             const clearDiv = document.createElement('div');
             clearDiv.style.clear = 'both';
 
-            // Create hoverable button for adding new entries
+            // Mid-add button to insert new items
             const midAddBtn = document.createElement('button');
             midAddBtn.className = 'midAddBtn';
-
-            // Event listener for the hover area
             midAddBtn.addEventListener('click', () => {
                 const blankData = {
                     refName: '',
-                    templateName: '',
-                    keyValuePairs: []
+                    templates: [{ templateName: '', keyValuePairs: [] }]
                 };
                 const newListItem = createListItem(blankData);
                 newItem.parentNode.insertBefore(newListItem, newItem.nextSibling);
                 bindEventsToItem(newListItem);
-
-                // Optionally, focus on the first input field in the new item
-                const firstInput = newListItem.querySelector('input');
-                if (firstInput) {
-                    firstInput.focus();
-                }
             });
 
             newItem.appendChild(handle);
@@ -458,8 +540,7 @@
         addTopEntryBtn.addEventListener('click', function() {
             const blankData = {
                 refName: '',
-                templateName: '',
-                keyValuePairs: []
+                templates: [{ templateName: '', keyValuePairs: [] }]
             };
             const newItem = createListItem(blankData);
             dynamicList.insertBefore(newItem, dynamicList.firstChild); // Insert at the beginning of the list
