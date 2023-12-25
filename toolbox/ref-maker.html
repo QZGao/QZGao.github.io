@@ -4,13 +4,66 @@
     <meta charset="UTF-8">
     <title>Generate and manage Wikipedia references</title>
     <style>
+        #toolbar {
+            padding-bottom: 10px;
+        }
+
+        .topAddBtn {
+            display: block;
+            padding: 0;
+            width: 100%; /* Adjust width as needed */
+            height: 20px; /* Same as the hover area */
+            line-height: 20px; /* For vertical centering */
+            background-color: transparent; /* Or any color you prefer */
+            border: none; /* No border */
+            cursor: pointer;
+            text-align: center;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.3s;
+        }
+
+        .topAddBtn:hover { /* Visible when either the area or the listItem is hovered */
+            opacity: 1;
+        }
+        .topAddBtn::before {
+            content: '+';
+            font-size: 20px; /* Adjust size as needed */
+            color: green; /* Adjust color as needed */
+        }
+
         #dynamicList .listItem {
+            position: relative;
             display: flex;
             align-items: stretch; /* Align children to stretch full height */
             padding: 5px;
-            margin-bottom: 5px;
+            margin-bottom: 20px;
             background-color: #f0f0f0;
             border: 1px solid #ddd;
+        }
+
+        .midAddBtn {
+            position: absolute;
+            bottom: -20px; /* Position it outside the listItem */
+            left: 0;
+            right: 0;
+            height: 20px; /* Height of the clickable area */
+            background-color: transparent; /* Or any color you prefer */
+            border: none; /* No border */
+            cursor: pointer;
+            text-align: center;
+            line-height: 20px; /* Same as height for vertical centering */
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.3s;
+        }
+
+        .midAddBtn:hover { /* Visible when either the area or the listItem is hovered */
+            opacity: 1;
+        }
+
+        .midAddBtn::before {
+            content: '+';
+            font-size: 20px; /* Adjust size as needed */
+            color: green; /* Adjust color as needed */
         }
 
         #dynamicList .handle {
@@ -89,19 +142,15 @@
             width: 100%; /* Optional, makes the textarea take full width of the dialog */
             box-sizing: border-box; /* Optional, ensures padding and border are included in width/height */
         }
-
-        #toolbar {
-            padding-bottom: 10px;
-        }
     </style>
 </head>
 <body>
 
 <div id="toolbar">
-    <button id="pasteTextBtn">Paste from Text</button>
-    <button id="clearListBtn">Clear</button>
-    <button id="newEntryBtn">Create New Entry</button>
+    <button id="pasteTextBtn">Paste from Wiki Text</button>
+    <button id="clearListBtn">Clear All</button>
 </div>
+<button id="addTopEntryBtn" class="topAddBtn"></button>
 
 <div id="pasteDialog" class="dialog">
     <textarea id="pasteDialogTextArea"></textarea>
@@ -309,11 +358,33 @@
             const clearDiv = document.createElement('div');
             clearDiv.style.clear = 'both';
 
+            // Create hoverable button for adding new entries
+            const midAddBtn = document.createElement('button');
+            midAddBtn.className = 'midAddBtn';
+
+            // Event listener for the hover area
+            midAddBtn.addEventListener('click', () => {
+                const blankData = {
+                    refName: '',
+                    templateName: '',
+                    keyValuePairs: []
+                };
+                const newListItem = createListItem(blankData);
+                newItem.parentNode.insertBefore(newListItem, newItem.nextSibling);
+                bindEventsToItem(newListItem);
+
+                // Optionally, focus on the first input field in the new item
+                const firstInput = newListItem.querySelector('input');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            });
+
             newItem.appendChild(handle);
             newItem.appendChild(editField);
             newItem.appendChild(buttonsDiv);
             newItem.appendChild(clearDiv);
-
+            newItem.appendChild(midAddBtn);
             return newItem;
         }
 
@@ -373,36 +444,31 @@
             });
         }
 
-        const newEntryBtn = document.getElementById('newEntryBtn');
-
-        newEntryBtn.addEventListener('click', function() {
-            // Create a new blank data structure for the list item
-            const blankData = {
-                refName: '',
-                templateName: '',
-                keyValuePairs: []
-            };
-
-            // Create a new list item using the blank data
-            const newItem = createListItem(blankData);
-            dynamicList.appendChild(newItem);
-            bindEventsToItem(newItem);
-
-            // Optionally, you can focus on the first input field in the new item
-            const firstInput = newItem.querySelector('input');
-            if (firstInput) {
-                firstInput.focus();
-            }
-        });
-
         const clearListBtn = document.getElementById('clearListBtn');
-
         clearListBtn.addEventListener('click', function() {
             if (dynamicList.firstChild && confirm('Are you sure you want to clear all entries?')) {
                 // Remove all children from dynamicList
                 while (dynamicList.firstChild) {
                     dynamicList.removeChild(dynamicList.firstChild);
                 }
+            }
+        });
+
+        const addTopEntryBtn = document.getElementById('addTopEntryBtn');
+        addTopEntryBtn.addEventListener('click', function() {
+            const blankData = {
+                refName: '',
+                templateName: '',
+                keyValuePairs: []
+            };
+            const newItem = createListItem(blankData);
+            dynamicList.insertBefore(newItem, dynamicList.firstChild); // Insert at the beginning of the list
+            bindEventsToItem(newItem);
+
+            // Optionally, focus on the first input field in the new item
+            const firstInput = newItem.querySelector('input');
+            if (firstInput) {
+                firstInput.focus();
             }
         });
 
