@@ -353,9 +353,9 @@
             if (templates.length === 1) {
                 rawCode += createTemplateString(templates[0]);
             } else {
-                rawCode += '{{bulleted list|';
+                rawCode += '{{bulleted list |';
                 templates.forEach(template => {
-                    rawCode += createTemplateString(template) + '|';
+                    rawCode += createTemplateString(template) + ' |';
                 });
                 rawCode = rawCode.slice(0, -1); // Remove the last pipe character
                 rawCode += '}}';
