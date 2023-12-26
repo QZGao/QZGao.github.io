@@ -330,7 +330,9 @@
                     if (templateMatch) {
                         const templateName = templateMatch[1].trim();
                         const keyValuePairs = templateMatch[2].split('|').map(kv => {
-                            const [key, value] = kv.split('=').map(s => s.trim());
+                            const indexOfEqual = kv.indexOf('=');
+                            const key = kv.substring(0, indexOfEqual).trim();
+                            const value = kv.substring(indexOfEqual + 1).trim();
                             return { key, value };
                         });
                         templates.push({ templateName, keyValuePairs });
