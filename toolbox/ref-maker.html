@@ -8,6 +8,27 @@
             padding-bottom: 10px;
         }
 
+        .topAddBtn,
+        .midAddBtn,
+        #dynamicList .buttonsDiv button,
+        #dynamicList .editField .templateDiv .addTemplateBtn,
+        #dynamicList .editField .templateDiv .deleteTemplateBtn,
+        #dynamicList .editField .templateDiv .templateDivFlex .addPairBtn,
+        #dynamicList .editField .templateDiv .templateDivFlex .keyValueDiv .deletePairBtn {
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        .topAddBtn:hover,
+        .midAddBtn:hover,
+        #dynamicList .buttonsDiv button:hover,
+        #dynamicList .editField .templateDiv .addTemplateBtn:hover,
+        #dynamicList .editField .templateDiv .deleteTemplateBtn:hover,
+        #dynamicList .editField .templateDiv .templateDivFlex .addPairBtn:hover,
+        #dynamicList .editField .templateDiv .templateDivFlex .keyValueDiv .deletePairBtn:hover {
+            opacity: 1;
+        }
+
         .topAddBtn {
             display: block;
             padding: 0;
@@ -16,15 +37,9 @@
             line-height: 20px;
             background-color: transparent;
             border: none;
-            cursor: pointer;
             text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s;
         }
 
-        .topAddBtn:hover {
-            opacity: 1;
-        }
         .topAddBtn::before {
             content: '+';
             font-size: 20px;
@@ -49,15 +64,8 @@
             height: 20px;
             background-color: transparent;
             border: none;
-            cursor: pointer;
             text-align: center;
             line-height: 20px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .midAddBtn:hover {
-            opacity: 1;
         }
 
         .midAddBtn::before {
@@ -73,15 +81,39 @@
             cursor: move;
         }
 
-        #dynamicList .buttonsDiv {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; /* Aligns children to start and end */
-        }
-
-        #dynamicList .buttonsDiv button {
+        #dynamicList .buttonsDiv .deleteBtn {
+            position: absolute;
+            top: 0;
+            right: 0;
             width: 24px;
             height: 24px;
+            background: transparent;
+            border: 0;
+            color: #ff3333;
+            font-size: 20px;
+        }
+
+        #dynamicList .buttonsDiv .rawCodeBtn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 24px;
+            background: transparent;
+            border: 0;
+            text-align: right;
+        }
+
+        #dynamicList .editField .templateDiv .deleteTemplateBtn {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border: 0;
+            color: #ff3333;
+            font-size: 20px;
         }
 
         #dynamicList .editField {
@@ -91,59 +123,65 @@
         #dynamicList .editField .templatesContainer {
             display: flex;
             flex-direction: column;
-            gap: 10px; /* Space between each template */
         }
 
         #dynamicList .editField .templateDiv {
-            display: flex;
-            flex-wrap: wrap;
-            align-content: flex-start;
-            padding: 10px 10px 5px 10px;
-            margin-top: 5px;
+            padding: 5px;
+            margin-bottom: 20px;
             border: 1px solid #ccc;
             background-color: #f8f8f8;
             border-radius: 5px;
+            position: relative;
         }
-        #dynamicList .editField .templateDiv > * {
-            flex-basis: 100%; /* Each child takes full width of a row */
+
+        #dynamicList .editField .templateDiv .templateNameHandle {
+            cursor: move;
+            user-select: none;
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        #dynamicList .editField .templateDiv .templateDivFlex {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            justify-content: space-between;
+            padding-right: 20px;
+        }
+        #dynamicList .editField .templateDiv .templateDivFlex > * {
+            flex: 1 1 300px; /* Allows flex items to grow and shrink from a base width of 300px */
             max-width: 300px; /* Set a maximum width for each child */
         }
-        #dynamicList .editField .templateDiv .keyValueDiv {
+        #dynamicList .editField .templateDiv .templateDivFlex .keyValueDiv {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         #dynamicList .editField .refNameDiv,
-        #dynamicList .editField .templateNameDiv,
-        #dynamicList .editField .keyValueDiv {
+        #dynamicList .editField .templateDiv .templateDivFlex .templateNameDiv,
+        #dynamicList .editField .templateDiv .templateDivFlex .keyValueDiv {
             break-inside: avoid-column;
             display: flex;
             align-items: center;
             margin-bottom: 5px;
         }
 
-        #dynamicList .editField .keyValueDiv .deletePairBtn {
+        #dynamicList .editField .templateDiv .templateDivFlex .keyValueDiv .deletePairBtn {
             margin: 0 -5px;
             background-color: transparent;
             color: #ff3333;
-            opacity: 0;
-            transition: opacity 0.3s;
             border: none;
-            cursor: pointer;
             font-size: 20px;
             line-height: 1;
         }
-        #dynamicList .editField .keyValueDiv .deletePairBtn:hover {
-            opacity: 1;
-        }
 
-        #dynamicList .editField .keyValueDiv .keyInput {
+        #dynamicList .editField .templateDiv .templateDivFlex .keyValueDiv .keyInput {
             flex: 0 0 30%;
             margin-right: 5px;
         }
 
-        #dynamicList .editField .keyValueDiv .valueInput {
+        #dynamicList .editField .templateDiv .templateDivFlex .keyValueDiv .valueInput {
             flex: 1; /* Value inputs take up the remaining space */
         }
 
@@ -152,18 +190,30 @@
             min-width: 90px;
         }
 
-        #dynamicList .editField .templateDiv .addPairBtn {
+        #dynamicList .editField .templateDiv .templateDivFlex .addPairBtn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
             background-color: transparent;
             border: none;
-            cursor: pointer;
             color: green;
             font-size: 20px;
-            opacity: 0;
-            transition: opacity 0.3s;
         }
 
-        #dynamicList .editField .templateDiv .addPairBtn:hover {
-            opacity: 1;
+        #dynamicList .editField .templateDiv .addTemplateBtn {
+            position: absolute;
+            bottom: -18px;
+            height: 20px;
+            width: 100%;
+            background-color: transparent;
+            border: none;
+            text-align: center;
+        }
+
+        #dynamicList .editField .templateDiv .addTemplateBtn::before {
+            content: '+';
+            font-size: 20px;
+            color: green;
         }
 
         .dialog {
@@ -197,6 +247,7 @@
 <div id="toolbar">
     <button id="pasteTextBtn">Paste from Wiki Text</button>
     <button id="clearListBtn">Clear All</button>
+    <button id="sortRefNameBtn">Sort by Ref Name</button>
 </div>
 <button id="addTopEntryBtn" class="topAddBtn"></button>
 
@@ -228,49 +279,53 @@
 
         // Function to parse text into structured data
         function parseText(text) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, 'text/html');
-            const refTags = doc.querySelectorAll('ref');
             let parsedDataBulk = [];
 
-            refTags.forEach(refTag => {
-                const refName = refTag.getAttribute('name') || '';
-                const refContent = refTag.innerHTML;
+            // Regex to match ref tags excluding self-closing ones and those with a "name" attribute
+            const refTagRegex = /<ref\s*(?:name\s*=\s*"([^"]*)"\s*)?[^>/]*>(.*?)<\/ref>/gs;
 
-                // Using a Set to store unique templates
+            let match;
+            while ((match = refTagRegex.exec(text)) !== null) {
+                const refName = match[1] || ''; // Extract refName if present
+                const refContent = match[2].trim();
+
                 let templateSet = new Set();
 
-                // Regex to match each template within the ref tag
-                const templateRegex = /{{(.*?)\|(.*?)}}/g;
-                let match;
-                while ((match = templateRegex.exec(refContent)) !== null) {
-                    templateSet.add(match[0]); // Add entire matched template string
+                // Regex to match each template within the ref tag that starts with "cite" or "Cite"
+                const templateRegex = /{{\s*((?:cite|Cite)[^|]*)\|(.*?)}}/g;
+                let templateMatch;
+                while ((templateMatch = templateRegex.exec(refContent)) !== null) {
+                    templateSet.add(templateMatch[0]); // Add entire matched template string
                 }
 
-                // Process each unique template
+                let templates = [];
                 templateSet.forEach(template => {
-                    const contentRegex = /{{(.*?)\|(.*?)}}/;
-                    const match = contentRegex.exec(template);
-                    if (match) {
-                        const templateName = match[1].trim();
-                        const keyValuePairs = match[2].split('|').map(kv => {
+                    const contentRegex = /{{\s*((?:cite|Cite)[^|]*)\|(.*?)}}/;
+                    const templateMatch = contentRegex.exec(template);
+                    if (templateMatch) {
+                        const templateName = templateMatch[1].trim();
+                        const keyValuePairs = templateMatch[2].split('|').map(kv => {
                             const [key, value] = kv.split('=').map(s => s.trim());
                             return { key, value };
                         });
-                        parsedDataBulk.push({ refName, templates: [{ templateName, keyValuePairs }] });
+                        templates.push({ templateName, keyValuePairs });
                     }
                 });
-            });
+
+                if (templates.length > 0) {
+                    parsedDataBulk.push({ refName, templates });
+                }
+            }
 
             return parsedDataBulk;
         }
 
-        function updateKeyOptions(templateDiv, templateName) {
+        function updateKeyOptions(templateDivFlex, templateName) {
             const options = keyOptions[templateName.toLowerCase()] || keyOptions['default'];
             console.log("updateKeyOptions running", options);
 
-            // Update the templateDiv's keyDataList
-            const dataList = templateDiv.keyDataList;
+            // Update the templateDivFlex's keyDataList
+            const dataList = templateDivFlex.keyDataList;
             if (dataList) {
                 dataList.innerHTML = ''; // Clear existing options
                 options.forEach(opt => {
@@ -291,13 +346,17 @@
         });
         document.body.appendChild(templateOptions);
 
-        function createTemplate(data, editField) {
+        function createTemplate(data, templateContainer, currTemplateDiv = null) {
             const templateDiv = document.createElement('div');
             templateDiv.className = 'templateDiv';
+
+            const templateDivFlex = document.createElement('div');
+            templateDivFlex.className = 'templateDivFlex';
 
             // Create a div for templateName with a caption
             const templateNameDiv = document.createElement('div');
             templateNameDiv.className = 'templateNameDiv';
+
             const templateNameCaption = document.createElement('span');
             templateNameCaption.textContent = 'Template: ';
             const templateNameInput = document.createElement('input');
@@ -308,25 +367,119 @@
 
             // Event listener for templateNameInput changes
             templateNameInput.addEventListener('input', () => {
-                updateKeyOptions(templateDiv, templateNameInput.value);
+                updateKeyOptions(templateDivFlex, templateNameInput.value);
+
+                // Check if templateDivFlex has any key-value pairs
+                const keyValuePairsExist = templateDivFlex.querySelectorAll('.keyValueDiv').length > 0;
+
+                if (!keyValuePairsExist) {
+                    const templateType = templateNameInput.value.toLowerCase();
+                    const defaultKeys = keyOptions[templateType] || keyOptions['default'];
+
+                    defaultKeys.forEach(key => {
+                        const newPair = { key: key, value: '' };
+                        createKeyValuePair(newPair, templateDivFlex, templateDivFlex.keyDataList.id);
+                    });
+                }
             });
 
-            templateDiv.appendChild(templateNameDiv);
+            const deleteTemplateBtn = document.createElement('button');
+            deleteTemplateBtn.className = 'deleteTemplateBtn';
+            deleteTemplateBtn.innerHTML = '×';
+            deleteTemplateBtn.onclick = function() {
+                if (confirm('Are you sure you want to delete this template?')) {
+                    templateDiv.remove();
+                }
+            };
+            templateNameDiv.append(deleteTemplateBtn);
+
+            const templateNameHandle = document.createElement('div');
+            templateNameHandle.className = 'templateNameHandle';
+            templateNameHandle.textContent = '⋮';
+            templateNameHandle.draggable = true;
+            templateNameDiv.insertBefore(templateNameHandle, templateNameDiv.firstChild);
+
+            // Implement drag-and-drop functionality
+            templateNameHandle.addEventListener('dragstart', function(e) {
+                draggedItem = templateDiv;
+                setTimeout(() => {
+                    templateDiv.style.opacity = '0.5';
+                    e.dataTransfer.effectAllowed = 'move';
+                }, 0);
+            });
+
+            templateDiv.addEventListener('dragend', function(e) {
+                templateDiv.style.opacity = '1';
+                templateDiv.style.backgroundColor = '#f0f0f0';
+            });
+
+            templateDiv.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                if (draggedItem && draggedItem.className === 'templateDiv') {
+                    e.stopPropagation();
+                    templateDiv.style.backgroundColor = '#aaa';
+                }
+            });
+
+            templateDiv.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                // Only change background if an item is being dragged
+                if (draggedItem && draggedItem.className === 'listItem') {
+                    e.stopPropagation(); // Prevent event from propagating further
+                    templateDiv.style.backgroundColor = '#aaa';
+                }
+            });
+
+            templateDiv.addEventListener('dragleave', function(e) {
+                templateDiv.style.backgroundColor = '#f0f0f0';
+            });
+
+            templateDiv.addEventListener('drop', function(e) {
+                templateDiv.style.backgroundColor = '#f0f0f0';
+                if (draggedItem && draggedItem.className === 'templateDiv') {
+                    e.stopPropagation();
+                    if (templateDiv !== draggedItem) {
+                        let allTemplates = templateContainer.querySelectorAll('.templateDiv');
+                        let draggedIdx = Array.from(allTemplates).indexOf(draggedItem);
+                        let thisIdx = Array.from(allTemplates).indexOf(templateDiv);
+
+                        const ogTemplateContainer = draggedItem.parentNode;
+                        if (draggedIdx > thisIdx) {
+                            templateDiv.before(draggedItem);
+                        } else {
+                            templateDiv.after(draggedItem);
+                        }
+
+                        // Check if the templateDiv is empty and create a new template if needed
+                        if (ogTemplateContainer.querySelectorAll('.templateDiv').length === 0) { // Assuming only the addPairBtn is left
+                            const newTemplateData = {
+                                templateName: '',
+                                keyValuePairs: []
+                            };
+                            createTemplate(newTemplateData, ogTemplateContainer);
+                        }
+                    }
+
+                    draggedItem = null;
+                }
+            });
+
+            templateDivFlex.appendChild(templateNameDiv);
 
             // Create a dataList for key options associated with this template
             const keyDataList = document.createElement('datalist');
             const dataListId = 'keyDataList-' + (dataListUniqueIDCounter++);
             keyDataList.id = dataListId;
             document.body.appendChild(keyDataList);
-            templateDiv.keyDataList = keyDataList; // Associate the dataList with the templateDiv
+            templateDivFlex.keyDataList = keyDataList; // Associate the dataList with the templateDivFlex
 
             // Create divs for each key-value pair
             data.keyValuePairs.forEach(pair => {
-                createKeyValuePair(pair, templateDiv, keyDataList.id);
+                createKeyValuePair(pair, templateDivFlex, keyDataList.id);
             });
 
             // Call updateKeyOptions initially to populate the dataList
-            updateKeyOptions(templateDiv, data.templateName);
+            updateKeyOptions(templateDivFlex, data.templateName);
 
             // New plus button for adding key-value pairs
             const addPairBtn = document.createElement('button');
@@ -334,11 +487,28 @@
             addPairBtn.textContent = '+';
             addPairBtn.onclick = function() {
                 const newPair = { key: '', value: '' }; // New empty pair
-                createKeyValuePair(newPair, templateDiv, keyDataList.id);
+                createKeyValuePair(newPair, templateDivFlex, keyDataList.id);
             };
-            templateDiv.appendChild(addPairBtn);
+            templateDivFlex.appendChild(addPairBtn);
+            templateDiv.appendChild(templateDivFlex);
 
-            editField.appendChild(templateDiv);
+            // New plus button for adding templates
+            const addTemplateBtn = document.createElement('button');
+            addTemplateBtn.className = 'addTemplateBtn';
+            addTemplateBtn.addEventListener('click', () => {
+                const newTemplateData = {
+                    templateName: data.templateName,
+                    keyValuePairs: []
+                };
+                createTemplate(newTemplateData, templateContainer, templateDiv);
+            });
+
+            templateDiv.appendChild(addTemplateBtn);
+            if (currTemplateDiv) {
+                currTemplateDiv.after(templateDiv);
+            } else {
+                templateContainer.appendChild(templateDiv);
+            }
         }
 
         // Function to create a form in the editField
@@ -369,7 +539,7 @@
             editField.appendChild(templatesContainer);
         }
 
-        function createKeyValuePair(pair, templateDiv, dataListId) {
+        function createKeyValuePair(pair, templateDivFlex, dataListId) {
             const pairDiv = document.createElement('div');
             pairDiv.className = 'keyValueDiv';
 
@@ -395,7 +565,7 @@
             const keyInput = document.createElement('input');
             keyInput.className = "keyInput";
             keyInput.value = pair.key;
-            keyInput.setAttribute('list', dataListId); // Reference the templateDiv's keyDataList
+            keyInput.setAttribute('list', dataListId); // Reference the templateDivFlex's keyDataList
             const colonSpan = document.createElement('span');
             colonSpan.textContent = ': ';
             const valueInput = document.createElement('input');
@@ -406,8 +576,8 @@
             pairDiv.appendChild(keyInput);
             pairDiv.appendChild(colonSpan);
             pairDiv.appendChild(valueInput);
-            const addPairBtn = templateDiv.querySelector('.addPairBtn')
-            templateDiv.insertBefore(pairDiv, addPairBtn);
+            const addPairBtn = templateDivFlex.querySelector('.addPairBtn')
+            templateDivFlex.insertBefore(pairDiv, addPairBtn);
         }
 
         function createListItem(parsedData) {
@@ -490,14 +660,16 @@
             item.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 e.stopPropagation(); // Prevent event from propagating further
-                item.style.backgroundColor = '#aaa';
+                if (draggedItem && draggedItem.className === 'listItem') {
+                    item.style.backgroundColor = '#aaa';
+                }
             });
 
             item.addEventListener('dragenter', function(e) {
                 e.preventDefault();
                 e.stopPropagation(); // Prevent event from propagating further
                 // Only change background if an item is being dragged
-                if (draggedItem) {
+                if (draggedItem && draggedItem.className === 'listItem') {
                     item.style.backgroundColor = '#aaa';
                 }
             });
@@ -511,7 +683,7 @@
             item.addEventListener('drop', function(e) {
                 e.stopPropagation(); // Prevent event from propagating further
                 item.style.backgroundColor = '#f0f0f0';
-                if (draggedItem && item !== draggedItem) {
+                if (draggedItem && draggedItem.className === 'listItem' && item !== draggedItem) {
                     let allItems = dynamicList.querySelectorAll('.listItem');
                     let draggedIdx = Array.from(allItems).indexOf(draggedItem);
                     let thisIdx = Array.from(allItems).indexOf(item);
@@ -563,6 +735,7 @@
         // Event listener to show the dialog
         pasteTextBtn.addEventListener('click', function() {
             pasteDialog.style.display = 'block';
+            pasteDialogTextArea.focus();
         });
 
         // Event listener to hide the dialog on cancel
@@ -585,6 +758,22 @@
             pasteDialogTextArea.value = '';
         });
 
+        function sortByRefName() {
+            let items = Array.from(document.querySelectorAll('#dynamicList .listItem'));
+            items.sort((a, b) => {
+                let refNameA = a.querySelector('.refNameDiv input').value.trim().toLowerCase();
+                let refNameB = b.querySelector('.refNameDiv input').value.trim().toLowerCase();
+                return refNameA.localeCompare(refNameB);
+            });
+            items.forEach(item => document.getElementById('dynamicList').appendChild(item));
+        }
+
+        const sortRefNameBtn = document.getElementById('sortRefNameBtn');
+        sortRefNameBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to sort the entries by Ref Name?')) {
+                sortByRefName();
+            }
+        });
     });
 
 </script>
