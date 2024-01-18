@@ -457,10 +457,10 @@ table td {
   background-color: #e3d2d2;
 }
 .highlight .k {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .o {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .cm {
   color: #998;
@@ -468,7 +468,7 @@ table td {
 }
 .highlight .cp {
   color: #999;
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .c1 {
   color: #998;
@@ -476,7 +476,7 @@ table td {
 }
 .highlight .cs {
   color: #999;
-  font-weight: bold;
+  font-weight: 700;
   font-style: italic;
 }
 .highlight .gd {
@@ -511,7 +511,7 @@ table td {
   color: #555;
 }
 .highlight .gs {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .gu {
   color: #aaa;
@@ -520,20 +520,20 @@ table td {
   color: #a00;
 }
 .highlight .kc {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .kd {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .kp {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .kr {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .kt {
   color: #458;
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .m {
   color: #099;
@@ -549,7 +549,7 @@ table td {
 }
 .highlight .nc {
   color: #458;
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .no {
   color: #008080;
@@ -559,11 +559,11 @@ table td {
 }
 .highlight .ne {
   color: #900;
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .nf {
   color: #900;
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .nn {
   color: #555;
@@ -575,7 +575,7 @@ table td {
   color: #008080;
 }
 .highlight .ow {
-  font-weight: bold;
+  font-weight: 700;
 }
 .highlight .w {
   color: #bbb;
