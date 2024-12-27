@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QQ Music API</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .input-container, .button-container {
+            margin: 20px 20px 0 20px;
+        }
+
+        .button-container {
+            margin-top: 10px;
+        }
+
+        .output-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            margin: 0 20px 20px 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: monospace;
+            resize: none;
+        }
+
+        .output-textarea {
+            flex-grow: 1;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #008080;
+            color: white;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            background-color: #005757;
+        }
+
+        #progress {
+            margin: 10px 20px;
+        }
+
+        progress {
+            width: 100%;
+            height: 20px;
+        }
+
+        .tab-container {
+            display: flex;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            background-color: #008080;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tab-button:hover {
+            background-color: #005757;
+        }
+
+        .tab-content {
+            flex-grow: 1;
+            display: none;
+            border: 1px solid #ccc;
+            border-radius: 0 4px 4px 4px;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "flex";
+            evt.currentTarget.className += " active";
+        }
+
+        // Set default tab
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector(".tab-button").click();
+        });
+
+        function apiQuery(query, keywords) {
+            var url = 'http://www.cqaibeibei.com/' + query;
+            if (keywords) {
+                url += '?' + Object.keys(keywords).map(key => key + '=' + keywords[key]).join('&');
+            }
+            return fetch(url);
+        }
+
+        function searchByKeyword() {
+            var keyword = document.getElementById('input').value;
+            var response = apiQuery('getSearchByKey', {
+                key: keyword,
+                limit: 20,
+            });
+            response.then(res => res.json()).then(data => {
+                document.getElementById('output').value = JSON.stringify(data, null, 2);
+                var formatted = 'Search results for "' + keyword + '":\n';
+                var songList = data.response.data.song.list;
+                for (var i = 0; i < songList.length; i++) {
+                    var song = songList[i];
+                    formatted += (i + 1) + '. ' + song.songname + ' (' + song.songmid + ')';
+                    if (song.albummid) {
+                        formatted += ', ' + song.albumname + ' (' + song.albummid + ')';
+                    }
+                    if (song.singer) {
+                        formatted += ', ' + song.singer.map(singer => singer.name).join('/');
+                    }
+                    formatted += '\n';
+                }
+                document.getElementById('output-formatted').value = formatted;
+            });
+        }
+
+        function getAlbumsBySinger() {
+            var response = apiQuery('getSingerAlbum', {
+                singermid: '001uz8tl04tdL8',
+                limit: 20,
+            });
+            response.then(res => res.json()).then(data => {
+                document.getElementById('output').value = JSON.stringify(data, null, 2);
+                var formatted = 'Recent albums of HOYO-MiX:\n';
+                var albumList = data.response.singer.data.albumList;
+                for (var i = 0; i < albumList.length; i++) {
+                    var album = albumList[i];
+                    formatted += (i + 1) + '. ' + album.albumName + ' (' + album.albumMid + ')';
+                    formatted += ', ' + album.singerName + ', ' + album.publishDate + '\n';
+                }
+                document.getElementById('output-formatted').value = formatted;
+            });
+        }
+
+        function getAlbum() {
+            var albummid = document.getElementById('input').value;
+            var response = apiQuery('getAlbumInfo', {
+                albummid: albummid,
+            });
+            response.then(res => res.json()).then(data => {
+                document.getElementById('output').value = JSON.stringify(data, null, 2);
+                var album = data.response.data;
+                var formatted = 'Album info for ' + album.name + ' (' + album.mid + '):\n';
+                formatted += ' - Singer(s): ' + album.singername + '\n';
+                formatted += ' - Release date: ' + album.aDate + '\n';
+                formatted += ' - Company: ' + album.company + '\n';
+                formatted += ' - Genre: ' + album.genre + '\n';
+                formatted += ' - Description: ' + album.desc + '\n';
+                formatted += ' - Songs (' + album.total_song_num + '):\n';
+                for (var i = 0; i < album.list.length; i++) {
+                    var song = album.list[i];
+                    formatted += '   ' + song.belongCD + '. ' + song.songname + ' (';
+                    if (song.songorig && song.songorig !== song.songname) {
+                        formatted += song.songorig + ', ';
+                    }
+                    formatted += song.songmid + ')';
+                    if (song.singer) {
+                        formatted += ', ' + song.singer.map(singer => singer.name).join('/');
+                    }
+                    formatted += '\n';
+                }
+                document.getElementById('output-formatted').value = formatted;
+            });
+        }
+
+        function getSong() {
+            var songmid = document.getElementById('input').value;
+            var response = apiQuery('getLyric', {
+                songmid: songmid,
+            });
+            response.then(res => res.json()).then(data => {
+                document.getElementById('output').value = JSON.stringify(data, null, 2);
+                var lyric = data.response.lyric;
+                document.getElementById('output-formatted').value = lyric;
+            });
+        }
+
+        function getAllSongs() {
+            var albummid = document.getElementById('input').value;
+            var albumResponse = apiQuery('getAlbumInfo', {
+                albummid: albummid,
+            });
+            albumResponse.then(res => res.json()).then(albumData => {
+                document.getElementById('output').value = JSON.stringify(albumData, null, 2);
+                var album = albumData.response.data;
+                var albumFormatted = 'Lyrics for all songs in ' + album.name + ' (' + album.mid + '):\n';
+                document.getElementById('output-formatted').value = albumFormatted;
+
+                // Progress bar
+                var progress = document.createElement('progress');
+                progress.max = album.total_song_num;
+                progress.value = 0;
+                document.getElementById('progress').appendChild(progress);
+
+                // For each song in the album
+                var songPromises = album.list.map((song, index) => {
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            var songResponse = apiQuery('getLyric', {
+                                songmid: song.songmid,
+                            });
+                            songResponse.then(res => res.json()).then(songData => {
+                                document.getElementById('output').value += '\n' + JSON.stringify(songData, null, 2);
+                                var lyric = songData.response.lyric;
+                                var songFormatted = '----------------------------------------\n';
+                                songFormatted += song.belongCD + '. ' + song.songname + ' (';
+                                if (song.songorig && song.songorig !== song.songname) {
+                                    songFormatted += song.songorig + ', ';
+                                }
+                                songFormatted += song.songmid + ')';
+                                if (song.singer) {
+                                    songFormatted += ', ' + song.singer.map(singer => singer.name).join('/');
+                                }
+                                songFormatted += ':\n' + lyric + '\n';
+                                document.getElementById('output-formatted').value += songFormatted;
+                                progress.value++;
+                                resolve();
+                            });
+                        }, index * 1000); // 1-second delay between each query
+                    });
+                });
+
+                Promise.all(songPromises).then(() => {
+                    console.log('All songs processed');
+                    // Remove progress bar
+                    document.getElementById('progress').removeChild(progress);
+                });
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="input-container">
+    <textarea class="input-textarea" id="input" rows="1"></textarea>
+</div>
+<div class="button-container">
+    <button class="action-button" onclick="searchByKeyword()">Search by keyword</button>
+    <button class="action-button" onclick="getAlbumsBySinger()">Get recent albums of HOYO-MiX</button>
+    <button class="action-button" onclick="getAlbum()">Get album by albummid</button>
+    <button class="action-button" onclick="getSong()">Get lyrics by songmid</button>
+    <button class="action-button" onclick="getAllSongs()">Get all lyrics by albummid</button>
+</div>
+<div id="progress"></div>
+<div class="output-container">
+    <div class="tab-container">
+        <button class="tab-button" onclick="openTab(event, 'formatted')">Formatted Output</button>
+        <button class="tab-button" onclick="openTab(event, 'raw')">Raw Output</button>
+    </div>
+    <div class="tab-content" id="formatted">
+        <textarea class="output-textarea" id="output-formatted" readonly></textarea>
+    </div>
+    <div class="tab-content" id="raw">
+        <textarea class="output-textarea" id="output" readonly></textarea>
+    </div>
+</div>
+</body>
+</html>
