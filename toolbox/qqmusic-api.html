@@ -134,6 +134,13 @@
         });
 
         function apiQuery(query, keywords) {
+            if (fetch('https://cors-anywhere.herokuapp.com/http://www.cqaibeibei.com/').status === 403) {
+                // If the access to CORS Anywhere is blocked, request a temporary access
+                alert('Please request temporary access to the CORS Anywhere proxy.');
+                open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank');
+                throw new Error('CORS Anywhere access blocked');
+            }
+
             var url = 'https://cors-anywhere.herokuapp.com/http://www.cqaibeibei.com/' + query;
             if (keywords) {
                 url += '?' + Object.keys(keywords).map(key => key + '=' + keywords[key]).join('&');
