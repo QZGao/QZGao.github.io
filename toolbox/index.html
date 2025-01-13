@@ -5,9 +5,13 @@
     <title>Toolbox</title>
     <style>
         body {
+            font-size: 16px;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             color: #333;
+        }
+
+        .main-content {
             padding: 20px;
             max-width: 768px;
             margin-left: auto;
@@ -42,6 +46,7 @@
             font-size: 1.3em;
             color: #333;
             padding-left: 10px;
+            padding-top: 20px;
         }
 
         .tool-address {
@@ -49,6 +54,29 @@
             color: #666;
             margin-top: 0;
             margin-bottom: 0;
+        }
+
+        .breadcrumb {
+            position: absolute;
+            color: #666;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .breadcrumb-sep {
+            color: #ccc;
+            padding-right: 4px;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+            padding: 4px 6px;
+        }
+
+        .breadcrumb a:hover {
+            background-color: rgba(64, 64, 64, 0.06);
+            border-radius: 6px;
         }
     </style>
     <script>
@@ -74,10 +102,11 @@
     </script>
 </head>
 <body>
-
-<h2 class="tools-heading">Toolbox</h2>
-<ul id="tools-list">
-</ul>
-
+<div class="breadcrumb"><a href="/">Homepage</a> <span class="breadcrumb-sep">/</span> Toolbox</div>
+<div class="main-content">
+    <h2 class="tools-heading">Toolbox</h2>
+    <ul id="tools-list">
+    </ul>
+</div>
 </body>
 </html>
