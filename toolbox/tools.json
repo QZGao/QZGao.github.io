@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Resize non-free images to Wikipedia Fair Use size (10,000 pixels)",
+        "file": "image-resizer.html"
+    },
+    {
+        "name": "Generate and manage Wikipedia references",
+        "file": "ref-maker.html"
+    },
+    {
+        "name": "Production credits lookup of HOYO-MiX soundtracks based on QQ Music API",
+        "file": "qqmusic-api.html"
+    }
+]

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Toolbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+            max-width: 768px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 5px;
+            padding-left: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+
+        .tools-heading {
+            font-size: 1.3em;
+            color: #333;
+            padding-left: 10px;
+        }
+
+        .tool-address {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('tools.json')
+                .then(response => response.json())
+                .then(tools => {
+                    const toolsList = document.getElementById('tools-list');
+                    tools.forEach(tool => {
+                        const listItem = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.href = `/toolbox/${tool.file}`;
+                        link.textContent = tool.name;
+                        const address = document.createElement('p');
+                        address.className = 'tool-address';
+                        address.textContent = `/toolbox/${tool.file}`;
+                        listItem.appendChild(link);
+                        listItem.appendChild(address);
+                        toolsList.appendChild(listItem);
+                    });
+                });
+        });
+    </script>
+</head>
+<body>
+
+<h2 class="tools-heading">Toolbox</h2>
+<ul id="tools-list">
+</ul>
+
+</body>
+</html>
