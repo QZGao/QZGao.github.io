@@ -1,0 +1,15 @@
+name = "qqmusic-api-worker"              
+main = "toolbox/qqmusic-api-worker.js"    
+workers_dev = true                        
+compatibility_date = "2025-05-31"         
+account_id = "d57d5f6946822ad2185443a27f0f4bf3"
+
+# allow built-in Node shims
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+# no externals, no custom command
+
+[observability.logs]
+enabled = true
+invocation_logs = false
