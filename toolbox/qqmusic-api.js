@@ -1491,8 +1491,6 @@
 			params
 		);
 
-		console.log(res);
-
 		// 解密並提取內容
 		let lyric = qrcDecrypt(res.lyric || "");
 		let transLyric = qrcDecrypt(res.trans || "");
