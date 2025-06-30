@@ -5,25 +5,46 @@
     <title>Resize non-free images to Wikipedia Fair Use size (10,000 pixels)</title>
     <script src="pica.min.js"></script>
     <style>
+        html, body {
+            height: calc(100vh - 20px);
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        *, *::before, *::after {
+            box-sizing: inherit;
+        }
+
+        h1 {
+            margin: 0 0 10px; /* remove default margins */
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
         .button-container {
             text-align: center;
             margin: 10px;
         }
 
         .image-container-wrapper {
-            display: flex; /* Apply Flexbox layout */
-            justify-content: center; /* Center the image containers horizontally */
+            flex: 1; /* take all remaining height */
+            min-height: 0; /* allow it to shrink to available space */
+            display: flex;
+            overflow: hidden; /* hide overflow instead of scrolling */
         }
 
         .image-container {
-            box-sizing: border-box;
-            width: 50%;
-            height: 90vh; /* Adjust height as needed */
+            flex: 1; /* split available width equally */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%; /* match wrapper’s height */
             border: 1px solid black;
-            display: flex; /* Use flexbox for centering */
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
-            overflow: hidden;
+            box-sizing: border-box;
         }
 
         .image-box {
@@ -37,6 +58,8 @@
     </style>
 </head>
 <body>
+<h1>Resize non-free images to Wikipedia Fair Use size (10,000 pixels)</h1>
+
 <div class="button-container">
     <input accept="image/*" id="file_input" onchange="previewImage();" style="display: none;" type="file"/>
     <button onclick="document.getElementById('file_input').click();">Upload</button>
