@@ -1,5 +1,5 @@
 name = "qqmusic-api-worker"              
-main = "toolbox/qqmusic-api-worker.js"    
+main = "toolbox/qqmusic-api-worker/qqmusic-api-worker.js"
 workers_dev = true                        
 compatibility_date = "2025-05-31"         
 account_id = "d57d5f6946822ad2185443a27f0f4bf3"

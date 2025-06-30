@@ -1,10 +1,10 @@
 (function () {
-	const axios = require('./axios.min.js');
-	const pako = require('./pako.min.js');
+	const axios = require('../lib/axios.min.js');
+	const pako = require('../lib/pako.min.js');
 	const fs = require('fs');
 	const path = require('path');
 	const crypto = require('crypto');
-	const DESHelper = require('./tripledes.js');
+	const DESHelper = require('../lib/qqmusic-tripledes.js');
 	const { TextDecoder } = require('util');
 
 	// replace uuid dependency with built-in crypto.randomUUID (fallback to custom v4)
