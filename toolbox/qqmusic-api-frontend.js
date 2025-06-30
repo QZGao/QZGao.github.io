@@ -205,32 +205,32 @@ async function getAlbumsBySinger() {
 		}
 
 		let formatted = `Albums of singer ${singerMid}:\n`;
-		let csv = `name\tmid\tsingerName\tpublishDate\n`;
+		let tsv = `name\tmid\tsingerName\tpublishDate\n`;
 
 		for (const [i, album] of list.entries()) {
 			const name = album.name || album.albumName;
 			const mid = album.mid || album.albumMid;
 			formatted += `${i + 1}. ${name} (${mid})`;
-			csv += `${name}\t${mid}\t`;
+			tsv += `${name}\t${mid}\t`;
 			// singer may be an array or a simple string field
 			if (Array.isArray(album.singer)) {
 				// output singer names with MID, join with spaces around slash
 				formatted += `, ${album.singer
 					.map(s => `${s.name} (${s.mid})`)
 					.join(' / ')}`;
-				csv += `${album.singer.map(s => s.name).join('/')}\t`;
+				tsv += `${album.singer.map(s => s.name).join('/')}\t`;
 			} else if (album.singerName) {
 				formatted += `, ${album.singerName}`;
-				csv += `${album.singerName}\t`;
+				tsv += `${album.singerName}\t`;
 			}
 			// date field
 			const date = album.time_public || album.publishDate;
 			if (date) formatted += `, ${date}`;
 			formatted += '\n';
-			csv += `${date || ''}\n`;
+			tsv += `${date || ''}\n`;
 		}
 		document.getElementById('output-formatted').value = formatted;
-		document.getElementById('output-csv').value = csv;
+		document.getElementById('output-tsv').value = tsv;
 	} catch (e) {
 		console.error(e);
 	}
@@ -286,7 +286,7 @@ async function getAlbum() {
 
 		if (songList.length) {
 			formatted += ` - Songs (${songList.length}):\n`;
-			let csv = `trackNo\tname\tmid\tsingers\tduration\n`;
+			let tsv = `trackNo\tname\tmid\tsingers\tduration\n`;
 			for (const song of songList) {
 				// track number: if both index_cd and index_album exist, show as "cd-album"
 				let trackNo = '';
@@ -306,7 +306,7 @@ async function getAlbum() {
 				if (song.subtitle) {
 					formatted += `, subtitle: ${song.subtitle}`;
 				}
-				csv += `${trackNo}\t${song.original_title || song.name}\t${song.mid}\t`;
+				tsv += `${trackNo}\t${song.original_title || song.name}\t${song.mid}\t`;
 
 				// singers with MID
 				if (song.singer) {
@@ -317,15 +317,15 @@ async function getAlbum() {
 						.map(s => `${s.name} (${s.mid})`)
 						.join(' / ')}`;
 
-					csv += singers.map(s => s.name).join('/') + '\t';
+					tsv += singers.map(s => s.name).join('/') + '\t';
 				}
 				let duration = `${Math.floor(song.interval / 60)}:${(song.interval % 60).toString().padStart(2, '0')}`;
 				formatted += `, duration: ${duration}`;
 
 				formatted += '\n';
-				csv += `${duration}\n`;
+				tsv += `${duration}\n`;
 			}
-			document.getElementById('output-csv').value = csv;
+			document.getElementById('output-tsv').value = tsv;
 		}
 
 		document.getElementById('output-formatted').value = formatted;
@@ -351,7 +351,7 @@ async function getAllSongs() {
 	const albummid = document.getElementById('input').value;
 	const outRaw = document.getElementById('output');
 	const outFmt = document.getElementById('output-formatted');
-	const outCsv = document.getElementById('output-csv');
+	const outTsv = document.getElementById('output-tsv');
 	const progress = document.getElementById('progress');
 	try {
 		// 1) Fetch album info
@@ -379,7 +379,7 @@ async function getAllSongs() {
 
 		// 3) Init formatted output & progress bar
 		outFmt.value = `Lyrics for all songs in ${info.albumName || ''} (${info.albumMid || ''}):\n`;
-		outCsv.value = 'trackNo\tlyric\n';
+		outTsv.value = 'trackNo\tlyric\n';
 		progress.innerHTML = '';
 		const bar = document.createElement('progress');
 		bar.max = songList.length;
@@ -401,9 +401,9 @@ async function getAllSongs() {
 			const songData = await apiQuery('getLyricByMid', { songMid });
 			outRaw.value += '\n' + JSON.stringify(songData, null, 2);
 			const lyric = songData.response.lyric ?? songData.response?.data?.lyric ?? '';
-			const lyricCsv = lyric.replace(/\[.*?\]/g, '').trim().replace(/\n/g, '\\n');
+			const lyricTsv = lyric.replace(/\[.*?\]/g, '').trim().replace(/\n/g, '\\n');
 			outFmt.value += `\n-- ${trackNo}. ${name} (${songMid}) --\n${lyric}\n`;
-			outCsv.value += `${trackNo}\t${lyricCsv}\n`;
+			outTsv.value += `${trackNo}\t${lyricTsv}\n`;
 			bar.value++;
 		}
 

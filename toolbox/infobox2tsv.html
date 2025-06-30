@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wikipedia Infobox to TSV crawler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        input, textarea, button, progress {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+
+        button {
+            width: auto;
+            padding: 4px;
+        }
+
+        progress {
+            height: 20px;
+        }
+
+        .cloze {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .cloze input {
+            width: auto;
+            padding: 4px;
+        }
+
+        input {
+            font-family: monospace, monospace;
+        }
+
+        .page-list-header {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap; /* allow wrapping on narrow screens */
+        }
+
+        .page-list-header label {
+            flex: 1 1 auto; /* label expands */
+            min-width: 0; /* allow label to shrink */
+        }
+
+        .action-buttons {
+            display: flex;
+            margin-top: 10px;
+            gap: 10px; /* space between buttons */
+        }
+        .action-buttons button, #downloadBtn {
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+<main>
+<h1>Wikipedia Infobox to TSV crawler</h1>
+
+<div class="cloze" id="targetWikiURL">
+    <span style="margin-right: 5px; font-weight: bold">Wiki URL:</span>
+    <input id="protocol" placeholder="http/https" type="text" value="https">
+    <span>://</span>
+    <input id="domain" placeholder="en.wikipedia.org" type="text" value="en.wikipedia.org">
+    <span>/</span>
+    <input id="prefix" placeholder="prefix & lang" type="text" value="wiki">
+    <span>/ &lt;page name&gt;</span>
+</div>
+
+<div class="page-list-header">
+    <label for="pageList" style="font-weight: bold">Page titles (one per line):</label>
+    <div class="page-list-controls cloze">
+        <span>Category:</span>
+        <input id="categoryInput" placeholder="Category name" type="text">
+        <button id="loadCategoryBtn" style="margin-left: 5px" type="button">Load Category</button>
+    </div>
+</div>
+<textarea id="pageList" placeholder="e.g. Albert Einstein"></textarea>
+
+<label for="infoboxTemplate" style="display: block; margin-top: 10px; font-weight: bold">Infobox template name (split by backslashes if multiple):</label>
+<input id="infoboxTemplate" placeholder="e.g. Infobox person" type="text" value="Infobox person">
+
+<div class="action-buttons">
+<button id="startBtn">Start</button>
+<button id="stopBtn" disabled>Force stop</button>
+</div>
+<progress id="progressBar" max="100" value="0"></progress>
+
+<label for="result" style="display: block; margin-top: 10px; font-weight: bold">TSV output:</label>
+<textarea id="result" readonly></textarea>
+<button disabled id="downloadBtn">Download TSV</button>
+</main>
+<script src="./lib/wikitext-template-parser.js"></script>
+<script defer src="infobox2tsv-frontend.js"></script>
+</body>
+</html>
