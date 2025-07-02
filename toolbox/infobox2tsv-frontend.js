@@ -20,7 +20,31 @@ function getTargetWikiURL() {
     return `${protocol}://${domain}/${prefix}/`;
 }
 
-function getApiEndpoint(wikiUrl) {
+async function testApiEndpoint(apiUrl) {
+    try {
+        const response = await fetch(apiUrl + '?action=query&meta=siteinfo&format=json&prop=general&format=json&formatversion=2&origin=*', {method: 'GET'});
+        if (response.status === 200) {
+            const data = await response.json();
+            // Check if we got a valid response
+            return data && data.query;
+        }
+    } catch (err) {
+    }
+    return false;
+}
+
+async function getApiEndpoint(wikiUrl) {
+    // Load (wikiUrl, actual API endpoint) mapping from localStorage
+    const cachedEndpoint = localStorage.getItem(`wikiApiEndpoint:${wikiUrl}`);
+    if (cachedEndpoint) {
+        return cachedEndpoint;
+    }
+
+    function saveApiEndpoint(endpoint) {
+        localStorage.setItem(`wikiApiEndpoint:${wikiUrl}`, endpoint);
+        return endpoint;
+    }
+
     let urlObj;
     try {
         urlObj = new URL(wikiUrl);
@@ -28,29 +52,40 @@ function getApiEndpoint(wikiUrl) {
         throw new Error(`Invalid wiki URL: ${wikiUrl}`);
     }
 
-    const origin = urlObj.origin;
-    // normalize the path, drop trailing slashes
-    let path = urlObj.pathname.replace(/\/+$/, '');
+    // Normally, wikiUrl = "https://en.wikipedia.org/wiki/" from user inputted page urls.
+    // However, we need to handle various cases to find the API endpoint.
 
-    // 1) if it's /wiki or /wiki/SomePage
-    if (/^\/wiki(?:\/|$)/i.test(path)) {
-        // strip off /wiki and anything after it
-        return origin + path.replace(/^\/wiki(\/.*)?$/i, '') + '/api.php';
+    // 1) wikiUrl + "api.php"
+    if (await testApiEndpoint(urlObj.href + 'api.php')) {
+        return saveApiEndpoint(urlObj.href + 'api.php');
     }
-    // 2) if it's /w or /w/SomePage
-    if (/^\/w(?:\/|$)/i.test(path)) {
-        return origin + path.replace(/^\/w(\/.*)?$/i, '') + '/w/api.php';
+
+    // 2) replace "wiki/" with "w/" or vice versa
+    if (urlObj.pathname.endsWith('/wiki/')) {
+        urlObj.pathname = urlObj.pathname.replace(/\/wiki\/$/, '/w/');
+    } else if (urlObj.pathname.endsWith('/w/')) {
+        urlObj.pathname = urlObj.pathname.replace(/\/w\/$/, '/wiki/');
     }
-    // 3) if it's /index.php
-    if (/\/index\.php$/i.test(path)) {
-        return origin + path.replace(/\/index\.php$/i, '/api.php');
+    if (await testApiEndpoint(urlObj.href + 'api.php')) {
+        return saveApiEndpoint(urlObj.href + 'api.php');
     }
-    // 4) if it already ends in /api.php
-    if (/\/api\.php$/i.test(path)) {
-        return origin + path;
+
+    // 3) remove "wiki/" or "w/" from the end
+    if (urlObj.pathname.endsWith('/wiki/')) {
+        urlObj.pathname = urlObj.pathname.slice(0, -6);
+    } else if (urlObj.pathname.endsWith('/w/')) {
+        urlObj.pathname = urlObj.pathname.slice(0, -3);
     }
-    // 5) fallback
-    return origin + '/api.php';
+    if (await testApiEndpoint(urlObj.href + 'api.php')) {
+        return saveApiEndpoint(urlObj.href + 'api.php');
+    }
+
+    // 4) try with origin + "api.php"
+    if (await testApiEndpoint(urlObj.origin + '/api.php')) {
+        return saveApiEndpoint(urlObj.origin + '/api.php');
+    }
+
+    throw new Error(`Could not find a valid API endpoint for ${wikiUrl}`);
 }
 
 function fetchJSONP(url) {
@@ -105,7 +140,7 @@ async function fetchWithRetry(url) {
 
 // ———————— 4. Unified “get JSON” helper ————————
 async function apiGet(params, wikiUrl) {
-    const endpoint = getApiEndpoint(wikiUrl);
+    const endpoint = await getApiEndpoint(wikiUrl);
     const qs = new URLSearchParams({
         ...params, format: 'json', formatversion: '2', origin: '*',
     });
@@ -332,8 +367,7 @@ document.getElementById('startBtn').addEventListener('click', async () => {
             // Map titles to wikitext
             const wikitextMap = {};
             for (const pg of data.query.pages) {
-                const rev = pg.revisions?.[0]?.slots?.main?.content || '';
-                wikitextMap[pg.title] = rev.replace(/\t/g, ' ');
+                wikitextMap[pg.title] = pg.revisions?.[0]?.slots?.main?.content || '';
             }
 
             // Process each page in batch
@@ -350,7 +384,7 @@ document.getElementById('startBtn').addEventListener('click', async () => {
                     if (dataObj) {
                         Object.entries(dataObj.params).forEach(([param, value]) => {
                             const colName = templates.length === 1 ? param : `${idx + 1}_${param}`;
-                            row[colName] = value;
+                            row[colName] = value.replace(/\t/g, ' ').replace(/\n/g, '\\n');  // sanitize tabs and newlines
                             if (!cols.has(colName)) newCols.push(colName);
                         });
                     }
