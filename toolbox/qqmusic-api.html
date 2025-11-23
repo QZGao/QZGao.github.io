@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>QQ Music API</title>
+    <link rel="stylesheet" href="common.css">
     <style>
         body {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            margin: 0;
+            min-height: calc(100vh - 2 * var(--toolbox-page-padding));
             font-family: Arial, sans-serif;
             background-color: white;
         }
@@ -113,8 +113,10 @@
             flex-direction: column;
         }
     </style>
+    <script defer src="breadcrumb.js"></script>
 </head>
 <body>
+<div class="breadcrumb" data-breadcrumb="Homepage=>/|Toolbox=>/toolbox/|QQ Music API"></div>
 <div class="input-container">
     <textarea class="input-textarea" id="input" rows="1"></textarea>
 </div>

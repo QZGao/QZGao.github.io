@@ -3,82 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Toolbox</title>
+    <link rel="stylesheet" href="common.css">
     <style>
-        body {
-            font-size: 16px;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-        }
-
         .main-content {
-            padding: 20px;
+            padding: 0;
             max-width: 768px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto;
         }
 
-        ul {
-            list-style: none;
+        .main-content ul {
+            margin: 0;
             padding: 0;
         }
 
-        li {
+        .main-content li {
             background-color: #fff;
             border: 1px solid #ddd;
-            padding: 5px;
-            padding-left: 10px;
+            padding: 10px 16px;
             border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             margin-bottom: 10px;
-        }
-
-        a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        a:hover {
-            color: #0056b3;
         }
 
         .tools-heading {
             font-size: 1.3em;
             color: #333;
-            padding-left: 10px;
-            padding-top: 20px;
+            margin: 0 0 10px;
         }
 
         .tool-address {
             font-size: 0.8em;
             color: #666;
-            margin-top: 0;
-            margin-bottom: 0;
-        }
-
-        .breadcrumb {
-            position: absolute;
-            color: #666;
-            margin: 5px;
-            font-size: 14px;
-        }
-
-        .breadcrumb-sep {
-            color: #ccc;
-            padding-right: 4px;
-        }
-
-        .breadcrumb a {
-            color: #666;
-            text-decoration: none;
-            padding: 4px 6px;
-        }
-
-        .breadcrumb a:hover {
-            background-color: rgba(64, 64, 64, 0.06);
-            border-radius: 6px;
+            margin: 4px 0 0;
         }
     </style>
+    <script defer src="breadcrumb.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             fetch('tools.json')
@@ -102,11 +61,10 @@
     </script>
 </head>
 <body>
-<div class="breadcrumb"><a href="/">Homepage</a> <span class="breadcrumb-sep">/</span> Toolbox</div>
-<div class="main-content">
+<div class="breadcrumb" data-breadcrumb="Homepage=>/|Toolbox"></div>
+<main class="main-content">
     <h2 class="tools-heading">Toolbox</h2>
-    <ul id="tools-list">
-    </ul>
-</div>
+    <ul id="tools-list" aria-live="polite"></ul>
+</main>
 </body>
 </html>
