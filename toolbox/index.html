@@ -47,11 +47,11 @@
                     tools.forEach(tool => {
                         const listItem = document.createElement('li');
                         const link = document.createElement('a');
-                        link.href = `/toolbox/${tool.file}`;
-                        link.textContent = tool.name;
+                        link.href = `${tool.url}`;
+                        link.innerHTML = tool.name;
                         const address = document.createElement('p');
                         address.className = 'tool-address';
-                        address.textContent = `/toolbox/${tool.file}`;
+                        address.textContent = `${tool.url}`;
                         listItem.appendChild(link);
                         listItem.appendChild(address);
                         toolsList.appendChild(listItem);
