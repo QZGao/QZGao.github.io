@@ -1,0 +1,8 @@
+name = "qqmusic-api-worker"
+main = "src/index.ts"
+workers_dev = true
+compatibility_date = "2025-05-31"
+
+[observability.logs]
+enabled = true
+invocation_logs = false

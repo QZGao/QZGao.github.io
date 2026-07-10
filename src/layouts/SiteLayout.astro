@@ -1,0 +1,69 @@
+---
+import '@fontsource-variable/source-serif-4/wght.css';
+import '@fontsource-variable/source-serif-4/wght-italic.css';
+import '@fontsource-variable/ibm-plex-sans/wght.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/600.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/print.css';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  pageClass?: string;
+}
+
+const {
+  title,
+  description = site.description,
+  pageClass = '',
+} = Astro.props;
+const documentTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.title}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: site.url,
+  email: `mailto:${site.email}`,
+  affiliation: {
+    '@type': 'CollegeOrUniversity',
+    name: site.affiliation,
+  },
+  sameAs: site.links.slice(0, 2).map((link) => link.href),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f3ea" />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary" />
+
+    <title>{documentTitle}</title>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+  </head>
+  <body class={pageClass}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <SiteHeader />
+    <main id="main-content" class="page-main">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

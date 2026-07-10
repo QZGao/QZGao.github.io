@@ -1,0 +1,139 @@
+---
+import { site } from '../data/site';
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout title="Curriculum vitae" description="Curriculum vitae for Quinn Gao, physics researcher and scientific software builder.">
+  <div class="shell cv">
+    <header class="page-intro">
+      <div class="stack--small">
+        <p class="eyebrow">Curriculum vitae</p>
+        <p class="folio">Web edition / updated 2026</p>
+      </div>
+      <div class="page-intro__body">
+        <h1>{site.name}</h1>
+        <p class="lede">Physics researcher and software engineer working across computational astrophysics, reproducible scientific software, and open knowledge.</p>
+        <div class="cluster no-print">
+          <a class="text-link" href={`mailto:${site.email}`}>Email</a>
+          <a class="text-link" href="https://github.com/QZGao">GitHub</a>
+          <a class="text-link" href="https://www.linkedin.com/in/quinn-gao">LinkedIn</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="section cv-section" aria-labelledby="education-heading">
+      <p class="section-label">01 / Education</p>
+      <div>
+        <h2 id="education-heading" class="visually-hidden">Education</h2>
+        <article class="cv-entry">
+          <p class="cv-entry__date">2024–2026</p>
+          <div>
+            <h3>Northeastern University</h3>
+            <p>Master of Science</p>
+          </div>
+        </article>
+        <article class="cv-entry">
+          <p class="cv-entry__date">2020–2024</p>
+          <div>
+            <h3>Beijing Normal University</h3>
+            <p>Bachelor of Science</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section cv-section" aria-labelledby="research-heading">
+      <p class="section-label">02 / Research</p>
+      <div>
+        <h2 id="research-heading" class="visually-hidden">Research</h2>
+        <article class="cv-entry">
+          <p class="cv-entry__date">Current</p>
+          <div>
+            <h3>Computational astrophysics</h3>
+            <p>Bayesian modelling, radio spectra, gravitational-wave and cosmology research environments, and reproducible scientific computing.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section cv-section" aria-labelledby="software-heading">
+      <p class="section-label">03 / Selected software</p>
+      <div class="cv-list">
+        <h2 id="software-heading" class="visually-hidden">Selected software</h2>
+        <article class="cv-entry">
+          <p class="cv-entry__date">2024–</p>
+          <div><h3>spectral_fit</h3><p>Bayesian pulsar radio-spectrum fitting and model comparison.</p></div>
+        </article>
+        <article class="cv-entry">
+          <p class="cv-entry__date">2025–</p>
+          <div><h3>CiteForge</h3><p>A TypeScript reference workbench for Wikimedia editors.</p></div>
+        </article>
+        <article class="cv-entry">
+          <p class="cv-entry__date">2025–</p>
+          <div><h3>Cite Unseen</h3><p>Source-type indicators that reveal useful context behind Wikipedia citations.</p></div>
+        </article>
+        <article class="cv-entry">
+          <p class="cv-entry__date">2025–</p>
+          <div><h3>LaTeX Suite</h3><p>A lightweight desktop environment for fast LaTeX composition.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section cv-section" aria-labelledby="practice-heading">
+      <p class="section-label">04 / Practice</p>
+      <div class="prose">
+        <h2 id="practice-heading">Research engineering</h2>
+        <p>Python and TypeScript software, statistical modelling, data extraction, interface design, and open-source collaboration. Particular emphasis on small inspectable systems, explicit uncertainty, and maintainable research infrastructure.</p>
+      </div>
+    </section>
+  </div>
+</SiteLayout>
+
+<style>
+  .cv-section {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.8fr) minmax(0, 2.2fr);
+    gap: var(--space-5);
+  }
+
+  .cv-entry {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--rule);
+  }
+
+  .cv-entry:first-of-type {
+    border-top-color: var(--rule-strong);
+  }
+
+  .cv-entry__date {
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  .cv-entry h3 {
+    font-family: var(--font-sans);
+    font-size: var(--step-1);
+    font-weight: 620;
+  }
+
+  .cv-entry h3 + p {
+    margin-top: var(--space-1);
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 46rem) {
+    .cv-section {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+
+    .cv-entry {
+      grid-template-columns: 5rem 1fr;
+      gap: var(--space-3);
+    }
+  }
+</style>

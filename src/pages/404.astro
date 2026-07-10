@@ -1,0 +1,24 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout title="Page not found" description="The requested page could not be found.">
+  <div class="shell">
+    <section class="not-found">
+      <p class="eyebrow">404 / Missing leaf</p>
+      <h1>That page is not in the index.</h1>
+      <p class="lede">It may have moved during the site refactor, or the address may be incomplete.</p>
+      <a class="text-link text-link--internal" href="/">Return home</a>
+    </section>
+  </div>
+</SiteLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    min-height: 60vh;
+    align-content: center;
+    gap: var(--space-4);
+    max-width: 55rem;
+  }
+</style>

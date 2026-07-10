@@ -1,0 +1,317 @@
+---
+import { getEntry } from 'astro:content';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+
+const project = await getEntry('projects', 'reference-maker');
+if (!project) throw new Error('Reference maker project metadata is missing.');
+---
+
+<ProjectLayout project={project} tool>
+  <section class="tool" data-reference-maker aria-labelledby="workbench-heading">
+    <header class="tool__header">
+      <div>
+        <p class="eyebrow">Interactive apparatus</p>
+        <h2 id="workbench-heading">Citation workbench</h2>
+        <p>Build or import complete citation references, reorder them explicitly, and export the resulting wikitext.</p>
+      </div>
+      <div class="tool-actions" role="group" aria-label="Workbench actions">
+        <button type="button" data-action="add-entry">Add reference</button>
+        <button type="button" class="button-secondary" data-action="open-import">Import wikitext</button>
+        <button type="button" class="button-secondary" data-action="sort">Sort by name</button>
+        <button type="button" class="button-secondary" data-action="open-output">Generate all</button>
+        <button type="button" class="button-danger" data-action="clear">Clear</button>
+      </div>
+    </header>
+
+    <p class="status" data-status aria-live="polite">Ready.</p>
+    <div class="empty-state" data-empty-state>
+      <p>No references in the workbench.</p>
+      <button type="button" class="button-secondary" data-action="add-entry">Add the first reference</button>
+    </div>
+    <div class="reference-list" data-reference-list></div>
+
+    <datalist id="citation-template-names">
+      <option value="cite web"></option>
+      <option value="cite news"></option>
+      <option value="cite book"></option>
+      <option value="cite journal"></option>
+      <option value="cite video game"></option>
+    </datalist>
+
+    <dialog data-import-dialog aria-labelledby="import-title">
+      <form method="dialog" class="dialog-form">
+        <div>
+          <p class="eyebrow">Import</p>
+          <h2 id="import-title">Paste references from wikitext</h2>
+          <p>Complete <code>&lt;ref&gt;…&lt;/ref&gt;</code> blocks containing citation templates will be added to the current workbench.</p>
+        </div>
+        <label>
+          <span>Wikitext</span>
+          <textarea data-import-input rows="12" spellcheck="false"></textarea>
+        </label>
+        <div class="dialog-actions">
+          <button type="button" data-action="import">Import references</button>
+          <button type="submit" class="button-secondary">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog data-output-dialog aria-labelledby="output-title">
+      <form method="dialog" class="dialog-form">
+        <div>
+          <p class="eyebrow">Output</p>
+          <h2 id="output-title">Generated wikitext</h2>
+        </div>
+        <label>
+          <span>References</span>
+          <textarea data-output-input rows="14" readonly spellcheck="false"></textarea>
+        </label>
+        <div class="dialog-actions">
+          <button type="button" data-action="copy-output">Copy</button>
+          <button type="submit" class="button-secondary">Close</button>
+        </div>
+      </form>
+    </dialog>
+  </section>
+
+  <script>
+    import { mountReferenceMaker } from '../../features/reference-maker/client';
+    mountReferenceMaker();
+  </script>
+</ProjectLayout>
+
+<style>
+  .tool {
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .tool__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 1fr);
+    gap: var(--space-5);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tool__header h2 {
+    margin-top: var(--space-2);
+    font-size: var(--step-2);
+  }
+
+  .tool__header h2 + p {
+    max-width: var(--measure);
+    margin-top: var(--space-3);
+    color: var(--ink-soft);
+  }
+
+  .tool-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: start;
+    justify-content: flex-end;
+    gap: var(--space-2);
+  }
+
+  .status {
+    padding-block: var(--space-3);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .empty-state {
+    display: grid;
+    min-height: 15rem;
+    place-content: center;
+    justify-items: center;
+    gap: var(--space-3);
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  .empty-state[hidden] {
+    display: none;
+  }
+
+  .reference-list {
+    display: grid;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+  }
+
+  :global(.reference-entry) {
+    padding: var(--space-4);
+    border: 1px solid var(--rule-strong);
+    background: rgb(252 250 245 / 72%);
+  }
+
+  :global(.reference-entry > * + *) {
+    margin-top: var(--space-4);
+  }
+
+  :global(.reference-entry__header),
+  :global(.entry-actions),
+  :global(.template-toolbar) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  :global(.reference-entry__header h3) {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  :global(.entry-actions),
+  :global(.template-toolbar) {
+    justify-content: flex-end;
+  }
+
+  :global(.compact-button) {
+    min-height: 2.2rem;
+    padding: 0.35rem 0.55rem;
+    border-color: var(--rule-strong);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+  }
+
+  :global(.compact-button:hover:not(:disabled)) {
+    border-color: var(--ink);
+    background: var(--paper-deep);
+    color: var(--ink);
+  }
+
+  :global(.compact-button--danger) {
+    color: var(--error);
+  }
+
+  :global(.compact-button--danger:hover:not(:disabled)) {
+    border-color: var(--error);
+    background: var(--error);
+    color: white;
+  }
+
+  :global(.citation-templates) {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  :global(.citation-template) {
+    min-width: 0;
+    padding: var(--space-3);
+    border: 1px solid var(--rule);
+  }
+
+  :global(.citation-template legend) {
+    padding-inline: var(--space-2);
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  :global(.citation-template > * + *) {
+    margin-top: var(--space-3);
+  }
+
+  :global(.reference-fields) {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  :global(.reference-field) {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.45fr) minmax(12rem, 1.55fr) auto;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  :global(.empty-fields) {
+    color: var(--ink-soft);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+  }
+
+  :global(.reference-preview) {
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--rule);
+  }
+
+  :global(.reference-preview summary) {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  :global(.reference-preview code) {
+    display: block;
+    margin-top: var(--space-2);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  dialog {
+    width: min(44rem, calc(100% - 2rem));
+    max-height: calc(100vh - 2rem);
+    padding: 0;
+    overflow: auto;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  dialog::backdrop {
+    background: rgb(28 27 24 / 55%);
+  }
+
+  .dialog-form {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
+
+  .dialog-form h2 {
+    margin-top: var(--space-2);
+    font-size: var(--step-2);
+  }
+
+  .dialog-form h2 + p {
+    margin-top: var(--space-2);
+    color: var(--ink-soft);
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+  }
+
+  @media (max-width: 52rem) {
+    .tool__header {
+      grid-template-columns: 1fr;
+    }
+
+    .tool-actions {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 38rem) {
+    :global(.reference-field) {
+      grid-template-columns: 1fr;
+    }
+
+    :global(.reference-field .compact-button) {
+      justify-self: start;
+    }
+
+    .dialog-form {
+      padding: var(--space-4);
+    }
+  }
+</style>

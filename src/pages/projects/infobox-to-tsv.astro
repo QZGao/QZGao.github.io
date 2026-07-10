@@ -1,0 +1,384 @@
+---
+import { getEntry } from 'astro:content';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+
+const project = await getEntry('projects', 'infobox-to-tsv');
+if (!project) throw new Error('Missing project entry: infobox-to-tsv');
+---
+
+<ProjectLayout project={project} tool>
+  <div class="tool-method">
+    <p class="section-label">Method note</p>
+    <p>
+      The extractor reads public wikitext through a wiki's MediaWiki API. It runs entirely in
+      this browser and emits raw template values, preserving links and nested templates for
+      later inspection. Use it for bounded datasets, not unattended crawling.
+    </p>
+  </div>
+
+  <section class="apparatus" data-infobox-extractor aria-labelledby="extractor-title">
+    <header class="apparatus__header">
+      <div>
+        <p class="folio">Apparatus / IBX–01</p>
+        <h2 id="extractor-title">Extraction workbench</h2>
+      </div>
+      <p>
+        Supply a wiki's article-path URL, a set of page titles, and one or more template names.
+        Category members can be added to the page list before extraction.
+      </p>
+    </header>
+
+    <form class="extractor" data-extractor-form>
+      <fieldset class="extractor__section">
+        <legend><span>01</span> Source</legend>
+
+        <div class="field">
+          <label for="wiki-url">Wiki article-path URL</label>
+          <input
+            id="wiki-url"
+            data-wiki-url
+            data-lock-while-running
+            name="wiki-url"
+            type="url"
+            value="https://en.wikipedia.org/wiki/"
+            inputmode="url"
+            autocomplete="url"
+            required
+            aria-describedby="wiki-url-hint"
+          />
+          <p class="field-hint" id="wiki-url-hint">
+            For example, <code>https://en.wikipedia.org/wiki/</code>. Only HTTP and HTTPS wikis
+            that permit cross-origin API requests can be read.
+          </p>
+        </div>
+
+        <div class="category-fields">
+          <div class="field">
+            <label for="category-name">Add pages from a category</label>
+            <input
+              id="category-name"
+              data-category
+              data-lock-while-running
+              name="category"
+              type="text"
+              placeholder="Category name"
+              autocomplete="off"
+            />
+          </div>
+          <button class="button-secondary" data-load-category type="button">
+            Load category
+          </button>
+        </div>
+      </fieldset>
+
+      <fieldset class="extractor__section">
+        <legend><span>02</span> Selection</legend>
+
+        <div class="selection-grid">
+          <div class="field">
+            <label for="page-titles">Page titles</label>
+            <textarea
+              id="page-titles"
+              data-pages
+              data-lock-while-running
+              name="pages"
+              rows="10"
+              placeholder="Albert Einstein"
+              spellcheck="false"
+              required
+              aria-describedby="page-titles-hint"></textarea>
+            <p class="field-hint" id="page-titles-hint">Enter one exact page title per line.</p>
+          </div>
+
+          <div class="field">
+            <label for="template-names">Template names</label>
+            <textarea
+              id="template-names"
+              data-templates
+              data-lock-while-running
+              name="templates"
+              rows="10"
+              spellcheck="false"
+              required
+              aria-describedby="template-names-hint">Infobox person</textarea>
+            <p class="field-hint" id="template-names-hint">
+              Enter one name per line, without braces. Multiple templates receive numbered
+              column prefixes.
+            </p>
+          </div>
+        </div>
+      </fieldset>
+
+      <section class="run-panel" aria-labelledby="run-heading">
+        <div class="run-panel__heading">
+          <div>
+            <p class="section-label">03 / Run</p>
+            <h3 id="run-heading">Fetch and parse</h3>
+          </div>
+          <div class="actions">
+            <button data-run type="submit">Start extraction</button>
+            <button class="button-danger" data-cancel type="button" disabled>Stop</button>
+          </div>
+        </div>
+
+        <div class="progress-block">
+          <div class="progress-meta">
+            <span>Progress</span>
+            <span id="infobox-progress-label" data-progress-label>Ready</span>
+          </div>
+          <progress data-progress value="0" max="1" aria-labelledby="infobox-progress-label">
+            0%
+          </progress>
+        </div>
+
+        <p class="status" data-status data-state="neutral" role="status" aria-live="polite" aria-atomic="true">
+          Ready. No network requests have been made.
+        </p>
+      </section>
+
+      <section class="output" aria-labelledby="output-heading">
+        <div class="output__heading">
+          <div>
+            <p class="section-label">04 / Result</p>
+            <h3 id="output-heading">Tab-separated output</h3>
+          </div>
+          <button class="button-secondary" data-download type="button" disabled>
+            Download TSV
+          </button>
+        </div>
+
+        <label class="visually-hidden" for="infobox-result">Extracted TSV data</label>
+        <textarea
+          id="infobox-result"
+          data-result
+          rows="16"
+          readonly
+          spellcheck="false"
+          aria-describedby="output-hint"></textarea>
+        <p class="field-hint" id="output-hint">
+          Tabs inside values become spaces; line breaks are represented as <code>\n</code> so
+          that each source page remains one record. Values otherwise remain untrusted raw
+          wikitext—including spreadsheet formula-like prefixes—so inspect the file before
+          opening it in spreadsheet software.
+        </p>
+      </section>
+    </form>
+  </section>
+</ProjectLayout>
+
+<script>
+  import { mountInfoboxExtractor } from '../../features/infobox-extractor/client';
+
+  const extractor = document.querySelector<HTMLElement>('[data-infobox-extractor]');
+  if (extractor) mountInfoboxExtractor(extractor);
+</script>
+
+<style>
+  .tool-method {
+    display: grid;
+    grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 2.2fr);
+    gap: var(--space-5);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tool-method > p:last-child {
+    max-width: var(--measure);
+  }
+
+  .apparatus {
+    margin-top: var(--space-6);
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule-strong);
+    background: rgb(252 250 245 / 72%);
+  }
+
+  .apparatus__header {
+    display: grid;
+    grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 1.6fr);
+    gap: var(--space-5);
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .apparatus__header h2 {
+    margin-top: var(--space-2);
+    font-size: var(--step-2);
+  }
+
+  .apparatus__header > p {
+    max-width: 56ch;
+    color: var(--ink-soft);
+  }
+
+  .extractor__section {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+    margin: 0;
+    padding: var(--space-5);
+    border: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  legend {
+    width: 100%;
+    padding: 0 0 var(--space-3);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-sans);
+    font-size: var(--step-1);
+    font-weight: 620;
+  }
+
+  legend span {
+    margin-right: var(--space-2);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+  }
+
+  .field {
+    min-width: 0;
+  }
+
+  .field label + :is(input, textarea) {
+    margin-top: var(--space-1);
+  }
+
+  .category-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-3);
+    max-width: 48rem;
+  }
+
+  .selection-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(14rem, 0.8fr);
+    gap: var(--space-4);
+  }
+
+  textarea,
+  input {
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+  }
+
+  .selection-grid textarea {
+    min-height: 14rem;
+  }
+
+  .run-panel,
+  .output {
+    padding: var(--space-5);
+  }
+
+  .run-panel {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .run-panel__heading,
+  .output__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .run-panel__heading h3,
+  .output__heading h3 {
+    margin-top: var(--space-1);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .progress-block {
+    margin-top: var(--space-4);
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  progress {
+    display: block;
+    width: 100%;
+    height: 0.45rem;
+    margin-top: var(--space-2);
+    border: 0;
+    border-radius: 0;
+    background: var(--paper-deep);
+    color: var(--signal);
+  }
+
+  progress::-webkit-progress-bar {
+    background: var(--paper-deep);
+  }
+
+  progress::-webkit-progress-value {
+    background: var(--signal);
+  }
+
+  progress::-moz-progress-bar {
+    background: var(--signal);
+  }
+
+  .status {
+    margin-top: var(--space-3);
+  }
+
+  .output textarea {
+    min-height: 22rem;
+    margin-top: var(--space-4);
+    white-space: pre;
+  }
+
+  [data-busy='true'] {
+    cursor: progress;
+  }
+
+  @media (max-width: 46rem) {
+    .tool-method,
+    .apparatus__header,
+    .selection-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+
+    .apparatus__header,
+    .extractor__section,
+    .run-panel,
+    .output {
+      padding: var(--space-4);
+    }
+
+    .category-fields {
+      grid-template-columns: 1fr;
+      align-items: stretch;
+    }
+
+    .category-fields button,
+    .actions button,
+    .output__heading button {
+      width: 100%;
+    }
+
+    .actions {
+      width: 100%;
+    }
+  }
+</style>

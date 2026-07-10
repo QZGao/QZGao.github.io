@@ -1,0 +1,40 @@
+@media print {
+  @page {
+    margin: 18mm;
+  }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 10.5pt;
+  }
+
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+
+  .shell {
+    width: 100%;
+  }
+
+  .page-intro,
+  .section,
+  .project-row {
+    break-inside: avoid;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-family: var(--font-sans);
+    font-size: 0.78em;
+    font-style: normal;
+  }
+}

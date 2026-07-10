@@ -1,0 +1,45 @@
+@layer tokens {
+  :root {
+    color-scheme: light;
+
+    --paper: #f7f3ea;
+    --paper-deep: #eee7d9;
+    --paper-light: #fcfaf5;
+    --ink: #1c1b18;
+    --ink-soft: #5c5a54;
+    --ink-faint: #858178;
+    --rule: #d4cbbb;
+    --rule-strong: #aaa08f;
+    --accent: #813b34;
+    --accent-deep: #642b27;
+    --accent-soft: #eadbd6;
+    --signal: #1d625b;
+    --signal-soft: #dbe9e4;
+    --error: #982f2f;
+
+    --font-serif: 'Source Serif 4 Variable', 'Iowan Old Style', 'Baskerville', Georgia, serif;
+    --font-sans: 'IBM Plex Sans Variable', 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --step--1: clamp(0.78rem, 0.74rem + 0.14vw, 0.86rem);
+    --step-0: clamp(1rem, 0.96rem + 0.18vw, 1.1rem);
+    --step-1: clamp(1.22rem, 1.12rem + 0.42vw, 1.48rem);
+    --step-2: clamp(1.48rem, 1.28rem + 0.78vw, 1.95rem);
+    --step-3: clamp(1.9rem, 1.45rem + 1.65vw, 2.9rem);
+    --step-4: clamp(2.65rem, 1.8rem + 3.25vw, 5.2rem);
+
+    --space-1: 0.35rem;
+    --space-2: 0.65rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --space-5: 2.25rem;
+    --space-6: 3.5rem;
+    --space-7: 5.5rem;
+    --space-8: 8rem;
+
+    --measure: 70ch;
+    --shell: 76rem;
+    --radius: 0.2rem;
+    --transition: 150ms ease;
+  }
+}
