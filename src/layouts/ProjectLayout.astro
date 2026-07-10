@@ -15,7 +15,10 @@ const metadata = data.status === 'archived' ? `${data.year} · Archived` : Strin
 <SiteLayout title={data.title} description={data.summary}>
   <div class="shell">
     <header class="project-intro">
-      <a class="back-link" href="/projects/">Projects</a>
+      <a class="back-link" href="/projects/">
+        <span aria-hidden="true">←</span>
+        <span>Projects</span>
+      </a>
       <h1>{data.title}</h1>
       <p class="lede">{data.summary}</p>
       <p class="project-meta">{metadata}</p>
@@ -45,7 +48,9 @@ const metadata = data.status === 'archived' ? `${data.year} · Archived` : Strin
   }
 
   .back-link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
     margin-bottom: var(--space-2);
     font-size: var(--step-0);
     font-weight: 600;
