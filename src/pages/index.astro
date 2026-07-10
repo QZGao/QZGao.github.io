@@ -1,97 +1,35 @@
 ---
-import { getCollection } from 'astro:content';
-import ProjectList from '../components/ProjectList.astro';
-import ResearchList from '../components/ResearchList.astro';
 import { site } from '../data/site';
 import SiteLayout from '../layouts/SiteLayout.astro';
-
-const research = (await getCollection('research', ({ data }) => !data.draft && data.featured))
-  .sort((a, b) => a.data.order - b.data.order);
-const projects = (await getCollection('projects', ({ data }) => !data.draft && data.featured))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
 ---
 
 <SiteLayout>
   <div class="shell home">
     <header class="home-intro">
       <h1>{site.name}</h1>
-      <p class="role">Physics researcher and former software engineer.</p>
-      <p class="bio">
-        I work on computational astrophysics, Bayesian inference, and scientific software,
-        with additional open-source work for Wikimedia.
+      <p>
+        I am a physics researcher with a background in software engineering. My work focuses on
+        computational astrophysics, Bayesian inference, and scientific software, alongside
+        open-source work for Wikimedia.
       </p>
-      <nav class="cluster" aria-label="Profile links">
-        <a href={`mailto:${site.email}`}>Email</a>
-        <a href="/cv/">CV</a>
-        <a href="https://github.com/QZGao">GitHub</a>
-      </nav>
     </header>
-
-    <section class="home-section" aria-labelledby="research-heading">
-      <div class="section-heading-row">
-        <h2 id="research-heading">Research</h2>
-        <a href="/research/">View all</a>
-      </div>
-      <ResearchList entries={research} />
-    </section>
-
-    <section class="home-section" aria-labelledby="software-heading">
-      <div class="section-heading-row">
-        <h2 id="software-heading">Selected software</h2>
-        <a href="/projects/">View all</a>
-      </div>
-      <ProjectList projects={projects} />
-    </section>
   </div>
 </SiteLayout>
 
 <style>
   .home {
-    max-width: 58rem;
+    max-width: 48rem;
   }
 
   .home-intro {
-    max-width: 46rem;
-    padding-block: var(--space-7) var(--space-6);
+    padding-block: var(--space-7);
   }
 
-  .home-intro > * + * {
+  .home-intro p {
+    max-width: 60ch;
     margin-top: var(--space-3);
-  }
-
-  .role {
     color: var(--ink-soft);
-    font-size: var(--step-2);
-    line-height: 1.45;
-  }
-
-  .bio {
-    max-width: 62ch;
-  }
-
-  .home-section {
-    padding-block: var(--space-5);
-    border-top: 1px solid var(--rule);
-  }
-
-  .home-section:last-child {
-    padding-bottom: var(--space-7);
-  }
-
-  .section-heading-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
-  }
-
-  .section-heading-row h2 {
-    font-size: var(--step-2);
-  }
-
-  .section-heading-row a {
-    font-size: var(--step--1);
+    font-size: var(--step-1);
+    line-height: 1.6;
   }
 </style>
