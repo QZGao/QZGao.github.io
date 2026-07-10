@@ -40,28 +40,30 @@ const { projects } = Astro.props;
     border-bottom: 1px solid var(--rule);
   }
 
-  .project-row a {
-    display: grid;
-    gap: var(--space-1);
+  .project-list .project-row > a {
+    display: block;
+    min-width: 0;
     padding-block: var(--space-3);
     color: var(--ink);
     text-decoration: none;
   }
 
-  .project-row a:hover strong {
+  .project-list .project-row > a:hover strong {
     color: var(--accent);
   }
 
   .project-row__heading {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: baseline;
-    justify-content: space-between;
     gap: var(--space-3);
   }
 
   .project-row__heading strong {
+    min-width: 0;
     font-size: var(--step-1);
     font-weight: 650;
+    overflow-wrap: anywhere;
   }
 
   .project-row__year,
@@ -71,11 +73,15 @@ const { projects } = Astro.props;
   }
 
   .project-row__summary {
+    display: block;
     max-width: var(--measure);
+    margin-top: var(--space-1);
     color: var(--ink-soft);
   }
 
   .project-row__status {
+    display: block;
     width: fit-content;
+    margin-top: var(--space-1);
   }
 </style>

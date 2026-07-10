@@ -7,16 +7,16 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
   .sort((a, b) => a.data.order - b.data.order);
 ---
 
-<SiteLayout title="Software" description="Research software and selected open-source tools by Quinn Gao.">
+<SiteLayout title="Projects" description="Research software and selected open-source tools by Quinn Gao.">
   <div class="shell compact-page">
     <header class="page-intro">
       <div class="page-intro__body">
-        <h1>Software</h1>
+        <h1>Projects</h1>
         <p class="lede">Research software and selected open-source tools.</p>
       </div>
     </header>
 
-    <div class="software-index" aria-label="Software projects">
+    <div class="projects-index" aria-label="Projects">
       <ProjectList projects={projects} />
     </div>
   </div>
@@ -27,7 +27,7 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
     max-width: 58rem;
   }
 
-  .software-index {
+  .projects-index {
     padding-bottom: var(--space-7);
   }
 </style>
