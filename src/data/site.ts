@@ -4,7 +4,7 @@ export const site = {
   description:
     'Quinn Gao is a physics researcher with a background in software engineering.',
   url: 'https://supergrey.uk',
-  email: 'gaoqz.cs@gmail.com',
+  email: 'gao.qingzh@northeastern.edu',
   links: [
     { label: 'GitHub', href: 'https://github.com/QZGao' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/quinn-gao' },

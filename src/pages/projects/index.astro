@@ -11,9 +11,9 @@ const projects = (await getCollection(
 
 const categoryOrder = ['academic', 'toolkit', 'wikipedia'] as const;
 const categoryLabels = {
-  academic: 'Academic',
-  toolkit: 'Toolkit',
-  wikipedia: 'Wikipedia',
+  academic: 'Academic releases',
+  toolkit: 'Utility tools',
+  wikipedia: 'Wikipedia tools',
 } as const;
 
 const groups = categoryOrder.map((category) => ({
