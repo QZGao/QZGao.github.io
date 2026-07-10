@@ -3,7 +3,10 @@ import { getCollection } from 'astro:content';
 import ProjectList from '../../components/ProjectList.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 
-const projects = (await getCollection('projects', ({ data }) => !data.draft))
+const projects = (await getCollection(
+  'projects',
+  ({ data }) => !data.draft && data.status !== 'archived',
+))
   .sort((a, b) => a.data.order - b.data.order);
 ---
 
