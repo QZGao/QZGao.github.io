@@ -16,7 +16,7 @@ npm run dev
 ## Adding content
 
 - Research notes live in `src/content/research/`.
-- Projects live in `src/content/projects/`; the collection entry generates the project index and metadata.
+- Projects live in `src/content/projects/`; set `category` to `academic`, `toolkit`, or `wikipedia` to place an entry in the project index.
 - Profile and notebook links live in `src/data/site.ts`.
 - An interactive project gets one route in `src/pages/projects/` and an isolated client module in `src/features/`.
 

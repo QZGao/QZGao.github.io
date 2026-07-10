@@ -26,6 +26,7 @@ const projects = defineCollection({
     summary: z.string(),
     year: z.number(),
     status: z.enum(['active', 'maintained', 'stable', 'archived']),
+    category: z.enum(['academic', 'toolkit', 'wikipedia']),
     order: z.number().default(99),
     featured: z.boolean().default(false),
     route: z.string().startsWith('/').optional(),

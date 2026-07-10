@@ -3,6 +3,7 @@ title: Cite Unseen
 summary: Source-type indicators for Wikipedia citations, offering readers and editors a useful first glance at what lies behind a reference.
 year: 2025
 status: maintained
+category: wikipedia
 order: 3
 featured: true
 links:

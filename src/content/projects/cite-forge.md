@@ -3,6 +3,7 @@ title: CiteForge
 summary: An interface for inspecting, renaming, reorganising, and checking every citation on a Wikimedia page.
 year: 2025
 status: active
+category: wikipedia
 order: 2
 featured: true
 links:

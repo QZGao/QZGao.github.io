@@ -3,6 +3,7 @@ title: LaTeX Suite
 summary: A lightweight desktop application for fast LaTeX composition on Windows and macOS.
 year: 2025
 status: active
+category: toolkit
 order: 4
 featured: true
 links:

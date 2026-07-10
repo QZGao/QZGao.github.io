@@ -8,19 +8,37 @@ const projects = (await getCollection(
   ({ data }) => !data.draft && data.status !== 'archived',
 ))
   .sort((a, b) => a.data.order - b.data.order);
+
+const categoryOrder = ['academic', 'toolkit', 'wikipedia'] as const;
+const categoryLabels = {
+  academic: 'Academic',
+  toolkit: 'Toolkit',
+  wikipedia: 'Wikipedia',
+} as const;
+
+const groups = categoryOrder.map((category) => ({
+  category,
+  label: categoryLabels[category],
+  projects: projects.filter((project) => project.data.category === category),
+}));
 ---
 
-<SiteLayout title="Projects" description="Research software and selected open-source tools by Quinn Gao.">
+<SiteLayout title="Projects" description="Academic projects, practical tools, and Wikipedia work by Quinn Gao.">
   <div class="shell compact-page">
     <header class="page-intro">
       <div class="page-intro__body">
         <h1>Projects</h1>
-        <p class="lede">Research software and selected open-source tools.</p>
+        <p class="lede">Academic work, practical tools, and projects for Wikipedia.</p>
       </div>
     </header>
 
     <div class="projects-index" aria-label="Projects">
-      <ProjectList projects={projects} />
+      {groups.map(({ category, label, projects }) => (
+        <section class="project-category" aria-labelledby={`${category}-heading`}>
+          <h2 id={`${category}-heading`}>{label}</h2>
+          <ProjectList projects={projects} />
+        </section>
+      ))}
     </div>
   </div>
 </SiteLayout>
@@ -32,5 +50,14 @@ const projects = (await getCollection(
 
   .projects-index {
     padding-bottom: var(--space-7);
+  }
+
+  .project-category + .project-category {
+    margin-top: var(--space-6);
+  }
+
+  .project-category h2 {
+    margin-bottom: var(--space-3);
+    font-size: var(--step-1);
   }
 </style>
