@@ -1,5 +1,5 @@
 ---
-import { getEntry, render } from 'astro:content';
+import { getEntry } from 'astro:content';
 import QQMusicTool from '../../features/qqmusic/QQMusicTool.astro';
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
 
@@ -9,18 +9,8 @@ if (!project) {
   throw new Error('Missing projects/qqmusic-metadata content entry.');
 }
 
-const { Content } = await render(project);
 ---
 
 <ProjectLayout project={project} tool>
-  <article class="prose project-note">
-    <Content />
-  </article>
   <QQMusicTool />
 </ProjectLayout>
-
-<style>
-  .project-note {
-    margin-bottom: var(--space-5);
-  }
-</style>

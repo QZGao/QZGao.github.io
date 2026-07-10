@@ -5,39 +5,29 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 
 const projects = (await getCollection('projects', ({ data }) => !data.draft))
   .sort((a, b) => a.data.order - b.data.order);
-const researchSoftware = projects.filter((project) => project.data.kind === 'research software');
-const openProjects = projects.filter((project) => project.data.kind !== 'research software');
 ---
 
-<SiteLayout title="Projects" description="Research software, open-source infrastructure, and small browser instruments by Quinn Gao.">
-  <div class="shell">
+<SiteLayout title="Software" description="Research software and selected open-source tools by Quinn Gao.">
+  <div class="shell compact-page">
     <header class="page-intro">
-      <div class="stack--small">
-        <p class="eyebrow">Project index</p>
-        <p class="folio">Software / instruments / prototypes</p>
-      </div>
       <div class="page-intro__body">
-        <h1>Projects</h1>
-        <p class="lede">A catalogue of research software, community tools, and small utilities. Each entry records its status; old experiments are labelled rather than quietly disappearing.</p>
+        <h1>Software</h1>
+        <p class="lede">Research software and selected open-source tools.</p>
       </div>
     </header>
 
-    {researchSoftware.length > 0 && (
-      <section class="section section-grid" aria-labelledby="research-software-heading">
-        <p class="section-label">Research software</p>
-        <div>
-          <h2 id="research-software-heading" class="visually-hidden">Research software</h2>
-          <ProjectList projects={researchSoftware} />
-        </div>
-      </section>
-    )}
-
-    <section class="section section-grid" aria-labelledby="open-projects-heading">
-      <p class="section-label">Open work</p>
-      <div>
-        <h2 id="open-projects-heading" class="visually-hidden">Open-source projects and utilities</h2>
-        <ProjectList projects={openProjects} />
-      </div>
-    </section>
+    <div class="software-index" aria-label="Software projects">
+      <ProjectList projects={projects} />
+    </div>
   </div>
 </SiteLayout>
+
+<style>
+  .compact-page {
+    max-width: 58rem;
+  }
+
+  .software-index {
+    padding-bottom: var(--space-7);
+  }
+</style>

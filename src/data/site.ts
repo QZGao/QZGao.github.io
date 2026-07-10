@@ -1,13 +1,11 @@
 export const site = {
   name: 'Quinn Gao',
-  shortName: 'QG',
-  title: 'Researcher and scientific software builder',
+  title: 'Physics researcher',
   description:
-    'Quinn Gao is a physics researcher and software engineer working across computational astrophysics, scientific software, and open knowledge.',
+    'Quinn Gao works on computational astrophysics, Bayesian inference, and scientific software.',
   url: 'https://supergrey.uk',
   email: 'gaoqz.cs@gmail.com',
   affiliation: 'Northeastern University',
-  location: 'San Jose, California',
   links: [
     { label: 'GitHub', href: 'https://github.com/QZGao' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/quinn-gao' },
@@ -18,7 +16,6 @@ export const site = {
 
 export const navigation = [
   { label: 'Research', href: '/research/' },
-  { label: 'Projects', href: '/projects/' },
+  { label: 'Software', href: '/projects/' },
   { label: 'CV', href: '/cv/' },
-  { label: 'Writing', href: '/writing/' },
 ] as const;

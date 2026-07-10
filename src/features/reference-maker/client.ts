@@ -209,7 +209,7 @@ export function mountReferenceMaker(): void {
   const renderEntry = (entry: ReferenceEntry, index: number): HTMLElement => {
     const article = element('article', { class: 'reference-entry', 'data-entry-id': entry.id });
     const header = element('header', { class: 'reference-entry__header' });
-    const heading = element('h3', {}, `Reference ${String(index + 1).padStart(2, '0')}`);
+    const heading = element('h2', {}, `Reference ${index + 1}`);
     const entryActions = element('div', { class: 'entry-actions' });
     entryActions.append(
       actionButton('move-entry-up', 'Move up', {
@@ -308,10 +308,10 @@ export function mountReferenceMaker(): void {
       render();
       list.querySelector<HTMLInputElement>(`[data-entry-id="${newEntry.id}"] input`)?.focus();
     } else if (action === 'clear') {
-      if (entries.length > 0 && window.confirm('Clear every reference from the workbench?')) {
+      if (entries.length > 0 && window.confirm('Clear every reference?')) {
         entries = [];
         render();
-        setStatus('Workbench cleared.');
+        setStatus('References cleared.');
       }
     } else if (action === 'sort') {
       entries.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));

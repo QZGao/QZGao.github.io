@@ -4,36 +4,35 @@ import SiteLayout from './SiteLayout.astro';
 interface Props {
   title: string;
   description: string;
-  kicker?: string;
-  folio?: string;
 }
 
-const {
-  title,
-  description,
-  kicker = 'Quinn Gao',
-  folio = 'Research notebook',
-} = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <SiteLayout title={title} description={description}>
   <div class="shell">
     <header class="page-intro">
-      <div class="stack--small">
-        <p class="eyebrow">{kicker}</p>
-        <p class="folio">{folio}</p>
-      </div>
+      <a class="back-link" href="/research/">Research</a>
       <div class="page-intro__body">
         <h1>{title}</h1>
         <p class="lede">{description}</p>
       </div>
     </header>
 
-    <div class="section section-grid">
-      <p class="section-label">Notes</p>
-      <article class="prose">
-        <slot />
-      </article>
-    </div>
+    <article class="prose article-body">
+      <slot />
+    </article>
   </div>
 </SiteLayout>
+
+<style>
+  .back-link {
+    display: inline-block;
+    margin-bottom: var(--space-4);
+    font-size: var(--step--1);
+  }
+
+  .article-body {
+    padding-bottom: var(--space-7);
+  }
+</style>

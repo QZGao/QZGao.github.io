@@ -7,25 +7,18 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
 ---
 
 <ProjectLayout project={project} tool>
-  <section class="tool" data-reference-maker aria-labelledby="workbench-heading">
-    <header class="tool__header">
-      <div>
-        <p class="eyebrow">Interactive apparatus</p>
-        <h2 id="workbench-heading">Citation workbench</h2>
-        <p>Build or import complete citation references, reorder them explicitly, and export the resulting wikitext.</p>
-      </div>
-      <div class="tool-actions" role="group" aria-label="Workbench actions">
-        <button type="button" data-action="add-entry">Add reference</button>
-        <button type="button" class="button-secondary" data-action="open-import">Import wikitext</button>
-        <button type="button" class="button-secondary" data-action="sort">Sort by name</button>
-        <button type="button" class="button-secondary" data-action="open-output">Generate all</button>
-        <button type="button" class="button-danger" data-action="clear">Clear</button>
-      </div>
-    </header>
+  <div class="tool" data-reference-maker>
+    <div class="tool-actions" role="group" aria-label="Reference actions">
+      <button type="button" data-action="add-entry">Add reference</button>
+      <button type="button" class="button-secondary" data-action="open-import">Import wikitext</button>
+      <button type="button" class="button-secondary" data-action="sort">Sort by name</button>
+      <button type="button" class="button-secondary" data-action="open-output">Generate wikitext</button>
+      <button type="button" class="button-danger" data-action="clear">Clear</button>
+    </div>
 
-    <p class="status" data-status aria-live="polite">Ready.</p>
+    <p class="status" data-status aria-live="polite"></p>
     <div class="empty-state" data-empty-state>
-      <p>No references in the workbench.</p>
+      <p>No references yet.</p>
       <button type="button" class="button-secondary" data-action="add-entry">Add the first reference</button>
     </div>
     <div class="reference-list" data-reference-list></div>
@@ -41,9 +34,8 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
     <dialog data-import-dialog aria-labelledby="import-title">
       <form method="dialog" class="dialog-form">
         <div>
-          <p class="eyebrow">Import</p>
           <h2 id="import-title">Paste references from wikitext</h2>
-          <p>Complete <code>&lt;ref&gt;…&lt;/ref&gt;</code> blocks containing citation templates will be added to the current workbench.</p>
+          <p>Complete <code>&lt;ref&gt;…&lt;/ref&gt;</code> blocks containing citation templates will be added to the editor.</p>
         </div>
         <label>
           <span>Wikitext</span>
@@ -59,7 +51,6 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
     <dialog data-output-dialog aria-labelledby="output-title">
       <form method="dialog" class="dialog-form">
         <div>
-          <p class="eyebrow">Output</p>
           <h2 id="output-title">Generated wikitext</h2>
         </div>
         <label>
@@ -72,7 +63,7 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
         </div>
       </form>
     </dialog>
-  </section>
+  </div>
 
   <script>
     import { mountReferenceMaker } from '../../features/reference-maker/client';
@@ -81,35 +72,12 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
 </ProjectLayout>
 
 <style>
-  .tool {
-    border-top: 1px solid var(--rule-strong);
-  }
-
-  .tool__header {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 1fr);
-    gap: var(--space-5);
-    padding-block: var(--space-5);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .tool__header h2 {
-    margin-top: var(--space-2);
-    font-size: var(--step-2);
-  }
-
-  .tool__header h2 + p {
-    max-width: var(--measure);
-    margin-top: var(--space-3);
-    color: var(--ink-soft);
-  }
-
   .tool-actions {
     display: flex;
     flex-wrap: wrap;
-    align-content: start;
-    justify-content: flex-end;
     gap: var(--space-2);
+    padding-block: var(--space-3);
+    border-block: 1px solid var(--rule);
   }
 
   .status {
@@ -117,9 +85,15 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
     border-bottom: 1px solid var(--rule);
   }
 
+  .status:empty {
+    min-height: 0;
+    padding: 0;
+    border: 0;
+  }
+
   .empty-state {
     display: grid;
-    min-height: 15rem;
+    min-height: 10rem;
     place-content: center;
     justify-items: center;
     gap: var(--space-3);
@@ -140,7 +114,7 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
   :global(.reference-entry) {
     padding: var(--space-4);
     border: 1px solid var(--rule-strong);
-    background: rgb(252 250 245 / 72%);
+    background: var(--paper-light);
   }
 
   :global(.reference-entry > * + *) {
@@ -157,11 +131,10 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
     gap: var(--space-2);
   }
 
-  :global(.reference-entry__header h3) {
-    font-family: var(--font-mono);
+  :global(.reference-entry__header h2) {
+    font-family: var(--font-sans);
     font-size: var(--step--1);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-weight: 620;
   }
 
   :global(.entry-actions),
@@ -191,7 +164,7 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
   :global(.compact-button--danger:hover:not(:disabled)) {
     border-color: var(--error);
     background: var(--error);
-    color: white;
+    color: var(--paper-light);
   }
 
   :global(.citation-templates) {
@@ -208,10 +181,8 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
   :global(.citation-template legend) {
     padding-inline: var(--space-2);
     color: var(--ink-soft);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
   }
 
   :global(.citation-template > * + *) {
@@ -266,7 +237,7 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
   }
 
   dialog::backdrop {
-    background: rgb(28 27 24 / 55%);
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
   }
 
   .dialog-form {
@@ -276,7 +247,6 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
   }
 
   .dialog-form h2 {
-    margin-top: var(--space-2);
     font-size: var(--step-2);
   }
 
@@ -289,16 +259,6 @@ if (!project) throw new Error('Reference maker project metadata is missing.');
     display: flex;
     justify-content: flex-end;
     gap: var(--space-2);
-  }
-
-  @media (max-width: 52rem) {
-    .tool__header {
-      grid-template-columns: 1fr;
-    }
-
-    .tool-actions {
-      justify-content: flex-start;
-    }
   }
 
   @media (max-width: 38rem) {

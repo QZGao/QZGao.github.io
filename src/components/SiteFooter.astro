@@ -6,68 +6,45 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="shell site-footer__inner">
-    <div>
-      <p class="site-footer__name">{site.name}</p>
-      <p>{site.title}</p>
-    </div>
-
+    <p>© {year} {site.name}</p>
     <nav aria-label="Contact and profile links">
       <ul>
         <li><a href={`mailto:${site.email}`}>Email</a></li>
         {site.links.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
       </ul>
     </nav>
-
-    <p class="site-footer__folio">© {year} · Set in Source Serif &amp; IBM Plex</p>
   </div>
 </footer>
 
 <style>
   .site-footer {
     margin-top: var(--space-7);
-    border-top: 1px solid var(--rule-strong);
-    font-family: var(--font-sans);
+    border-top: 1px solid var(--rule);
   }
 
   .site-footer__inner {
-    display: grid;
-    grid-template-columns: 1.2fr 1.4fr auto;
-    gap: var(--space-5);
-    padding-block: var(--space-5);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
     color: var(--ink-soft);
     font-size: var(--step--1);
-  }
-
-  .site-footer__name {
-    color: var(--ink);
-    font-weight: 650;
   }
 
   ul {
     display: flex;
     flex-wrap: wrap;
-    align-content: start;
-    gap: var(--space-1) var(--space-3);
+    gap: var(--space-2) var(--space-3);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .site-footer__folio {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    text-align: right;
-    text-transform: uppercase;
-  }
-
-  @media (max-width: 46rem) {
+  @media (max-width: 42rem) {
     .site-footer__inner {
-      grid-template-columns: 1fr;
-      gap: var(--space-3);
-    }
-
-    .site-footer__folio {
-      text-align: left;
+      align-items: flex-start;
+      flex-direction: column;
     }
   }
 </style>

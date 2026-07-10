@@ -262,7 +262,7 @@ export function initializeQQMusicTool(root: HTMLElement): void {
   });
 
   setBusy(false);
-  setStatus('Ready. Choose an action to query QQ Music metadata.', 'idle');
+  setStatus('', 'idle');
 }
 
 export function initializeQQMusicTools(): void {

@@ -1,5 +1,5 @@
 ---
-import { getEntry, render } from 'astro:content';
+import { getEntry } from 'astro:content';
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
 
 const project = await getEntry('projects', 'image-resizer');
@@ -8,35 +8,10 @@ if (!project) {
   throw new Error('Missing image-resizer project metadata.');
 }
 
-const { Content } = await render(project);
 ---
 
 <ProjectLayout project={project} tool>
-  <section class="resizer" data-image-resizer aria-labelledby="resizer-heading" aria-busy="false">
-    <div class="method-note">
-      <div>
-        <p class="section-label">Method / browser-local</p>
-        <h2 id="resizer-heading">Prepare a non-free image</h2>
-      </div>
-      <article class="prose">
-        <Content />
-      </article>
-      <dl>
-        <div>
-          <dt>Area limit</dt>
-          <dd>100,000 pixels</dd>
-        </div>
-        <div>
-          <dt>Output</dt>
-          <dd>PNG</dd>
-        </div>
-        <div>
-          <dt>Transfer</dt>
-          <dd>None</dd>
-        </div>
-      </dl>
-    </div>
-
+  <div class="resizer" data-image-resizer aria-busy="false">
     <div class="controls">
       <div class="file-field">
         <label for="resizer-file">Source image</label>
@@ -47,7 +22,9 @@ const { Content } = await render(project);
           accept="image/*"
           aria-describedby="file-hint"
         />
-        <p id="file-hint" class="field-hint">The source remains on this device.</p>
+        <p id="file-hint" class="field-hint">
+          Processed locally. Images keep their aspect ratio and are never enlarged.
+        </p>
       </div>
       <button type="button" data-action="convert" disabled>Resize image</button>
       <button type="button" class="button-secondary" data-action="download" disabled>
@@ -89,7 +66,7 @@ const { Content } = await render(project);
         </div>
       </figure>
     </div>
-  </section>
+  </div>
 </ProjectLayout>
 
 <script>
@@ -105,43 +82,7 @@ const { Content } = await render(project);
 <style>
   .resizer {
     display: grid;
-    gap: var(--space-5);
-  }
-
-  .method-note {
-    display: grid;
-    grid-template-columns: minmax(11rem, 0.8fr) minmax(18rem, 1.45fr) minmax(12rem, 0.75fr);
-    gap: var(--space-5);
-    padding-bottom: var(--space-5);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .method-note h2 {
-    margin-top: var(--space-2);
-    font-size: var(--step-2);
-  }
-
-  .method-note dl {
-    display: grid;
-    align-content: start;
-    gap: var(--space-2);
-    font-family: var(--font-sans);
-    font-size: var(--step--1);
-  }
-
-  .method-note dl div {
-    display: grid;
-    grid-template-columns: 5.4rem 1fr;
-    gap: var(--space-2);
-    padding-top: var(--space-1);
-    border-top: 1px solid var(--rule);
-  }
-
-  .method-note dt {
-    color: var(--ink-faint);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    text-transform: uppercase;
+    gap: var(--space-4);
   }
 
   .controls {
@@ -197,24 +138,16 @@ const { Content } = await render(project);
 
   .preview-stage {
     display: grid;
-    min-height: 20rem;
-    aspect-ratio: 4 / 3;
+    height: clamp(11rem, 24vw, 16rem);
     overflow: hidden;
     place-items: center;
-    background:
-      linear-gradient(45deg, rgb(170 160 143 / 12%) 25%, transparent 25%) 0 0 / 1.25rem 1.25rem,
-      linear-gradient(45deg, transparent 75%, rgb(170 160 143 / 12%) 75%) 0 0 / 1.25rem 1.25rem,
-      linear-gradient(45deg, transparent 75%, rgb(170 160 143 / 12%) 75%) -0.625rem 0.625rem / 1.25rem 1.25rem,
-      linear-gradient(45deg, rgb(170 160 143 / 12%) 25%, transparent 25%) 0.625rem -0.625rem / 1.25rem 1.25rem,
-      var(--paper);
+    background: var(--paper);
   }
 
   .preview-stage p {
     color: var(--ink-faint);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: var(--step--1);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
   }
 
   .preview-stage img {
@@ -224,14 +157,6 @@ const { Content } = await render(project);
   }
 
   @media (max-width: 58rem) {
-    .method-note {
-      grid-template-columns: minmax(10rem, 0.75fr) minmax(0, 1.25fr);
-    }
-
-    .method-note dl {
-      grid-column: 2;
-    }
-
     .controls {
       grid-template-columns: minmax(0, 1fr) auto;
     }
@@ -246,27 +171,17 @@ const { Content } = await render(project);
   }
 
   @media (max-width: 46rem) {
-    .method-note,
     .controls,
     .previews {
       grid-template-columns: 1fr;
     }
 
-    .method-note {
-      gap: var(--space-3);
-    }
-
-    .method-note dl,
     .controls > button:last-child {
       grid-column: auto;
     }
 
     .controls > button {
       width: 100%;
-    }
-
-    .preview-stage {
-      min-height: 14rem;
     }
   }
 </style>

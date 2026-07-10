@@ -1,9 +1,4 @@
 ---
-import '@fontsource-variable/source-serif-4/wght.css';
-import '@fontsource-variable/source-serif-4/wght-italic.css';
-import '@fontsource-variable/ibm-plex-sans/wght.css';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/600.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
 import '../styles/print.css';
@@ -14,13 +9,11 @@ import { site } from '../data/site';
 interface Props {
   title?: string;
   description?: string;
-  pageClass?: string;
 }
 
 const {
   title,
   description = site.description,
-  pageClass = '',
 } = Astro.props;
 const documentTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.title}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
@@ -45,7 +38,7 @@ const schema = {
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f7f3ea" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="canonical" href={canonical} />
 
     <meta property="og:type" content="website" />
@@ -58,7 +51,7 @@ const schema = {
     <title>{documentTitle}</title>
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)}></script>
   </head>
-  <body class={pageClass}>
+  <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <SiteHeader />
     <main id="main-content" class="page-main">

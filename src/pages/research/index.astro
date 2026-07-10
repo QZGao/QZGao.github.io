@@ -7,34 +7,27 @@ const entries = (await getCollection('research', ({ data }) => !data.draft))
   .sort((a, b) => a.data.order - b.data.order);
 ---
 
-<SiteLayout title="Research" description="Research directions spanning computational astrophysics, scientific software, and inspectable knowledge systems.">
-  <div class="shell">
+<SiteLayout title="Research" description="Research in computational astrophysics, Bayesian inference, and citation tools for Wikimedia.">
+  <div class="shell compact-page">
     <header class="page-intro">
-      <div class="stack--small">
-        <p class="eyebrow">Research</p>
-        <p class="folio">Questions / methods / practice</p>
-      </div>
       <div class="page-intro__body">
         <h1>Research</h1>
-        <p class="lede">I am interested in computational work whose uncertainty, assumptions, and provenance remain legible—from astrophysical inference to the infrastructure of open knowledge.</p>
+        <p class="lede">My work focuses on computational inference in astrophysics and citation tools for Wikimedia.</p>
       </div>
     </header>
 
-    <section class="section section-grid" aria-labelledby="directions-heading">
-      <p class="section-label">Directions</p>
-      <div>
-        <h2 id="directions-heading" class="visually-hidden">Research directions</h2>
-        <ResearchList entries={entries} />
-      </div>
-    </section>
-
-    <section class="section section-grid">
-      <p class="section-label">Approach</p>
-      <div class="prose">
-        <h2>Software is part of the method.</h2>
-        <p>My background in software engineering informs how I structure research: explicit data boundaries, recoverable assumptions, and small tools that can be inspected independently of a larger pipeline.</p>
-        <p>This is not a claim that research code must resemble a commercial product. It is a preference for making the path from observation to conclusion easier to examine.</p>
-      </div>
-    </section>
+    <div class="research-index" aria-label="Research areas">
+      <ResearchList entries={entries} headingLevel="h2" />
+    </div>
   </div>
 </SiteLayout>
+
+<style>
+  .compact-page {
+    max-width: 58rem;
+  }
+
+  .research-index {
+    padding-bottom: var(--space-7);
+  }
+</style>

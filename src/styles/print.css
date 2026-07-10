@@ -21,7 +21,6 @@
   }
 
   .page-intro,
-  .section,
   .project-row {
     break-inside: avoid;
   }

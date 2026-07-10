@@ -7,30 +7,15 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
 ---
 
 <ProjectLayout project={project} tool>
-  <div class="tool-method">
-    <p class="section-label">Method note</p>
-    <p>
-      The extractor reads public wikitext through a wiki's MediaWiki API. It runs entirely in
-      this browser and emits raw template values, preserving links and nested templates for
-      later inspection. Use it for bounded datasets, not unattended crawling.
+  <div class="tool" data-infobox-extractor>
+    <p class="tool-note">
+      Runs in this browser against a site's public MediaWiki API. Use it for small datasets,
+      not unattended crawling.
     </p>
-  </div>
-
-  <section class="apparatus" data-infobox-extractor aria-labelledby="extractor-title">
-    <header class="apparatus__header">
-      <div>
-        <p class="folio">Apparatus / IBX–01</p>
-        <h2 id="extractor-title">Extraction workbench</h2>
-      </div>
-      <p>
-        Supply a wiki's article-path URL, a set of page titles, and one or more template names.
-        Category members can be added to the page list before extraction.
-      </p>
-    </header>
 
     <form class="extractor" data-extractor-form>
       <fieldset class="extractor__section">
-        <legend><span>01</span> Source</legend>
+        <legend>Source</legend>
 
         <div class="field">
           <label for="wiki-url">Wiki article-path URL</label>
@@ -72,7 +57,7 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
       </fieldset>
 
       <fieldset class="extractor__section">
-        <legend><span>02</span> Selection</legend>
+        <legend>Selection</legend>
 
         <div class="selection-grid">
           <div class="field">
@@ -111,10 +96,7 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
 
       <section class="run-panel" aria-labelledby="run-heading">
         <div class="run-panel__heading">
-          <div>
-            <p class="section-label">03 / Run</p>
-            <h3 id="run-heading">Fetch and parse</h3>
-          </div>
+          <h2 id="run-heading">Run</h2>
           <div class="actions">
             <button data-run type="submit">Start extraction</button>
             <button class="button-danger" data-cancel type="button" disabled>Stop</button>
@@ -132,16 +114,13 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
         </div>
 
         <p class="status" data-status data-state="neutral" role="status" aria-live="polite" aria-atomic="true">
-          Ready. No network requests have been made.
+          Ready.
         </p>
       </section>
 
       <section class="output" aria-labelledby="output-heading">
         <div class="output__heading">
-          <div>
-            <p class="section-label">04 / Result</p>
-            <h3 id="output-heading">Tab-separated output</h3>
-          </div>
+          <h2 id="output-heading">Output</h2>
           <button class="button-secondary" data-download type="button" disabled>
             Download TSV
           </button>
@@ -163,7 +142,7 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
         </p>
       </section>
     </form>
-  </section>
+  </div>
 </ProjectLayout>
 
 <script>
@@ -174,41 +153,16 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
 </script>
 
 <style>
-  .tool-method {
-    display: grid;
-    grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 2.2fr);
-    gap: var(--space-5);
-    padding-bottom: var(--space-6);
-    border-bottom: 1px solid var(--rule);
+  .tool {
+    max-width: 66rem;
   }
 
-  .tool-method > p:last-child {
+  .tool-note {
     max-width: var(--measure);
-  }
-
-  .apparatus {
-    margin-top: var(--space-6);
-    border-top: 2px solid var(--ink);
+    padding-bottom: var(--space-5);
     border-bottom: 1px solid var(--rule-strong);
-    background: rgb(252 250 245 / 72%);
-  }
-
-  .apparatus__header {
-    display: grid;
-    grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 1.6fr);
-    gap: var(--space-5);
-    padding: var(--space-5);
-    border-bottom: 1px solid var(--rule-strong);
-  }
-
-  .apparatus__header h2 {
-    margin-top: var(--space-2);
-    font-size: var(--step-2);
-  }
-
-  .apparatus__header > p {
-    max-width: 56ch;
     color: var(--ink-soft);
+    font-size: var(--step--1);
   }
 
   .extractor__section {
@@ -216,26 +170,16 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
     gap: var(--space-4);
     min-width: 0;
     margin: 0;
-    padding: var(--space-5);
+    padding: var(--space-5) 0;
     border: 0;
     border-bottom: 1px solid var(--rule);
   }
 
   legend {
-    width: 100%;
-    padding: 0 0 var(--space-3);
-    border-bottom: 1px solid var(--rule);
+    padding: 0;
     font-family: var(--font-sans);
     font-size: var(--step-1);
     font-weight: 620;
-  }
-
-  legend span {
-    margin-right: var(--space-2);
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    font-weight: 500;
   }
 
   .field {
@@ -272,7 +216,7 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
 
   .run-panel,
   .output {
-    padding: var(--space-5);
+    padding-block: var(--space-5);
   }
 
   .run-panel {
@@ -288,9 +232,9 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
     gap: var(--space-3);
   }
 
-  .run-panel__heading h3,
-  .output__heading h3 {
-    margin-top: var(--space-1);
+  .run-panel__heading h2,
+  .output__heading h2 {
+    font-size: var(--step-1);
   }
 
   .actions {
@@ -308,10 +252,8 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
     justify-content: space-between;
     gap: var(--space-3);
     color: var(--ink-soft);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
   }
 
   progress {
@@ -352,18 +294,9 @@ if (!project) throw new Error('Missing project entry: infobox-to-tsv');
   }
 
   @media (max-width: 46rem) {
-    .tool-method,
-    .apparatus__header,
     .selection-grid {
       grid-template-columns: 1fr;
       gap: var(--space-3);
-    }
-
-    .apparatus__header,
-    .extractor__section,
-    .run-panel,
-    .output {
-      padding: var(--space-4);
     }
 
     .category-fields {

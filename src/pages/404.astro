@@ -5,10 +5,10 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 <SiteLayout title="Page not found" description="The requested page could not be found.">
   <div class="shell">
     <section class="not-found">
-      <p class="eyebrow">404 / Missing leaf</p>
-      <h1>That page is not in the index.</h1>
-      <p class="lede">It may have moved during the site refactor, or the address may be incomplete.</p>
-      <a class="text-link text-link--internal" href="/">Return home</a>
+      <p class="error-code">404</p>
+      <h1>Page not found</h1>
+      <p class="lede">The address may be incorrect, or the page may have moved.</p>
+      <a href="/">Return home</a>
     </section>
   </div>
 </SiteLayout>
@@ -20,5 +20,10 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     align-content: center;
     gap: var(--space-4);
     max-width: 55rem;
+  }
+
+  .error-code {
+    color: var(--ink-soft);
+    font-size: var(--step--1);
   }
 </style>

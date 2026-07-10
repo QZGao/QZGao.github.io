@@ -1,17 +1,9 @@
-<section class="qqmusic-tool" data-qqmusic-tool aria-busy="false" aria-labelledby="qqmusic-tool-heading">
-  <div class="tool-heading">
-    <div>
-      <p class="eyebrow">Metadata workbench</p>
-      <h2 id="qqmusic-tool-heading">Catalogue and lyric lookup</h2>
-    </div>
-    <p>
-      Enter a keyword, singer MID, album MID, or song MID, then choose the matching operation.
-      Album lookup falls back to the public track-list endpoint when necessary.
-    </p>
-  </div>
-
+<div class="qqmusic-tool" data-qqmusic-tool aria-busy="false">
   <div class="query-panel">
     <label for="qqmusic-query">Keyword or QQ Music MID</label>
+    <p class="input-hint" id="qqmusic-query-hint">
+      Leave blank with “Albums by singer MID” to use HOYO-MiX.
+    </p>
     <input
       id="qqmusic-query"
       data-input
@@ -21,9 +13,6 @@
       aria-describedby="qqmusic-query-hint"
       placeholder="For example: 001uz8tl04tdL8"
     />
-    <p class="input-hint" id="qqmusic-query-hint">
-      Leave this blank only when listing albums to use the default HOYO-MiX singer MID.
-    </p>
 
     <div class="action-grid" role="group" aria-label="QQ Music lookup actions">
       <button type="button" data-action="search">Search by keyword</button>
@@ -38,7 +27,7 @@
   <div class="request-state">
     <p data-status data-state="idle" role="status" aria-live="polite"></p>
     <div class="progress-row" data-progress-region hidden>
-      <progress data-progress max="1" value="0"></progress>
+      <progress data-progress max="1" value="0" aria-label="Request progress"></progress>
       <span data-progress-text></span>
     </div>
   </div>
@@ -103,7 +92,7 @@
       <textarea id="qqmusic-output-tsv" data-output="tsv" readonly rows="18"></textarea>
     </div>
   </div>
-</section>
+</div>
 
 <script>
   import { initializeQQMusicTools } from './controller';
@@ -114,28 +103,7 @@
 <style>
   .qqmusic-tool {
     display: grid;
-    gap: var(--space-5);
-    padding: var(--space-5);
-    border: 1px solid var(--rule-strong);
-    background: color-mix(in srgb, var(--paper-light) 86%, transparent);
-  }
-
-  .tool-heading {
-    display: grid;
-    grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 1.4fr);
-    gap: var(--space-5);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .tool-heading h2 {
-    margin-top: var(--space-2);
-    font-size: var(--step-2);
-  }
-
-  .tool-heading > p {
-    max-width: 58ch;
-    color: var(--ink-soft);
+    gap: var(--space-4);
   }
 
   .query-panel {
@@ -166,10 +134,19 @@
     height: 100%;
   }
 
+  .action-grid [data-action] {
+    border-color: var(--rule-strong);
+    background: var(--paper-light);
+    color: var(--ink);
+  }
+
+  .action-grid [data-action]:hover:not(:disabled) {
+    border-color: var(--ink);
+    background: var(--paper-deep);
+  }
+
   .request-state {
-    min-height: 3.75rem;
-    padding-block: var(--space-2);
-    border-block: 1px solid var(--rule);
+    min-height: 1.5rem;
   }
 
   [data-status][data-state='error'] {
@@ -262,21 +239,12 @@
   }
 
   @media (max-width: 52rem) {
-    .tool-heading {
-      grid-template-columns: 1fr;
-      gap: var(--space-3);
-    }
-
     .action-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 34rem) {
-    .qqmusic-tool {
-      padding: var(--space-3);
-    }
-
     .action-grid {
       grid-template-columns: 1fr;
     }

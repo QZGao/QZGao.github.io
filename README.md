@@ -1,4 +1,4 @@
-# Quinn Gao — research and projects
+# Quinn Gao — research and software
 
 The source for [supergrey.uk](https://supergrey.uk), built with Astro and deployed as a static site through GitHub Pages.
 
@@ -17,7 +17,7 @@ npm run dev
 
 - Research notes live in `src/content/research/`.
 - Projects live in `src/content/projects/`; the collection entry generates the project index and metadata.
-- Writing links live in `src/content/writing/`.
+- Profile and notebook links live in `src/data/site.ts`.
 - An interactive project gets one route in `src/pages/projects/` and an isolated client module in `src/features/`.
 
 Use Markdown for prose. Use MDX only when the document itself must embed an interactive component.

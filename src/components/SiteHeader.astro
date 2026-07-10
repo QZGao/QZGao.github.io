@@ -7,20 +7,13 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 
 <header class="site-header">
   <div class="shell site-header__inner">
-    <a class="identity" href="/">
-      <span class="identity__mark" aria-hidden="true">{site.shortName}</span>
-      <span class="identity__text">
-        <strong>{site.name}</strong>
-        <small>Research &amp; software</small>
-      </span>
-    </a>
+    <a class="identity" href="/">{site.name}</a>
 
     <nav aria-label="Primary navigation">
       <ul class="site-nav">
-        {navigation.map((item, index) => (
+        {navigation.map((item) => (
           <li>
             <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
-              <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
               {item.label}
             </a>
           </li>
@@ -32,100 +25,36 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 
 <style>
   .site-header {
-    border-bottom: 1px solid var(--rule-strong);
-    background: rgb(247 243 234 / 92%);
+    border-bottom: 1px solid var(--rule);
   }
 
   .site-header__inner {
     display: flex;
-    min-height: 5.5rem;
-    align-items: stretch;
+    min-height: 4.25rem;
+    align-items: center;
     justify-content: space-between;
     gap: var(--space-5);
   }
 
   .identity {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-3);
     color: var(--ink);
-    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 650;
     text-decoration: none;
   }
 
-  .identity:hover {
-    color: var(--accent-deep);
-  }
-
-  .identity__mark {
-    display: grid;
-    width: 2.7rem;
-    height: 2.7rem;
-    place-items: center;
-    border: 1px solid currentColor;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-  }
-
-  .identity__text {
-    display: grid;
-    line-height: 1.2;
-  }
-
-  .identity__text strong {
-    font-size: 0.94rem;
-    font-weight: 640;
-  }
-
-  .identity__text small {
-    margin-top: 0.18rem;
-    color: var(--ink-soft);
-    font-size: 0.72rem;
-  }
-
-  .site-nav,
-  .site-nav li {
-    height: 100%;
+  .site-nav {
+    display: flex;
+    gap: var(--space-4);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .site-nav {
-    display: flex;
-    align-items: stretch;
-  }
-
   .site-nav a {
-    position: relative;
-    display: flex;
-    height: 100%;
-    min-width: 5rem;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 var(--space-3);
     color: var(--ink-soft);
-    font-family: var(--font-sans);
-    font-size: 0.82rem;
-    font-weight: 560;
+    font-size: 0.92rem;
     text-decoration: none;
-  }
-
-  .site-nav a span {
-    color: var(--ink-faint);
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-  }
-
-  .site-nav a::after {
-    position: absolute;
-    right: var(--space-3);
-    bottom: -1px;
-    left: var(--space-3);
-    height: 2px;
-    background: transparent;
-    content: '';
   }
 
   .site-nav a:hover,
@@ -133,42 +62,20 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
     color: var(--ink);
   }
 
-  .site-nav a[aria-current='page']::after {
-    background: var(--accent);
+  .site-nav a[aria-current='page'] {
+    font-weight: 600;
   }
 
-  @media (max-width: 46rem) {
+  @media (max-width: 32rem) {
     .site-header__inner {
-      min-height: auto;
+      align-items: flex-start;
       flex-direction: column;
-      gap: 0;
-      padding-top: var(--space-3);
-    }
-
-    .identity {
-      padding-bottom: var(--space-3);
-    }
-
-    nav {
-      width: 100%;
-      overflow-x: auto;
+      gap: var(--space-2);
+      padding-block: var(--space-3);
     }
 
     .site-nav {
-      width: max-content;
-      min-width: 100%;
-      border-top: 1px solid var(--rule);
-    }
-
-    .site-nav a {
-      min-height: 3.6rem;
-      min-width: 4.7rem;
-      padding-inline: var(--space-2);
-    }
-
-    .site-nav a::after {
-      right: var(--space-2);
-      left: var(--space-2);
+      gap: var(--space-3);
     }
   }
 </style>

@@ -17,9 +17,6 @@
     "verify": "npm test && npm run build && npm run check:links && npm run check:worker"
   },
   "dependencies": {
-    "@fontsource-variable/ibm-plex-sans": "5.2.8",
-    "@fontsource-variable/source-serif-4": "5.2.9",
-    "@fontsource/ibm-plex-mono": "5.2.7",
     "astro": "7.0.7",
     "pica": "10.0.2"
   },
