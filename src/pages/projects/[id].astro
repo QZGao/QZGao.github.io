@@ -3,8 +3,15 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
 
 export async function getStaticPaths() {
-  const entries = await getCollection('projects', ({ data }) => !data.draft && !data.route);
-  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+  const staticPageIds = new Set(
+    Object.keys(import.meta.glob('./*.astro'))
+      .map((path) => path.slice(2, -'.astro'.length))
+      .filter((id) => id !== 'index' && id !== '[id]'),
+  );
+  const entries = await getCollection('projects');
+  return entries
+    .filter((entry) => !staticPageIds.has(entry.id))
+    .map((entry) => ({ params: { id: entry.id }, props: { entry } }));
 }
 
 interface Props {

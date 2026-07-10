@@ -1,11 +1,9 @@
 ---
 title: spectral_fit
 summary: A Python package for fitting and comparing pulsar radio-spectrum models with Bayesian inference.
-year: 2024
-status: active
+year: '2024'
 category: academic
 order: 1
-featured: true
 links:
   - label: Source code
     url: https://github.com/QZGao/spectral_fit

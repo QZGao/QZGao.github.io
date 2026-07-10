@@ -1,12 +1,14 @@
 ---
+import InlineMarkdown from '../components/InlineMarkdown.astro';
 import SiteLayout from './SiteLayout.astro';
 
 interface Props {
   title: string;
   description: string;
+  lede?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, lede = description } = Astro.props;
 ---
 
 <SiteLayout title={title} description={description}>
@@ -18,7 +20,7 @@ const { title, description } = Astro.props;
       </a>
       <div class="page-intro__body">
         <h1>{title}</h1>
-        <p class="lede">{description}</p>
+        <p class="lede"><InlineMarkdown content={lede} /></p>
       </div>
     </header>
 

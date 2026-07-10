@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import InlineMarkdown from './InlineMarkdown.astro';
 
 interface Props {
   entries: CollectionEntry<'research'>[];
@@ -14,7 +15,7 @@ const Heading = headingLevel;
   {entries.map((entry) => (
     <article class="research-entry">
       <Heading><a href={`/research/${entry.id}/`}>{entry.data.title}</a></Heading>
-      <p>{entry.data.summary}</p>
+      <p><InlineMarkdown content={entry.data.citation} /></p>
     </article>
   ))}
 </div>

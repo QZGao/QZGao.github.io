@@ -11,11 +11,9 @@ const research = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/research' }),
   schema: z.object({
     title: z.string(),
-    summary: z.string(),
-    order: z.number().default(99),
-    featured: z.boolean().default(false),
+    citation: z.string(),
+    order: z.number(),
     links: z.array(linkSchema).default([]),
-    draft: z.boolean().default(false),
   }),
 });
 
@@ -24,14 +22,11 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     summary: z.string(),
-    year: z.number(),
-    status: z.enum(['active', 'maintained', 'stable', 'archived']),
+    year: z.string(),
+    archived: z.boolean().default(false),
     category: z.enum(['academic', 'toolkit', 'wikipedia']),
-    order: z.number().default(99),
-    featured: z.boolean().default(false),
-    route: z.string().startsWith('/').optional(),
+    order: z.number(),
     links: z.array(linkSchema).default([]),
-    draft: z.boolean().default(false),
   }),
 });
 

@@ -1,11 +1,9 @@
 ---
 title: Cite Unseen
 summary: Source-type indicators for Wikipedia citations, offering readers and editors a useful first glance at what lies behind a reference.
-year: 2025
-status: maintained
+year: '2025–'
 category: wikipedia
 order: 3
-featured: true
 links:
   - label: Project page
     url: https://meta.wikimedia.org/wiki/Cite_Unseen

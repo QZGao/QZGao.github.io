@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import InlineMarkdown from './InlineMarkdown.astro';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
@@ -10,18 +11,15 @@ const { projects } = Astro.props;
 
 <ul class="project-list">
   {projects.map((project) => {
-    const href = project.data.route ?? `/projects/${project.id}/`;
+    const href = `/projects/${project.id}/`;
     return (
       <li class="project-row">
         <a href={href}>
           <span class="project-row__heading">
             <strong>{project.data.title}</strong>
-            <span class="project-row__year">{project.data.year}</span>
+            <span class="project-row__year"><InlineMarkdown content={project.data.year} /></span>
           </span>
           <span class="project-row__summary">{project.data.summary}</span>
-          {project.data.status === 'archived' && (
-            <span class="project-row__status">Archived</span>
-          )}
         </a>
       </li>
     );
@@ -66,8 +64,7 @@ const { projects } = Astro.props;
     overflow-wrap: anywhere;
   }
 
-  .project-row__year,
-  .project-row__status {
+  .project-row__year {
     color: var(--ink-faint);
     font-size: var(--step--1);
   }
@@ -77,11 +74,5 @@ const { projects } = Astro.props;
     max-width: var(--measure);
     margin-top: var(--space-1);
     color: var(--ink-soft);
-  }
-
-  .project-row__status {
-    display: block;
-    width: fit-content;
-    margin-top: var(--space-1);
   }
 </style>

@@ -1,14 +1,44 @@
 ---
+import InlineMarkdown from '../components/InlineMarkdown.astro';
 import { site } from '../data/site';
 import SiteLayout from '../layouts/SiteLayout.astro';
+
+interface CvEntry {
+  order: number;
+  year: string;
+  title: string;
+  detail: string;
+}
+
+const byOrder = (a: CvEntry, b: CvEntry) => a.order - b.order;
+
+const education = ([
+  {
+    order: 1,
+    year: '2024–2026',
+    title: 'Northeastern University',
+    detail: 'Master of Science, Computer Science',
+  },
+  {
+    order: 2,
+    year: '2020–2024',
+    title: 'Beijing Normal University',
+    detail: 'Bachelor of Science, Physics',
+  },
+] satisfies CvEntry[]).sort(byOrder);
+
+const experience = ([
+  { order: 1, year: '2026–', title: 'Researcher', detail: 'FieldQuantum' },
+  { order: 2, year: '2026–', title: 'Software Engineer', detail: 'Hacks/Hackers' },
+  { order: 3, year: '2025', title: 'QA & Testing Engineer', detail: 'Evenness' },
+] satisfies CvEntry[]).sort(byOrder);
 ---
 
 <SiteLayout title="Curriculum vitae" description="Curriculum vitae for Quinn Gao, physics researcher and scientific software developer.">
   <div class="shell cv">
     <header class="page-intro">
       <div class="page-intro__body">
-        <h1>{site.name}</h1>
-        <p class="lede">Physics researcher and former software engineer.</p>
+        <h1>Qingzheng (Quinn) Gao</h1>
         <nav class="cluster no-print" aria-label="Contact and profiles">
           <a href={`mailto:${site.email}`}>Email</a>
           <a href="https://github.com/QZGao">GitHub</a>
@@ -20,42 +50,41 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     <section class="cv-section" aria-labelledby="education-heading">
       <h2 id="education-heading">Education</h2>
       <div>
-        <article class="cv-entry">
-          <p class="cv-entry__date">2024–2026</p>
-          <div>
-            <h3>Northeastern University</h3>
-            <p>Master of Science</p>
-          </div>
-        </article>
-        <article class="cv-entry">
-          <p class="cv-entry__date">2020–2024</p>
-          <div>
-            <h3>Beijing Normal University</h3>
-            <p>Bachelor of Science</p>
-          </div>
-        </article>
+        {education.map((entry) => (
+          <article class="cv-entry">
+            <p class="cv-entry__date"><InlineMarkdown content={entry.year} /></p>
+            <div>
+              <h3>{entry.title}</h3>
+              <p>{entry.detail}</p>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
 
-    <section class="cv-section" aria-labelledby="software-heading">
-      <h2 id="software-heading">Selected software</h2>
+    <section class="cv-section" aria-labelledby="experience-heading">
+      <h2 id="experience-heading">Work experience</h2>
       <div>
-        <article class="cv-entry">
-          <p class="cv-entry__date">2024–</p>
-          <div><h3>spectral_fit</h3><p>Bayesian pulsar radio-spectrum fitting and model comparison.</p></div>
-        </article>
-        <article class="cv-entry">
-          <p class="cv-entry__date">2025–</p>
-          <div><h3>CiteForge</h3><p>Reference management tools for Wikimedia editors.</p></div>
-        </article>
-        <article class="cv-entry">
-          <p class="cv-entry__date">2025–</p>
-          <div><h3>Cite Unseen</h3><p>Source-type indicators for Wikipedia citations.</p></div>
-        </article>
-        <article class="cv-entry">
-          <p class="cv-entry__date">2025–</p>
-          <div><h3>LaTeX Suite</h3><p>A lightweight desktop environment for LaTeX composition.</p></div>
-        </article>
+        {experience.map((entry) => (
+          <article class="cv-entry">
+            <p class="cv-entry__date"><InlineMarkdown content={entry.year} /></p>
+            <div><h3>{entry.title}</h3><p>{entry.detail}</p></div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="cv-section" aria-labelledby="skills-heading">
+      <h2 id="skills-heading">Skills</h2>
+      <div class="skill-list">
+        <div class="skill-group">
+          <h3>Programming Languages</h3>
+          <p>Python (PyTorch), C/C++, C# (Unity), Java, JavaScript/TypeScript (Vue, React)</p>
+        </div>
+        <div class="skill-group">
+          <h3>Computing &amp; Infrastructure</h3>
+          <p>Linux, Git, Docker, CI/CD, AWS, GCP</p>
+        </div>
       </div>
     </section>
   </div>
@@ -100,6 +129,20 @@ import SiteLayout from '../layouts/SiteLayout.astro';
   }
 
   .cv-entry h3 + p {
+    margin-top: var(--space-1);
+    color: var(--ink-soft);
+  }
+
+  .skill-list {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .skill-group h3 {
+    font-size: var(--step-0);
+  }
+
+  .skill-group p {
     margin-top: var(--space-1);
     color: var(--ink-soft);
   }

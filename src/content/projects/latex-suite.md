@@ -1,11 +1,9 @@
 ---
 title: LaTeX Suite
 summary: A lightweight desktop application for fast LaTeX composition on Windows and macOS.
-year: 2025
-status: active
+year: '2025'
 category: toolkit
 order: 4
-featured: true
 links:
   - label: Source code
     url: https://github.com/QZGao/latex-suite-app

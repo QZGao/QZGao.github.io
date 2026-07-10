@@ -5,7 +5,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 
 const projects = (await getCollection(
   'projects',
-  ({ data }) => !data.draft && data.status !== 'archived',
+  ({ data }) => !data.archived,
 ))
   .sort((a, b) => a.data.order - b.data.order);
 
@@ -28,7 +28,7 @@ const groups = categoryOrder.map((category) => ({
     <header class="page-intro">
       <div class="page-intro__body">
         <h1>Projects</h1>
-        <p class="lede">Academic work, practical tools, and projects for Wikipedia.</p>
+        <!-- <p class="lede">Some projects and tools I developed.</p> -->
       </div>
     </header>
 

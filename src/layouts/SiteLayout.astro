@@ -23,10 +23,6 @@ const schema = {
   name: site.name,
   url: site.url,
   email: `mailto:${site.email}`,
-  affiliation: {
-    '@type': 'CollegeOrUniversity',
-    name: site.affiliation,
-  },
   sameAs: site.links.slice(0, 2).map((link) => link.href),
 };
 ---

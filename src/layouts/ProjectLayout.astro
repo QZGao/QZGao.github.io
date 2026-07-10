@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import InlineMarkdown from '../components/InlineMarkdown.astro';
 import SiteLayout from './SiteLayout.astro';
 
 interface Props {
@@ -9,7 +10,6 @@ interface Props {
 
 const { project, tool = false } = Astro.props;
 const { data } = project;
-const metadata = data.status === 'archived' ? `${data.year} · Archived` : String(data.year);
 ---
 
 <SiteLayout title={data.title} description={data.summary}>
@@ -21,7 +21,10 @@ const metadata = data.status === 'archived' ? `${data.year} · Archived` : Strin
       </a>
       <h1>{data.title}</h1>
       <p class="lede">{data.summary}</p>
-      <p class="project-meta">{metadata}</p>
+      <p class="project-meta">
+        <InlineMarkdown content={data.year} />
+        {data.archived && ' · Archived'}
+      </p>
 
       {data.links.length > 0 && (
         <div class="cluster no-print">

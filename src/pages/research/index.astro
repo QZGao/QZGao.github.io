@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import ResearchList from '../../components/ResearchList.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 
-const entries = (await getCollection('research', ({ data }) => !data.draft))
+const entries = (await getCollection('research'))
   .sort((a, b) => a.data.order - b.data.order);
 ---
 
@@ -12,7 +12,7 @@ const entries = (await getCollection('research', ({ data }) => !data.draft))
     <header class="page-intro">
       <div class="page-intro__body">
         <h1>Research</h1>
-        <p class="lede">Published work in computational astrophysics and pulsar radio astronomy.</p>
+        <!-- <p class="lede">Published work in computational astrophysics and pulsar radio astronomy.</p> -->
       </div>
     </header>
 

@@ -1,0 +1,12 @@
+---
+import { renderInlineMarkdown } from '../lib/inline-markdown';
+
+interface Props {
+  content: string;
+}
+
+const { content } = Astro.props;
+const html = renderInlineMarkdown(content);
+---
+
+<Fragment set:html={html} />

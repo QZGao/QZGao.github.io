@@ -1,16 +1,15 @@
 export const site = {
   name: 'Quinn Gao',
-  title: 'Physics researcher',
+  title: 'Researcher',
   description:
-    'Quinn Gao works on computational astrophysics, Bayesian inference, and scientific software.',
+    'Quinn Gao is a physics researcher with a background in software engineering.',
   url: 'https://supergrey.uk',
   email: 'gaoqz.cs@gmail.com',
-  affiliation: 'Northeastern University',
   links: [
     { label: 'GitHub', href: 'https://github.com/QZGao' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/quinn-gao' },
-    { label: 'Technical notes', href: 'https://quinns.bearblog.dev/' },
-    { label: 'Personal notebook', href: 'https://supergrey.bearblog.dev/' },
+    { label: 'English blog', href: 'https://quinn.supergrey.uk/' },
+    { label: 'Chinese blog', href: 'https://blog.supergrey.uk/' },
   ],
 } as const;
 
