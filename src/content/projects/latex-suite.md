@@ -9,7 +9,7 @@ links:
     url: https://github.com/QZGao/latex-suite-app
 ---
 
-LaTeX Suite is a lightweight Electron desktop companion for composing mathematical notation on Windows and macOS. Its editor is built on a CodeMirror 6 extension derived from [Obsidian LaTeX Suite](https://github.com/artisticat1/obsidian-latex-suite) (developed by artisticat1), combining snippet-driven input with a live preview in a small, focused window rather than a full integrated development environment.
+LaTeX Suite is a lightweight Electron desktop companion for composing mathematical notation on Windows and macOS. Its editor is built on a CodeMirror 6 extension derived from [Obsidian LaTeX Suite](https://github.com/artisticat1/obsidian-latex-suite) (developed by artisticat), combining snippet-driven input with a live preview in a small, focused window rather than a full integrated development environment.
 
 The application can be opened from anywhere with a global hotkey. In insert mode it sends the completed formula to the active application at the cursor; selection-replace modes first capture existing text as context, then replace that selection with the edited formula. This makes the same composition workflow available in documents, messages, browsers, and other software.
 
