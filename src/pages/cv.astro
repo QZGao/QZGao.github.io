@@ -28,7 +28,7 @@ const education = ([
 ] satisfies CvEntry[]).sort(byOrder);
 
 const experience = ([
-  { order: 1, year: '2026–', title: 'AI4S Research Scientist', detail: 'FieldQuantum' },
+ // { order: 1, year: '2026–', title: 'AI4S Research Scientist', detail: 'FieldQuantum' },
   { order: 2, year: '2026–', title: 'Software Engineer', detail: 'Hacks/Hackers' },
   { order: 3, year: '2025', title: 'QA & Testing Engineer', detail: 'Evenness' },
 ] satisfies CvEntry[]).sort(byOrder);
@@ -79,24 +79,18 @@ const experience = ([
       <h2 id="skills-heading">Skills</h2>
       <div class="skill-list">
         <div class="skill-group">
-          <h3>Computational Science</h3>
+          <h3>Computation & Machine Learning</h3>
           <p>
-            High-performance computing, GPU-accelerated machine learning,
-            Bayesian inference, statistical model comparison, numerical modeling
-          </p>
-        </div>
-
-        <div class="skill-group">
-          <h3>Scientific Machine Learning</h3>
-          <p>
-            Generative and predictive modeling (VAEs, diffusion models, regression, classification), representation learning, reinforcement learning, and out-of-distribution evaluation
+            High-performance computing,
+            numerical modeling,
+            generative and predictive modeling (VAEs, diffusion models), reinforcement learning
           </p>
         </div>
 
         <div class="skill-group">
           <h3>Programming Languages</h3>
           <p>
-            Python (PyTorch, NumPy, SciPy, pandas, pymatgen),
+            Python,
             C/C++, C# (.NET Framework, Unity), Java, JavaScript/TypeScript (React, Vue)
           </p>
         </div>
@@ -104,7 +98,7 @@ const experience = ([
         <div class="skill-group">
           <h3>Computing &amp; Infrastructure</h3>
           <p>
-            Linux, Git, SVN, Docker, CI/CD (GitHub Actions, GitLab CI), AWS, GCP, Cloudflare, LaTeX
+            Linux, Git, SVN, Docker, CI/CD, AWS, GCP, Cloudflare, LaTeX
           </p>
         </div>
       </div>
