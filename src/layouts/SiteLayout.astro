@@ -34,7 +34,8 @@ const schema = {
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#15191e" media="(prefers-color-scheme: dark)" />
     <link rel="canonical" href={canonical} />
 
     <meta property="og:type" content="website" />

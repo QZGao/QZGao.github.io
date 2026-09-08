@@ -3,15 +3,17 @@ import SiteLayout from './SiteLayout.astro';
 ---
 
 <SiteLayout>
-  <article class="shell home prose">
-    <slot />
-  </article>
+  <div class="shell">
+    <article class="home prose">
+      <slot />
+    </article>
+  </div>
 </SiteLayout>
 
 <style>
   .home {
     max-width: 48rem;
-    padding-block: var(--space-7);
+    padding-top: var(--space-7);
   }
 
   .home :global(h1 + p) {

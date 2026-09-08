@@ -107,9 +107,8 @@ const experience = ([
 </SiteLayout>
 
 <style>
-  .cv {
+  .cv > * {
     max-width: 58rem;
-    padding-bottom: var(--space-7);
   }
 
   .cv-section {
@@ -118,6 +117,10 @@ const experience = ([
     gap: var(--space-5);
     padding-block: var(--space-5);
     border-top: 1px solid var(--rule);
+  }
+
+  .cv-section:last-child {
+    padding-bottom: 0;
   }
 
   .cv-section h2 {

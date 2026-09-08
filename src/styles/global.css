@@ -79,7 +79,7 @@
   h2,
   h3 {
     color: var(--ink);
-    font-weight: 650;
+    font-weight: var(--weight-heading);
     line-height: 1.2;
     text-wrap: balance;
   }
@@ -163,7 +163,7 @@
   label {
     display: block;
     font-size: var(--step--1);
-    font-weight: 600;
+    font-weight: var(--weight-medium);
   }
 
   button {
@@ -171,9 +171,9 @@
     padding: 0.5rem 0.8rem;
     border: 1px solid var(--accent);
     background: var(--accent);
-    color: white;
+    color: var(--on-accent);
     font-size: var(--step--1);
-    font-weight: 600;
+    font-weight: var(--weight-medium);
     cursor: pointer;
     transition:
       background var(--transition),
@@ -198,7 +198,7 @@
   }
 
   .page-main {
-    min-height: 62vh;
+    padding-bottom: var(--space-6);
   }
 
   .page-intro {
@@ -228,7 +228,7 @@
 
   .text-link {
     font-size: var(--step--1);
-    font-weight: 600;
+    font-weight: var(--weight-medium);
   }
 
   .button-secondary {
@@ -251,7 +251,7 @@
   .button-danger:hover:not(:disabled) {
     border-color: var(--error);
     background: var(--error);
-    color: white;
+    color: var(--on-error);
   }
 
   .prose {
@@ -299,7 +299,7 @@
   .field-hint {
     margin-top: 0.25rem;
     color: var(--ink-soft);
-    font-size: 0.78rem;
+    font-size: var(--step--1);
     line-height: 1.45;
   }
 }
@@ -312,7 +312,7 @@
     left: var(--space-3);
     padding: 0.55rem 0.8rem;
     background: var(--ink);
-    color: white;
+    color: var(--paper);
     transform: translateY(-200%);
   }
 
@@ -354,5 +354,12 @@
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark) !important;
   }
 }

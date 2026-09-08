@@ -7,7 +7,7 @@
     --paper-light: #f8f9fa;
     --ink: #20242a;
     --ink-soft: #5f6873;
-    --ink-faint: #68727d;
+    --ink-faint: #66707b;
     --rule: #dfe3e8;
     --rule-strong: #c8ced5;
     --accent: #1d5f91;
@@ -15,11 +15,17 @@
     --accent-soft: #eaf2f8;
     --signal: #287a56;
     --error: #a83232;
+    --on-accent: #ffffff;
+    --on-error: #ffffff;
 
     --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-mono: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 
-    --step--1: 0.84rem;
+    --weight-regular: 400;
+    --weight-medium: 600;
+    --weight-heading: 650;
+
+    --step--1: 0.875rem;
     --step-0: 1rem;
     --step-1: clamp(1.08rem, 1.02rem + 0.2vw, 1.18rem);
     --step-2: clamp(1.3rem, 1.2rem + 0.35vw, 1.5rem);
@@ -38,5 +44,26 @@
     --shell: 66rem;
     --radius: 0.2rem;
     --transition: 120ms ease;
+  }
+
+  @media screen and (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --paper: #15191e;
+      --paper-deep: #262e38;
+      --paper-light: #1d232b;
+      --ink: #e7ecf2;
+      --ink-soft: #b4beca;
+      --ink-faint: #a3aebb;
+      --rule: #39434f;
+      --rule-strong: #758291;
+      --accent: #91c8f2;
+      --accent-deep: #b8ddfa;
+      --accent-soft: #263f54;
+      --signal: #81d6ac;
+      --error: #ffaaaa;
+      --on-accent: #15191e;
+      --on-error: #15191e;
+    }
   }
 }
