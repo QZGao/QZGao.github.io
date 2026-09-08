@@ -16,11 +16,14 @@ import SiteLayout from './SiteLayout.astro';
     padding-top: var(--space-7);
   }
 
-  .home :global(h1 + p) {
+  .home :global(p:not(:has(img))) {
     max-width: 60ch;
-    margin-top: var(--space-3);
     color: var(--ink-soft);
     font-size: var(--step-1);
     line-height: 1.6;
+  }
+
+  .home :global(h1 + p) {
+    margin-top: var(--space-3);
   }
 </style>
