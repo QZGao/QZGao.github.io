@@ -1,0 +1,204 @@
+---
+import { getEntry } from 'astro:content';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+
+const project = await getEntry('projects', 'ai-slop-detector');
+
+if (!project) throw new Error('Missing AI slop detector project metadata.');
+---
+
+<ProjectLayout project={project} tool>
+  <div class="detector" data-ai-slop-detector>
+    <div class="detector__toolbar">
+      <label for="detector-language">Interface language</label>
+      <select id="detector-language" data-role="language"></select>
+    </div>
+
+    <div class="detector__editor">
+      <label for="detector-input" data-role="input-label">Paste Chinese text</label>
+      <textarea id="detector-input" data-role="input" rows="14" spellcheck="false"></textarea>
+      <div class="detector__actions">
+        <button type="button" data-action="analyze">Analyze text</button>
+        <button type="button" class="button-secondary" data-action="clear">Clear</button>
+      </div>
+    </div>
+
+    <section class="detector__output" data-role="output" hidden aria-labelledby="detector-result-heading">
+      <div class="detector__score-line">
+        <div>
+          <h2 id="detector-result-heading" data-role="score-label">AI writing style signal</h2>
+          <p class="detector__caveat" data-role="caveat">This score is a style signal, not a verdict about who wrote the text.</p>
+        </div>
+        <strong class="detector__score" data-role="score">0.0%</strong>
+      </div>
+      <h3 data-role="evidence-heading">Main evidence</h3>
+      <ul class="detector__hits" data-role="hits"></ul>
+      <h3 data-role="breakdown-heading">Breakdown</h3>
+      <div class="detector__breakdown" data-role="breakdown" tabindex="0"></div>
+    </section>
+  </div>
+</ProjectLayout>
+
+<script>
+  import { initAiSlopDetector } from '../../features/ai-slop-detector/ai-slop-detector';
+  const root = document.querySelector<HTMLElement>('[data-ai-slop-detector]');
+  if (root) initAiSlopDetector(root);
+</script>
+
+<style>
+  .detector {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 58rem;
+  }
+
+  .detector__toolbar {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: var(--space-2);
+  }
+
+  .detector__toolbar label {
+    color: var(--ink-soft);
+  }
+
+  .detector__toolbar select {
+    width: auto;
+    min-width: 12rem;
+  }
+
+  .detector__editor {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .detector__editor textarea {
+    min-height: 19rem;
+    font-family: var(--font-sans);
+  }
+
+  .detector__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .detector__output {
+    display: grid;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--ink);
+  }
+
+  .detector__output[hidden] {
+    display: none;
+  }
+
+  .detector__score-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .detector__score-line h2 {
+    font-size: var(--step-2);
+  }
+
+  .detector__caveat {
+    max-width: 48rem;
+    margin-top: var(--space-1);
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+  }
+
+  .detector__score {
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .detector__hits {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .detector__hits li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-block: var(--space-1);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .detector__hits li > span {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .detector__hits small {
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+    line-height: 1.4;
+  }
+
+  .detector__hits strong {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .detector__breakdown {
+    max-height: 34rem;
+    overflow: auto;
+    padding: var(--space-3);
+    border: 1px solid var(--rule);
+    background: var(--paper-light);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.75;
+  }
+
+  :global(.detector__mark) {
+    position: relative;
+    cursor: help;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.16em;
+    text-underline-offset: 0.12em;
+  }
+
+  :global(.detector__mark--1) { text-decoration-color: #d2a900; }
+  :global(.detector__mark--2) { text-decoration-color: #e07b18; }
+  :global(.detector__mark--3) { text-decoration-color: #c43b3b; }
+
+  :global(.detector__tooltip) {
+    position: fixed;
+    z-index: 2;
+    width: max-content;
+    max-width: min(24rem, 80vw);
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--rule-strong);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 0.35rem 1rem rgb(0 0 0 / 0.14);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    line-height: 1.35;
+    white-space: pre-line;
+    pointer-events: none;
+  }
+
+  @media (max-width: 40rem) {
+    .detector__toolbar,
+    .detector__score-line {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .detector__toolbar select {
+      width: 100%;
+    }
+  }
+</style>

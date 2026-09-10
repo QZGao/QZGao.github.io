@@ -12,15 +12,18 @@ const { project, tool = false } = Astro.props;
 const { data } = project;
 ---
 
-<SiteLayout title={data.title} description={data.summary}>
+<SiteLayout
+  title={data.title}
+  description={project.id === 'ai-slop-detector' ? 'Chinese AI writing style detector.' : data.summary}
+>
   <div class="shell">
     <header class="project-intro">
       <a class="back-link" href="/projects/">
         <span aria-hidden="true">←</span>
         <span>Projects</span>
       </a>
-      <h1>{data.title}</h1>
-      <p class="lede">{data.summary}</p>
+      <h1 data-project-title={project.id}>{data.title}</h1>
+      <p class="lede" data-project-summary={project.id}>{data.summary}</p>
       <p class="project-meta">
         <InlineMarkdown content={data.year} />
         {data.archived && ' · Archived'}

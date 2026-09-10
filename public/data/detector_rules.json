@@ -1,0 +1,1580 @@
+{
+  "version": 8,
+  "sources": [
+    {
+      "url": "https://github.com/op7418/Humanizer-zh/blob/main/SKILL.md",
+      "name": "Humanizer-zh",
+      "license": "MIT"
+    },
+    {
+      "url": "https://github.com/kevintsai1202/Humanizer-zh-TW/blob/main/SKILL.md",
+      "name": "Humanizer-zh-TW",
+      "license": "MIT"
+    }
+  ],
+  "scoring": {
+    "minimum_characters": 200,
+    "frequency_unit": 1000,
+    "evidence_scale": 3.0,
+    "description": "Regex groups: frequency_unit * merged match count / max(non-whitespace characters, minimum_characters). Logic-surge groups: 100 * sum(strongest surge per paragraph) / max(paragraph_count, minimum_paragraphs). Group evidence = weight * max(0,positive_frequency-negative_weight*negative_frequency)/(net_frequency+saturation_frequency). Final score = 100*(1-exp(-sum(group evidence)/evidence_scale)). Parameters are uncalibrated. Paragraph templates use paragraph prevalence times a repetition reliability factor; combine the regex/density and template strengths by maximum, not addition. Effective weight increases from the base through two ordered weight_levels using smoothstep and count reliability.",
+    "weight_description": "Three weight levels: weight is the low-frequency base, weight_levels[0] is level 1, and weight_levels[1] is level 2. For each level, x=clip((frequency/saturation_frequency-start_ratio)/(full_ratio-start_ratio),0,1); blend=x*x*(3-2*x)*count/(count+count_prior). Effective weight = base + (level1-base)*blend1 + (level2-level1)*blend2. Threshold intervals must be ordered and non-overlapping. Parameters are heuristic, not calibrated.",
+    "interaction_description": "Independent interactions consume primitive regex spans or unsaturated local density events, never final group scores. Tail subtypes and sentence/paragraph levels share strongest-first overlap suppression. Opening/closing pairs must occur in the same paragraph without overlap, and are reliability-weighted across repeated paragraphs; expected pairs under independence are diagnostic only. Sequence extensions augment the target rule and add no separate evidence. Add independently scored interaction evidence to the 24 group contributions."
+  },
+  "rules": [
+    {
+      "id": 1,
+      "weight": 0.2,
+      "negative_weight": 0.75,
+      "positive": [
+        "[标標][志誌][着著][^。！？\\n]{0,35}(?:[关關][鍵键]|重要|[轉转]折|新[时時]代)",
+        "(?:至[关關]重要|[关關][鍵键]性|核心)的?(?:作用|[时時]刻|意[义義])",
+        "(?:不可磨[滅灭]的印[記记]|不[断斷]演[变變]的.{0,8}格局|深深植根[于於])",
+        "(?:彰[显顯]|凸[显顯]|象[征徵])[了着著]?[^。！？\\n]{0,20}(?:意[义義]|重要性|永[恆恒]|持久)",
+        "[为為爲][^。！？\\n]{1,20}奠定[了]?基[础礎]",
+        "不[断斷]演[进進]的.{0,8}[佈布]局",
+        "[标標][志誌]住[^。！？\\n]{0,35}(?:[关關][鍵键]|重要|[轉转]折|新[时時]代)"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "過度強調意義、遺產和更廣泛的趨勢",
+        "zh-Hans": "过度强调意义、遗产和更广泛的趋势",
+        "yue-Hant": "過度強調意義、遺產和更廣泛的趨勢",
+        "yue-Hans": "过度强调意义、遗产和更广泛的趋势",
+        "en": "Inflated significance and legacy"
+      },
+      "notes": {
+        "zh-Hant": "將範圍有限的事件、地點或作品拔高為「歷史地標」、「關鍵轉折」、「長久遺產」乃至「更大趨勢的象徵」，誇大其重要性。",
+        "zh-Hans": "将范围有限的事件、地点或作品拔高为「历史地标」、「关键转折」、「长久遗产」乃至「更大趋势的象征」，夸大其重要性。",
+        "yue-Hant": "將範圍有限嘅事件、地點或者作品拔高成「歷史地標」、「關鍵轉折」、「長久遺產」，甚至「更大趨勢嘅象徵」，誇大佢嘅重要性。",
+        "yue-Hans": "将范围有限嘅事件、地点或者作品拔高成「历史地标」、「关键转折」、「长久遗产」，甚至「更大趋势嘅象征」，夸大佢嘅重要性。",
+        "en": "Inflate a limited event, place, or work into a “historical landmark,” “turning point,” “lasting legacy,” or “symbol of a larger trend,” overstating its importance."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.0,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 6.0,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "weight": 0.12,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:多家|主流|[国國]家[級级]|知名|[国國][內内]外)媒[体體][^。！？\\n]{0,15}(?:[報报]道|[关關]注|引用)",
+        "(?:[拥擁]有|吸引)[了]?超[过過]?\\s*\\d+\\s*[万萬]?粉[丝絲]",
+        "(?:活[跃躍]的社交媒[体體]|由知名[专專]家撰[写寫]|[独獨]立[報报]道)",
+        "(?:多家|主流|[国國]家[級级]|知名|[国國][內内]外)媒[体體][^。！？\\n]{0,15}[報报][导導]",
+        "活[跃躍][嘅的]社群媒[体體]",
+        "[独獨]立[報报][导導]",
+        "(?:[拥擁]有|吸引)[咗]?超[过過]?\\s*\\d+\\s*[万萬]?粉[丝絲]"
+      ],
+      "negative": [
+        "\\d{4}\\s*年[^。！？\\n]{0,25}《[^》\\n]+》[^。！？\\n]{0,12}(?:[採采][訪访]|[報报]道)",
+        "\\d{4}\\s*年[^。！？\\n]{0,25}《[^》\\n]+》[^。！？\\n]{0,12}(?:[採采][訪访]|[報报][导導])"
+      ],
+      "names": {
+        "zh-Hant": "過度強調知名度和媒體報導",
+        "zh-Hans": "过度强调知名度和媒体报道",
+        "yue-Hant": "過度強調知名度和媒體報道",
+        "yue-Hans": "过度强调知名度和媒体报道",
+        "en": "Overemphasis on fame and media coverage"
+      },
+      "notes": {
+        "zh-Hant": "以「知名專家」、「主流媒體」、「多家報導」或社群聲量來證明重要性，卻不提供報導內容、材料樣本或可查證來源。",
+        "zh-Hans": "以「知名专家」、「主流媒体」、「多家报道」或社群声量来证明重要性，却不提供报道内容、材料样本或可查证来源。",
+        "yue-Hant": "用「知名專家」、「主流媒體」、「多家報道」或者社群聲量去證明重要性，但唔提供報道內容、材料樣本或者可供查核嘅來源。",
+        "yue-Hans": "用「知名专家」、「主流媒体」、「多家报道」或者社群声量去证明重要性，但唔提供报道内容、材料样本或者可供查核嘅来源。",
+        "en": "Use “well-known experts,” “mainstream media,” “multiple reports,” or social-media attention as proof of importance without supplying the report’s substance, a material sample, or a checkable source."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.6,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 3.6,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "weight": 0.14,
+      "negative_weight": 0.75,
+      "names": {
+        "zh-Hant": "句段末邏輯詞突增與收尾重複",
+        "zh-Hans": "句段末逻辑词突增与收尾重复",
+        "yue-Hant": "句段尾邏輯詞突增同收尾重複",
+        "yue-Hans": "句段尾逻辑词突增同收尾重复",
+        "en": "Logical density surges and repeated paragraph endings"
+      },
+      "notes": {
+        "zh-Hant": "句尾突然密集出現「說明」、「因此」、「反映」、「取決於」等分析詞，遠多於前文；跨段落反覆使用「這些……說明……」一類的句式。",
+        "zh-Hans": "句尾突然密集出现「说明」、「因此」、「反映」、「取决于」等分析词，远多于前文；跨段落反复使用「这些……说明……」一类的句式。",
+        "yue-Hant": "句尾突然密集出現「說明」、「因此」、「反映」、「取決於」等分析詞，遠多過前文；跨段落反覆使用「呢啲……說明……」一類句式。",
+        "yue-Hans": "句尾突然密集出现「说明」、「因此」、「反映」、「取决于」等分析词，远多过前文；跨段落反复使用「呢啲……说明……」一类句式。",
+        "en": "A sentence ending suddenly becomes crowded with analysis terms such as “shows,” “therefore,” “reflects,” or “depends on,” far more than the preceding text; across paragraphs, forms such as “these … show …” recur."
+      },
+      "saturation_frequency": 10.0,
+      "method": "logic_surge",
+      "density": {
+        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
+        "clause_separator": "[，,；;：:]+|—{1,2}",
+        "minimum_unit_characters": 8,
+        "minimum_paragraphs": 3,
+        "delta_scale": 0.06,
+        "tail_density_scale": 0.06,
+        "hit_prior": 1.0,
+        "levels": {
+          "sentence": {
+            "previous_units": 3,
+            "tail_units": 2
+          },
+          "paragraph": {
+            "previous_units": 3,
+            "tail_units": 2
+          }
+        },
+        "lexicon": [
+          {
+            "id": "inference_verbs",
+            "weight": 1.0,
+            "patterns": [
+              "[說说]明",
+              "意味[著着住]?",
+              "反映(?:出|了|[著着住])?",
+              "[證证]明",
+              "表明",
+              "推(?:定|[斷断]|[論论])",
+              "[導导]致",
+              "取[決决][於于]",
+              "(?:使|令)(?=[^，,。！？；;\\n]{0,12}(?:能[夠够]?|可以|[難难]以|得以|必[須须]))"
+            ]
+          },
+          {
+            "id": "reasoning_nouns",
+            "weight": 0.5,
+            "patterns": [
+              "原因|[結结]果|前提|依[據据]|[條条]件|作用|意[義义]|影[響响]|[關关][係系]|[結结][論论]|[機机]制"
+            ]
+          },
+          {
+            "id": "reasoning_adverbs",
+            "weight": 0.65,
+            "patterns": [
+              "因而|因此|[從从]而|由此|[據据]此|本[質质]上|[實实][際际]上|必然|[僅仅][僅仅]|根本上|同[樣样]",
+              "能[夠够]|得以|[難难]以"
+            ]
+          },
+          {
+            "id": "reasoning_adjectives",
+            "weight": 0.45,
+            "patterns": [
+              "[關关][鍵键]|根本|必要|充分|[決决]定性|核心|直接|整[體体]|[綜综]合"
+            ]
+          },
+          {
+            "id": "reasoning_constructions",
+            "weight": 1.0,
+            "patterns": [
+              "核心在[於于]|重要原因(?:是|在[於于])|必要[條条]件|充分[條条]件",
+              "不[僅仅](?:[僅仅])?|(?:也|亦|更|仲)(?:取[決决][於于]|能|使|成[為为]|包括)",
+              "既(?:能|包括|是)|同[時时]是|也(?:是|包括)",
+              "(?:不|未)足以(?:[證证]明|推定|[說说]明)",
+              "不能[據据]此(?:推定|[斷断]定|[證证]明)",
+              "唔(?:單止|单止|淨係|净系)|仲(?:係|系|可以)|所以|即係|即系|[喺係系]本[質质]上"
+            ]
+          },
+          {
+            "id": "conceptual_predicates",
+            "weight": 0.65,
+            "patterns": [
+              "解[釋释][為为]|理解[為为]|[視视][為为]|描述[為为]|[歸归][類类][為为]|界定[為为]|[區区]分|判[斷断]|判定|化[約约]|[歸归]入"
+            ]
+          },
+          {
+            "id": "interpretive_words",
+            "weight": 0.3,
+            "patterns": [
+              "解[釋释]|理解|象[徵征]|描述|界定|[歸归][類类]|呈[現现]"
+            ]
+          },
+          {
+            "id": "inference_qualification",
+            "weight": 0.65,
+            "patterns": [
+              "{{limitation}}",
+              "仍[須须]|仍需|分[開开]|分[別别]判[斷断]"
+            ]
+          }
+        ],
+        "description": "Weighted logical-expression character coverage per chunk. Compare final windows with immediately preceding windows at clause-within-sentence and sentence-within-paragraph levels. Strength = (positive_density_delta/(delta+delta_scale))**delta_power * tail_density/(tail_density+tail_density_scale) * (tail_hits/(tail_hits+hit_prior))**hit_power. Attribution-adjusted strength cannot exceed the corresponding raw strength. Use the strongest candidate per paragraph across levels and average over max(paragraph_count,minimum_paragraphs). No adjacent context means no surge evidence. Squared hit reliability attenuates one- and two-expression events; no semantic support inference is performed.",
+        "attribution": {
+          "patterns": [
+            "(?:[評评][論论][員员]|[編编][輯辑]|[導导]演|演[員员]|配音[員员]|[聲声][優优]|[學学]者|教授|作家)[^，,。！？；;：:\\n]{1,65}?(?P<cue>表示|[認认][為为]|指出|[稱称]|[強强][調调]|提到|描述|[說说]明|解[釋释])",
+            "(?:^|(?<=[，,。！？；;：:\\n]))[ \\t]*(?!(?:[這这該该此其]|上述|[結结]果|材料|[資资]料|研究|分析|[數数][據据]|作品|文本|[變变]化|制度|政策|本[文段書书]))[\\u3400-\\u9fff·]{2,10}?(?:亦|也|[還还]|同[時时])?(?P<cue>表示|[認认][為为]|指出|[稱称]|[強强][調调]|提到|描述|[說说]明|解[釋释])"
+          ],
+          "factor": 0.2,
+          "description": "Only the named cue group is downweighted; quoted content and other logical terms retain their weights. Short speaker-like prefixes and explicit roles are syntactic heuristics, not entity recognition. Event strength cannot exceed its unadjusted counterpart, preventing lower prior density from increasing the score."
+        },
+        "delta_power": 1.0,
+        "hit_power": 2.0
+      },
+      "paragraph_patterns": {
+        "minimum_paragraphs": 3,
+        "repeat_prior": 2.0,
+        "saturation_frequency": 15.0,
+        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
+        "position": "end",
+        "patterns": [
+          "(?:[這这](?:些|種|种|一|項|项)|此[類类]|上述|呢[啲尐]|呢[種种])[^。！？\\n]{1,60}(?:[說说]明|反映|意味|表明|使|把|[顯显]示)[^。！？\\n]{1,100}",
+          "^[^，,。！？；;\\n]{0,30}{{reasoning_link}}{{clause_gap}}(?:{{inference}}|把|[將将]|是)[^。！？\\n]{1,120}",
+          "^[^，,。！？；;\\n]{1,30}(?:仍[須须]|仍需|需要){{clause_gap}}(?:{{separation}}|{{judgment}})[^。！？\\n]{0,80}",
+          "^[^，,。！？；;\\n]{1,40}{{inference}}[^。！？\\n]{1,100}[，,](?:也|而|[卻却]|但|同[時时])[^。！？\\n]{1,100}",
+          "^(?:[^，,。！？\\n]{0,25}(?:[變变]化|[機机]制|安排|[協协]作|制度|措施|[規规][則则])|[該该]制度|它|佢)[^。！？\\n]{0,65}(?:把|使|令)[^。！？\\n]{1,100}(?:[納纳]入|置[於于]|相[連连]|[連连]接|[轉转]化|[擴扩]展|[寫写]入)[^。！？\\n]{1,100}",
+          "^(?:[該该]|[這这][種种]|呢[種种])(?:[機机]制|安排|措施|制度)[^。！？\\n]{1,65}(?:同[時时]|同埋|進而|进而)[^。！？\\n]{0,60}(?:需要|才能|使|令)[^。！？\\n]{1,100}",
+          "^(?:[這这](?:套|一|[種种])|[該该]|呢(?:套|[種种]))(?:[機机]制|安排|制度|措施|政策)[^。！？\\n]{0,30}(?:降低|增加|[減减]少|[擴扩]大|提高|[減减][輕轻]|加重)[^。！？\\n]{1,70}[，,](?:同[時时]|同埋|亦|也)[^。！？\\n]{1,100}"
+        ],
+        "description": "Repeated demonstrative-summary predicates in the final sentence. Count each paragraph once. Weight prevalence by (matched_paragraphs-1)/(matched_paragraphs-1+repeat_prior); one isolated template has zero repetition strength."
+      },
+      "weight_levels": [
+        {
+          "weight": 0.7,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 4.2,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "weight": 0.2,
+      "negative_weight": 0.75,
+      "positive": [
+        "令人(?:[叹嘆][为為爲][觀观]止|[惊驚][叹嘆]|心[馳驰]神往)",
+        "(?:充[满滿]活力|[丰豐]富的文化[遗遺][产產]|迷人的自然|必游之地|[无無][与與][伦倫]比|卓越非凡)",
+        "(?:[开開][创創]性|革命性|[顛颠]覆性)的?(?:[体體][驗验]|解[决決]方案|[创創]新|突破)",
+        "(?:坐落[于在於]|位[于於])[^。！？\\n]{0,20}(?:中心|[壮壯][丽麗]|迷人)",
+        "令人[讚赞][叹嘆]",
+        "(?:充[满滿]活力|[丰豐]富嘅文化[遗遺][产產]|迷人嘅自然|必[游遊]之地)",
+        "(?:[开開][创創]性|革命性|[顛颠]覆性)嘅(?:[体體][驗验]|解[决決]方案|[创創]新|突破)"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "宣傳和廣告式語言",
+        "zh-Hans": "宣传和广告式语言",
+        "yue-Hant": "宣傳和廣告式語言",
+        "yue-Hans": "宣传和广告式语言",
+        "en": "Promotional language"
+      },
+      "notes": {
+        "zh-Hant": "採用「充滿活力」、「令人讚嘆」、「必遊之地」、「開創性」等宣傳語，使內容讀來像旅遊介紹或品牌文案。",
+        "zh-Hans": "采用「充满活力」、「令人赞叹」、「必游之地」、「开创性」等宣传语，使内容读来像旅游介绍或品牌文案。",
+        "yue-Hant": "採用「充滿活力」、「令人讚嘆」、「必遊之地」、「開創性」等宣傳語，令內容讀落似旅遊介紹或者品牌文案。",
+        "yue-Hans": "采用「充满活力」、「令人赞叹」、「必游之地」、「开创性」等宣传语，令内容读落似旅游介绍或者品牌文案。",
+        "en": "Use promotional wording such as “vibrant,” “breathtaking,” “must-see,” or “groundbreaking,” making an informational passage read like travel or brand copy."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.0,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 6.0,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "weight": 0.2,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:行[业業][報报]告|研究|多[个個][來来]源|多[項项]研究)(?:[显顯]示|表明|指出)",
+        "(?:行[业業])?(?:[专專]家|[觀观]察者|[业業][內内]人士|一些批[評评]者|有[关關]人士)(?:普遍)?(?:[認认][为為爲]|指出|表示)",
+        "[据據](?:了解|悉|有[关關][報报]道)",
+        "[业業]界[報报]告(?:[显顯]示|表明|指出)",
+        "(?:[业業]界)?(?:[专專]家|[觀观]察者|[业業][內内]人士)(?:普遍)?(?:[認认][为為爲]|指出|表示|[話话])",
+        "有(?:人|[专專]家)[話话]"
+      ],
+      "negative": [
+        "(?:根[据據]|[据據])《[^》\\n]{2,80}》",
+        "(?:doi\\s*:\\s*10\\.\\d{4,9}/\\S+|https?://[^\\s）)]+)",
+        "根[据據][^。！？\\n]{2,30}\\d{4}\\s*年的?(?:[調调]查|研究|[報报]告)"
+      ],
+      "names": {
+        "zh-Hant": "模糊歸因和含糊措辭",
+        "zh-Hans": "模糊归因和含糊措辞",
+        "yue-Hant": "模糊歸因和含糊措辭",
+        "yue-Hans": "模糊归因和含糊措辞",
+        "en": "Vague attribution"
+      },
+      "notes": {
+        "zh-Hant": "以「專家認為」、「業界指出」、「研究顯示」或「據了解」等模糊說法支撐結論，卻不交代作者、報告、樣本或引文。",
+        "zh-Hans": "以「专家认为」、「业界指出」、「研究显示」或「据了解」等模糊说法支撑结论，却不交代作者、报告、样本或引文。",
+        "yue-Hant": "用「專家認為」、「業界指出」、「研究顯示」或者「據了解」等含糊講法支撐結論，但唔交代作者、報告、樣本或者引文。",
+        "yue-Hans": "用「专家认为」、「业界指出」、「研究显示」或者「据了解」等含糊讲法支撑结论，但唔交代作者、报告、样本或者引文。",
+        "en": "Use vague attributions such as “experts believe,” “industry observers point out,” “research shows,” or “according to reports” to support a conclusion without identifying the author, report, sample, or quotation."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.0,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 6.0,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "weight": 0.2,
+      "negative_weight": 0.75,
+      "positive": [
+        "[儘尽盡]管[^。！？\\n]{1,45}(?:面[临臨]|存在)[^。！？\\n]{0,12}挑[战戰]",
+        "[儘尽盡]管存在[这這]些挑[战戰]",
+        "^[ \\t]*(?:#{1,6}[ \\t]*)?(?:\\d+[.、][ \\t]*)?(?:挑[战戰][与與](?:[机機]遇|[遗遺][产產])|未[來来]展望|挑[战戰][与與]未[來来]展望)[：: \\t]*$",
+        "[虽雖]然[^。！？\\n]{1,45}(?:面[对對]|面[临臨]|存在)[^。！？\\n]{0,12}挑[战戰]",
+        "即使有呢[啲尐]挑[战戰]"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "提綱式的挑戰與未來展望",
+        "zh-Hans": "提纲式的挑战与未来展望",
+        "yue-Hant": "提綱式的挑戰與未來展望",
+        "yue-Hans": "提纲式的挑战与未来展望",
+        "en": "Formulaic challenges and future outlook"
+      },
+      "notes": {
+        "zh-Hant": "以「挑戰與機遇」或「未來展望」等標題預先定調，再以概括語句收束；標題所承諾的內容未必在正文展開。",
+        "zh-Hans": "以「挑战与机遇」或「未来展望」等标题预先定调，再以概括语句收束；标题所承诺的内容未必在正文展开。",
+        "yue-Hant": "用「挑戰與機遇」或者「未來展望」等標題預先定調，再用概括語句收結；標題承諾嘅內容未必喺正文展開。",
+        "yue-Hans": "用「挑战与机遇」或者「未来展望」等标题预先定调，再用概括语句收结；标题承诺嘅内容未必喺正文展开。",
+        "en": "Use headings such as “challenges and opportunities” or “future outlook” to set the frame in advance, then close with a general statement; the promised discussion may never be developed in the body."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.0,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 6.0,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "weight": 0.1,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:此外|至[关關]重要|深入探[討讨]|[宝寶][貴贵]的|[关關][鍵键]性的|相互作用)",
+        "(?:不[断斷]演[变變]|持久的影[响響]|文化[織织][錦锦]|技[术術]格局|烹[飪饪]格局)",
+        "(?:彰[显顯]|凸[显顯]|[賦赋]能|充[满滿]活力)",
+        "(?:不[断斷]演[进進]|技[术術][佈布]局|烹[飪饪][佈布]局|突[显顯])",
+        "(?:[宝寶][貴贵]嘅|[关關][鍵键]性嘅|持久嘅影[响響])",
+        "(?:的|嘅)(?:[銜衔]接|[綜综]合|整[體体])[^，,。！？；;\\n]{1,10}",
+        "(?:[銜衔]接|[綜综]合|整[體体])(?:性|的|嘅)[^，,。！？；;\\n]{1,10}",
+        "共同(?:形成|[構构]成)[^，,。！？；;\\n]{0,25}(?:[系係][統统]|[體体][系係]|制度|景[觀观]|框架)",
+        "完整(?:的|嘅)[^，,。！？；;\\n]{0,25}(?:[系係][統统]|[體体][系係]|制度|框架)",
+        "既(?:是|係|系)[^。！？\\n]{1,50}[，,](?:也|亦|仲)(?:是|係|系)[^。！？\\n]{1,60}(?:[系係][統统]|[體体][系係]|制度|框架|安排)"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "過度使用的 AI 詞彙",
+        "zh-Hans": "过度使用的 AI 词汇",
+        "yue-Hant": "過度使用的 AI 詞彙",
+        "yue-Hans": "过度使用的 AI 词汇",
+        "en": "Overused AI vocabulary"
+      },
+      "notes": {
+        "zh-Hant": "在短段落內密集使用「此外」、「至關重要」、「深入探討」、「格局」、「彰顯」、「持久」等空洞詞語，同類詞語相隔不遠便再度出現。",
+        "zh-Hans": "在短段落内密集使用「此外」、「至关重要」、「深入探讨」、「格局」、「彰显」、「持久」等空洞词语，同类词语相隔不远便再度出现。",
+        "yue-Hant": "喺短段落入面密集使用「此外」、「至關重要」、「深入探討」、「格局」、「彰顯」、「持久」等空洞詞語，同類詞語隔唔遠又再出現。",
+        "yue-Hans": "喺短段落入面密集使用「此外」、「至关重要」、「深入探讨」、「格局」、「彰显」、「持久」等空洞词语，同类词语隔唔远又再出现。",
+        "en": "Pack a short paragraph with empty terms such as “moreover,” “crucial,” “delve,” “landscape,” “showcase,” or “enduring,” with related words recurring at short intervals."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.5,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 3.0,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ],
+      "local_scoring": {
+        "method": "clause_families",
+        "clause_separator": "[，,；;。！？!?\\r\\n]+",
+        "base_factor": 0.25,
+        "cooccurrence_prior": 1.0,
+        "families": [
+          {
+            "id": "weak",
+            "patterns": [
+              "此外|相互作用"
+            ],
+            "scale": true
+          }
+        ],
+        "default_family": "rhetorical"
+      }
+    },
+    {
+      "id": 8,
+      "weight": 0.07,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:作[为為爲]|充[当當])[^。！？\\n]{1,25}的(?:[證证]明|[体體][现現]|象[征徵]|空[間间]|平台)",
+        "(?:[拥擁]有|[設设]有|提供)(?:一[个個]|一[种種]|多[个個]|[独獨]特的)[^。！？\\n]{1,15}",
+        "(?:作[为為爲]|充[当當])[^。！？\\n]{1,25}嘅(?:[證证]明|[体體][现現]|象[征徵]|空[間间]|平台)",
+        "(?:[拥擁]有|[設设]有|提供)(?:一[个個]|一[种種]|多[个個]|[独獨]特嘅)[^。！？\\n]{1,15}"
+      ],
+      "negative": [
+        "(?:是一[个個]|是一[种種]|有一[个個]|有四[个個])",
+        "(?:[係系]一[个個]|[係系]一[种種]|有一[个個]|有四[个個])"
+      ],
+      "names": {
+        "zh-Hant": "繫詞迴避",
+        "zh-Hans": "系动词回避",
+        "yue-Hant": "繫詞迴避",
+        "yue-Hans": "系词回避",
+        "en": "Copula avoidance"
+      },
+      "notes": {
+        "zh-Hant": "以「作為」、「充當」、「擁有」、「設有」等迂迴說法，取代直截了當的「是」、「有」。",
+        "zh-Hans": "以「作为」、「充当」、「拥有」、「设有」等迂回说法，取代直截了当的「是」、「有」。",
+        "yue-Hant": "用「作為」、「充當」、「擁有」、「設有」等迂迴講法，取代直截了當嘅「係」、「有」。",
+        "yue-Hans": "用「作为」、「充当」、「拥有」、「设有」等迂回讲法，取代直截了当嘅「系」、「有」。",
+        "en": "Use roundabout constructions such as “serve as,” “act as,” “possess,” or “feature” where the direct forms “is” or “has” would be sufficient."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.35,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 2.1,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "weight": 0.2,
+      "negative_weight": 0.75,
+      "positive": [
+        "不(?:[仅僅][仅僅]|[仅僅]|[单單][单單]|只是)[^。！？\\n]{1,60}(?:而且|更是|而是|[还還]是)",
+        "不是[^。！？\\n]{1,60}[，,；;— ]+(?:而是|是)",
+        "[这這]不[仅僅][仅僅]是[^。！？\\n]{1,50}[。；;][ \\t]*它是",
+        "唔(?:[单單]止|止|[净淨][係系]|[单單][单單][係系])[^。！？\\n]{1,60}(?:而且|仲[係系]|更加[係系]|仲|而[係系])",
+        "唔[係系][^。！？\\n]{1,60}[，,；;— ]+(?:而[係系]|[係系])",
+        "呢[个個]唔[单單]止[係系][^。！？\\n]{1,50}[。；;][ \\t]*佢[係系]",
+        "不(?:[僅仅]|只是|只|限[於于])[^。！？\\n]{1,65}[，,](?:也|亦|而是)[^。！？\\n]{1,45}",
+        "(?:並并)?非[^。！？\\n]{1,45}[，,](?:而是|{{contrast_not}})[^。！？\\n]{1,45}",
+        "(?:並并)?非[^。！？\\n]{0,10}(?:[單单]一|[單单][體体])[^。！？\\n]{1,25}",
+        "而不是[^。！？\\n]{1,35}",
+        "(?:[並并]?不等[於于]|唔等[於于])[^。！？\\n]{1,45}",
+        "唔係[^。！？\\n]{0,12}(?:[單单]一|[單单][體体])[^。！？\\n]{1,25}",
+        "(?:[沒没]有|[並并]非|唔係|冇)[^。！？\\n]{1,65}[，,](?:而是|而係|而系)[^。！？\\n]{1,65}",
+        "(?:^|(?<=[。！？\\n]))[^，,。！？\\n]{1,30}[並并]非[^。！？\\n]{1,60}",
+        "[^，,。！？\\n]{1,55}[，,](?:[並并]非|{{contrast_not}}|唔係)[^。！？\\n]{1,45}",
+        "(?:[並并])?不完全[^，,。！？；;\\n]{1,35}",
+        "[並并]未[^。！？\\n]{1,65}",
+        "(?:但|[卻却])(?:仍|[並并])?(?:[沒没]有|未)[^。！？\\n]{1,65}",
+        "(?:唔完全|[但不]過冇|但冇|仍然未)[^。！？\\n]{1,55}",
+        "(?:[並并]|也|亦)?不(?:意味[著着住]?|代表)[^，,。！？；;\\n]{1,65}",
+        "(?:[並并])?不(?:[總总]是|始[終终]|一定|必然)[^，,。！？；;\\n]{1,55}",
+        "(?:亦|也)?唔(?:代表|等[於于]|一定|永遠|永远)[^，,。！？；;\\n]{1,55}",
+        "(?:[並并]不|[並并][沒没]有|也[沒没]有|亦[沒没]有|亦唔|亦冇|都唔|都冇)(?:完全|天然|直接|始[終终]|[總总]是|必然|一定|立即)?[^，,。！？；;\\n]{1,65}"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "否定式排比",
+        "zh-Hans": "否定式排比",
+        "yue-Hant": "否定式排比",
+        "yue-Hans": "否定式排比",
+        "en": "Negative parallelism"
+      },
+      "notes": {
+        "zh-Hant": "以「不僅……而且……」、「不是……而是……」、「並非……」等現成對比句式，先否定一方，再轉向另一方。",
+        "zh-Hans": "以「不仅……而且……」、「不是……而是……」、「并非……」等现成对比句式，先否定一方，再转向另一方。",
+        "yue-Hant": "用「不僅……而且……」、「唔係……而係……」、「並非……」等現成對比句式，先否定一邊，再轉去另一邊。",
+        "yue-Hans": "用「不仅……而且……」、「唔系……而系……」、「并非……」等现成对比句式，先否定一边，再转去另一边。",
+        "en": "Rely on ready-made contrast frames such as “not only … but also …,” “not … but …,” or “it is not …,” first rejecting one side and then turning to another."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.0,
+          "start_ratio": 0.0625,
+          "full_ratio": 0.25,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 6.0,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        }
+      ],
+      "match_scaling": {
+        "patterns": [
+          "^(?:[並并]不|[並并]未|也不|亦不|都唔|亦唔)(?:知道|想(?:要)?|[願愿]意|[意][識识]到|[記记]得|[認认][識识]|明白|了解|打算)"
+        ],
+        "unless_patterns": [
+          "而是|而非|而係|不代表|不等[於于]"
+        ],
+        "factor": 0.15
+      }
+    },
+    {
+      "id": 10,
+      "weight": 0.03,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:^|(?<=[。！？；;，,\\n]))[^、，。！？；;\\n]{1,40}、[^、，。！？；;\\n]{1,20}(?:以及|和|[與与]|同埋|同)[^、，。！？；;\\n]{1,40}(?=[。！？；;，,\\n]|$)",
+        "首先[^。！？\\n]{1,50}[，,；;]其次[^。！？\\n]{1,50}[，,；;]最[后後]",
+        "首先[^。！？\\n]{1,50}[，,；;]跟住[^。！？\\n]{1,50}[，,；;]最[后後]"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "三段式法則過度使用",
+        "zh-Hans": "三段式法则过度使用",
+        "yue-Hant": "三段式法則過度使用",
+        "yue-Hans": "三段式法则过度使用",
+        "en": "Overused groups of three"
+      },
+      "notes": {
+        "zh-Hant": "出現「甲、乙以及丙」式的三項並列，尤其在相鄰句子或多個段落中反覆出現。",
+        "zh-Hans": "出现「甲、乙以及丙」式的三项并列，尤其在相邻句子或多个段落中反复出现。",
+        "yue-Hant": "出現「甲、乙以及丙」式嘅三項並列，尤其喺相鄰句子或者多個段落入面反覆出現。",
+        "yue-Hans": "出现「甲、乙以及丙」式嘅三项并列，尤其喺相邻句子或者多个段落入面反复出现。",
+        "en": "Use a “A, B, and C” three-item parallel list, especially when the same device recurs in adjacent sentences or across several paragraphs."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.15,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 0.3,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "weight": 0.06,
+      "negative_weight": 0.75,
+      "positive": [
+        "主人公[^\\n]{0,100}主要角色[^\\n]{0,100}中心人物",
+        "[这這]家公司[^\\n]{0,100}[該该]企[业業][^\\n]{0,100}[这這]家[机機][构構]",
+        "[这這]一方法[^\\n]{0,100}[該该]策略[^\\n]{0,100}[这這]一方案",
+        "主人翁[^\\n]{0,100}主要角色[^\\n]{0,100}中心人物",
+        "呢[間间]公司[^\\n]{0,100}[該该]企[业業][^\\n]{0,100}呢[間间][机機][构構]",
+        "呢[个個]方法[^\\n]{0,100}[該该]策略[^\\n]{0,100}呢[个個]方案"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "換詞與跨句結構重複",
+        "zh-Hans": "换词与跨句结构重复",
+        "yue-Hant": "換詞同跨句結構重複",
+        "yue-Hans": "换词同跨句结构重复",
+        "en": "Synonym cycling and repeated cross-sentence structures"
+      },
+      "notes": {
+        "zh-Hant": "同一對象先後被稱為「主人公」、「主要角色」、「中心人物」，或在幾句話裡換用「這家公司／該企業／這家機構」等近義稱呼。",
+        "zh-Hans": "同一对象先后被称为「主人公」、「主要角色」、「中心人物」，或在几句话里换用「这家公司／该企业／这家机构」等近义称呼。",
+        "yue-Hant": "同一個對象先後叫做「主人公」、「主要角色」、「中心人物」，或者喺幾句說話入面換用「呢間公司／該企業／呢間機構」等近義稱呼。",
+        "yue-Hans": "同一个对象先后叫做「主人公」、「主要角色」、「中心人物」，或者喺几句说话入面换用「呢间公司／该企业／呢间机构」等近义称呼。",
+        "en": "Cycle through near-synonyms for one subject, such as “protagonist,” “main character,” and “central figure,” or “this company,” “the enterprise,” and “the institution.”"
+      },
+      "saturation_frequency": 3.0,
+      "sequence_patterns": {
+        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
+        "minimum_paragraphs": 3,
+        "repeat_prior": 2.0,
+        "saturation_frequency": 15.0,
+        "max_sentence_gap": 4,
+        "max_characters": 1200,
+        "stages": [
+          {
+            "id": "first_view",
+            "patterns": [
+              "一(?:[種种]|[類类]|個|个)[^，,。！？\\n]{0,10}(?:解[釋释]|[觀观][點点]|看法|[讀读]法|研究|[論论][點点]|批[評评])"
+            ]
+          },
+          {
+            "id": "alternative_view",
+            "patterns": [
+              "另一(?:[種种]|[類类]|個|个)[^，,。！？\\n]{0,10}(?:解[釋释]|[觀观][點点]|看法|[讀读]法|研究|[論论][點点]|批[評评])",
+              "另(?:一些|一批|一部分|一派|有)[^，,。！？\\n]{0,10}(?:研究|[觀观][點点]|解[釋释]|分析|看法|[讀读]法)"
+            ]
+          },
+          {
+            "id": "synthesis",
+            "patterns": [
+              "(?:[兩两](?:[種种]|[類类])|[雙双]方|二者)[^，,。！？\\n]{0,15}(?:都|均|各|共同|不能|不宜)",
+              "(?:[較较]新|近年|[綜综]合|目前)的?(?:研究|分析|解[釋释])[^，,。！？\\n]{0,15}(?:不|[結结]合|兼[顧顾]|同[時时])",
+              "(?:[這这]些|上述|[這这][類类]|呢[啲尐])(?:研究|分析|解[釋释]|[觀观][點点])[^。！？\\n]{0,40}(?:使|令|[說说]明|表明)[^。！？\\n]{0,65}(?:[轉转]向|[轉转][變变]|改[變变]|[擴扩]展|[結结]合)"
+            ]
+          }
+        ],
+        "description": "Ordered roles in distinct sentences within a paragraph. Lexical alternatives instantiate the same structural roles. A single paragraph is not repetition; repeated paragraphs supply a smoothed prevalence signal. Combine with the existing group signal by maximum."
+      },
+      "weight_levels": [
+        {
+          "weight": 0.3,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 1.8,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "weight": 0.05,
+      "negative_weight": 1.0,
+      "positive": [
+        "[从從][^，。！？\\n]{1,30}(?<!受)到[^，。！？\\n]{1,30}",
+        "[从從][^，。！？\\n]{1,30}[带帶]到[^，。！？\\n]{1,30}",
+        "由[^，。！？\\n]{1,30}去到[^，。！？\\n]{1,30}"
+      ],
+      "negative": [
+        "[从從]\\s*\\d+(?:\\.\\d+)?\\s*(?:年|月|日|[点點]|[时時]|%|％|米|公[裏裡里]|℃)?\\s*到\\s*\\d+(?:\\.\\d+)?",
+        "[从從](?:周一|星期一|早上|上午)到(?:周五|星期五|晚上|下午)",
+        "由\\s*\\d+(?:\\.\\d+)?\\s*(?:年|月|日|[点點]|[时時]|%|％|米|公[裏裡里]|℃)?\\s*去到\\s*\\d+(?:\\.\\d+)?",
+        "由(?:周一|星期一|朝早|上[昼晝])去到(?:周五|星期五|夜晚|下[昼晝])"
+      ],
+      "names": {
+        "zh-Hant": "虛假範圍",
+        "zh-Hans": "虚假范围",
+        "yue-Hant": "虛假範圍",
+        "yue-Hans": "虚假范围",
+        "en": "False ranges"
+      },
+      "notes": {
+        "zh-Hant": "使用「從 X 到 Y」或「由……去到……」等句式連接兩個事物，而兩者不屬於同一時間、數量或空間尺度。",
+        "zh-Hans": "使用「从 X 到 Y」或「由……去到……」等句式连接两个事物，而两者不属于同一时间、数量或空间尺度。",
+        "yue-Hant": "使用「從 X 到 Y」或者「由……去到……」等句式連接兩樣事物，而兩者唔屬於同一時間、數量或者空間尺度。",
+        "yue-Hans": "使用「从 X 到 Y」或者「由……去到……」等句式连接两样事物，而两者唔属于同一时间、数量或者空间尺度。",
+        "en": "Connect two items with “from X to Y” or “from … to …” even though the endpoints do not belong to the same temporal, quantitative, or spatial scale."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.25,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 1.5,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "weight": 0.06,
+      "negative_weight": 0.75,
+      "positive": [
+        "—+",
+        "(?<=\\S)[ \\t]+--[ \\t]+(?=\\S)"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "破折號過度使用",
+        "zh-Hans": "破折号过度使用",
+        "yue-Hant": "破折號過度使用",
+        "yue-Hans": "破折号过度使用",
+        "en": "Overused em dashes"
+      },
+      "notes": {
+        "zh-Hant": "大量使用「—」或「 -- 」插入補充、轉折或製造戲劇效果。（如果「—」被用做中文連字符，則為誤報）",
+        "zh-Hans": "大量使用「—」或「 -- 」插入补充、转折或制造戏剧效果。（如果「—」被用做中文连字符，则为误报）",
+        "yue-Hant": "大量使用「—」或者「 -- 」插入補充、轉折，或者製造戲劇效果。（如果「—」用嚟做中文連字符，就係誤報）",
+        "yue-Hans": "大量使用「—」或者「 -- 」插入补充、转折，或者制造戏剧效果。（如果「—」用嚟做中文连字符，就系误报）",
+        "en": "Use “—” or “ -- ” repeatedly to insert additions, turns, or dramatic effects. A dash used as a Chinese hyphen is an excluded case."
+      },
+      "saturation_frequency": 3.0,
+      "exclude_spans": [
+        "《[^《》\\r\\n]*》"
+      ],
+      "weight_levels": [
+        {
+          "weight": 0.3,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 1.8,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "weight": 0.05,
+      "negative_weight": 0.75,
+      "positive": [
+        "\\*\\*[^*\\n]+\\*\\*",
+        "__[^_\\n]+__",
+        "<(?:strong|b)>[^\\n<]+</(?:strong|b)>"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "粗體過度使用",
+        "zh-Hans": "粗体过度使用",
+        "yue-Hant": "粗體過度使用",
+        "yue-Hans": "粗体过度使用",
+        "en": "Overused boldface"
+      },
+      "notes": {
+        "zh-Hant": "在正文中反覆以粗體標示普通詞語，粗體標記機械而密集。",
+        "zh-Hans": "在正文中反复以粗体标示普通词语，粗体标记机械而密集。",
+        "yue-Hant": "喺正文入面反覆用粗體標示普通詞語，粗體標記機械而密集。",
+        "yue-Hans": "喺正文入面反复用粗体标示普通词语，粗体标记机械而密集。",
+        "en": "Apply boldface repeatedly to ordinary words in the body text, producing a dense and mechanical pattern of emphasis."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.25,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 1.5,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "weight": 0.08,
+      "negative_weight": 0.75,
+      "positive": [
+        "^[ \\t]*(?:[-*+] |\\d+[.)、][ \\t]*)\\*\\*[^*\\n]{1,35}[：:]\\*\\*",
+        "^[ \\t]*(?:[-*+] |\\d+[.)、][ \\t]*)\\*\\*[^*\\n]{1,35}\\*\\*[：:]"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "內嵌標題垂直列表",
+        "zh-Hans": "内联标题垂直列表",
+        "yue-Hant": "內嵌標題垂直列表",
+        "yue-Hans": "内嵌标题垂直列表",
+        "en": "Lists with inline headings"
+      },
+      "notes": {
+        "zh-Hant": "條列項目採用「- **小標題：**完整句子」或「1. **小標題：**完整句子」的固定格式。",
+        "zh-Hans": "条列项目采用「- **小标题：**完整句子」或「1. **小标题：**完整句子」的固定格式。",
+        "yue-Hant": "條列項目採用「- **小標題：**完整句子」或者「1. **小標題：**完整句子」嘅固定格式。",
+        "yue-Hans": "条列项目采用「- **小标题：**完整句子」或者「1. **小标题：**完整句子」嘅固定格式。",
+        "en": "Format list items as “- **Heading:** full sentence” or “1. **Heading:** full sentence” throughout a vertical list."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.4,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 2.4,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "weight": 0.02,
+      "negative_weight": 0.75,
+      "positive": [
+        "^[ \\t]*#{1,6}[ \\t]+(?:[A-Z][a-z]+[ \\t]+){2,}[A-Z][a-z]+[ \\t]*$",
+        "^\\*\\*(?:[A-Z][a-z]+[ \\t]+){2,}[A-Z][a-z]+\\*\\*[ \\t]*$"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "英文標題首字母大寫",
+        "zh-Hans": "标题中的标题大写",
+        "yue-Hant": "英文標題首字母大寫",
+        "yue-Hans": "英文标题首字母大写",
+        "en": "English title case"
+      },
+      "notes": {
+        "zh-Hant": "英文標題把多數實詞寫成「Important Historical Development」一類的 Title Case，與一般英文句子的大小寫慣例不同。",
+        "zh-Hans": "英文标题把多数实词写成「Important Historical Development」一类的 Title Case，与一般英文句子的大小写惯例不同。",
+        "yue-Hant": "英文標題將大部分實詞寫成「Important Historical Development」一類嘅 Title Case，同一般英文句子嘅大小寫慣例唔同。",
+        "yue-Hans": "英文标题将大部分实词写成「Important Historical Development」一类嘅 Title Case，同一般英文句子嘅大小写惯例唔同。",
+        "en": "Write most content words in an English heading in “Important Historical Development” style Title Case, rather than following ordinary sentence capitalization."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.1,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 0.6,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "weight": 0.05,
+      "negative_weight": 0.75,
+      "positive": [
+        "^[ \\t]*(?:#{1,6}[ \\t]+|[-*+][ \\t]+)?[\\U0001f300-\\U0001faff\\u2705\\u2728\\u26a0\\u2b50]",
+        "^[ \\t]*\\d+[.)、][ \\t]*[\\U0001f300-\\U0001faff\\u2705\\u2728\\u26a0\\u2b50]"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "表情符號裝飾",
+        "zh-Hans": "表情符号装饰",
+        "yue-Hant": "表情符號裝飾",
+        "yue-Hans": "表情符号装饰",
+        "en": "Decorative emoji"
+      },
+      "notes": {
+        "zh-Hant": "在標題或列表開頭加入裝飾性質的表情符號。",
+        "zh-Hans": "在标题或列表开头加入装饰性质的表情符号。",
+        "yue-Hant": "喺標題或者列表開頭加入裝飾性質嘅表情符號。",
+        "yue-Hans": "喺标题或者列表开头加入装饰性质嘅表情符号。",
+        "en": "Place decorative emoji at the beginning of headings or list items."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.25,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 1.5,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "weight": 0.01,
+      "negative_weight": 0.75,
+      "positive": [
+        "\"[^\"\\r\\n]+\"",
+        "(?<![A-Za-z0-9])'[^'\\r\\n]+'(?![A-Za-z0-9])"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "ASCII 直引號",
+        "zh-Hans": "ASCII 直引号",
+        "yue-Hant": "ASCII 直引號",
+        "yue-Hans": "ASCII 直引号",
+        "en": "ASCII straight quotes"
+      },
+      "notes": {
+        "zh-Hant": "中文正文用 ASCII 直引號（如 \"詞語\"、'詞語'）代替全形引號。",
+        "zh-Hans": "中文正文用 ASCII 直引号（如 \"词语\"、'词语'）代替全形引号。",
+        "yue-Hant": "中文正文用 ASCII 直引號（例如 \"詞語\"、'詞語'）代替全形引號。",
+        "yue-Hans": "中文正文用 ASCII 直引号（例如 \"词语\"、'词语'）代替全形引号。",
+        "en": "Use ASCII straight quotes in Chinese prose, such as \"詞語\" or '詞語', in place of full-width quotation marks."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.05,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 0.3,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "weight": 0.24,
+      "negative_weight": 0.75,
+      "positive": [
+        "希望[这這][对對][你您]有所?[帮幫]助",
+        "如果[你您](?:想|需要)[^。！？\\n]{0,35}[請请]告[訴诉]我",
+        "(?:以下是|[这這]是)[^。！？\\n]{0,20}[为為爲][你您](?:整理|准[備备]|提供)",
+        "[請请]告[訴诉]我[^。！？\\n]{0,20}(?:是否|需要|想要)",
+        "希望呢(?:[个個]|[啲尐])[对對]你有(?:所)?[帮幫]助",
+        "如果你(?:想|需要)[^。！？\\n]{0,35}(?:[請请][話话]畀我知|[話话]畀我知|同我[講讲])",
+        "(?:以下[係系]|呢[个個][係系])[^。！？\\n]{0,20}[为為爲]你(?:整理|[准準][備备]|提供)",
+        "希望(?:[帮幫]到你|[对對]你有[帮幫]助)",
+        "(?:以下是|以下[為为]|[这這]是|呢[个個][係系])[^。！？\\n]{0,100}(?:將|将|把)[^。！？\\n]{0,80}(?:轉換|转换|改寫|改写|整理|格式化|翻譯|翻译)[^。！？\\n]{0,60}(?:版本|格式|內容|内容)",
+        "(?:[條条]目|本文|本[節节]|本段|此[處处]|[撰编編]寫[時时]|[撰编編]写时)[^。！？\\n]{0,35}(?:[應应](?:[當当])?|宜|需要|不宜)[^。！？\\n]{0,12}(?:使用|表述|[歸归][屬属]|[歸归][於于]|[區区]分|[說说]明|保留|避免|[刪删]除)",
+        "(?:[條条]目|本文|本[節节]|本段)[^。！？\\n]{0,30}(?:使用|表述|引用)[^。！？\\n]{0,20}(?:[應应]|宜|需要)[^。！？\\n]{0,25}",
+        "(?:[請请]|[應应][該该]?|需要)(?:將|将|把)[^。！？\\n]{0,20}(?:文字|句子|段落|[標标][題题]|措[辭辞]|[敘叙]述)[^。！？\\n]{0,12}(?:改[寫写][為为]|改成|放在|移[至到]|[刪删]除)[^。！？\\n]{0,25}",
+        "(?:呢篇文|呢一段|呢度)[^。！？\\n]{0,25}(?:[應应][該该]?|要|唔[應应][該该]?)[^。！？\\n]{0,12}(?:用|寫|写|保留|分清|[刪删]走)"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "協作交流與寫作指示殘留",
+        "zh-Hans": "协作交流与写作指示残留",
+        "yue-Hant": "對話同寫作指示殘留",
+        "yue-Hans": "对话同写作指示残留",
+        "en": "Conversational and editorial instruction residue"
+      },
+      "notes": {
+        "zh-Hant": "正文出現「以下是為你整理……」、「希望這對你有所幫助」、「請告訴我……」或「條目應如何表述」等招呼讀者、請託或指點寫作的話，敘述對象轉向讀者或寫作流程。",
+        "zh-Hans": "正文出现「以下是为你整理……」、「希望这对你有所帮助」、「请告诉我……」或「条目应如何表述」等招呼读者、请托或指点写作的话，叙述对象转向读者或写作流程。",
+        "yue-Hant": "正文出現「以下係為你整理……」、「希望呢個對你有幫助」、「請話畀我知……」或者「條目應該點樣表述」等招呼讀者、請託或者指點寫作嘅說話，敘述對象轉向讀者或者寫作流程。",
+        "yue-Hans": "正文出现「以下系为你整理……」、「希望呢个对你有帮助」、「请话畀我知……」或者「条目应该点样表述」等招呼读者、请托或者指点写作嘅说话，叙述对象转向读者或者写作流程。",
+        "en": "Leave reader greetings, offers of help, or writing instructions in the body text, such as “here is a version prepared for you,” “hope this helps,” “please tell me,” or “how the entry should be phrased.”"
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.2,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 7.2,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "weight": 0.24,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:根[据據]|截至|基[于於])我的?(?:最[后後]|最新)?(?:[訓训][練练]|知[識识])(?:更新|截止)",
+        "(?:我的知[識识]截止|知[識识]截止日期|作[为為爲](?:一[个個]|一名)?(?:AI|人工智能|[語语]言模型))",
+        "(?:[虽雖]然|[儘尽盡]管)[^。！？\\n]{0,30}(?:具[体體][細细][節节]|可用信息)[^。！？\\n]{0,15}(?:有限|稀缺|[沒没]有[广廣]泛[記记][录錄])",
+        "基[于於](?:目前)?可用信息",
+        "(?:根[据據]|截至|基[于於])我嘅(?:最[后後]|最新)?(?:[訓训][練练]|知[識识])(?:更新|截止)",
+        "我嘅知[識识]截止",
+        "基[于於](?:目前)?可用[資资][訊讯]",
+        "(?:[虽雖]然|[儘尽盡]管)[^。！？\\n]{0,30}(?:具[体體][細细][節节]|可用[資资][訊讯])[^。！？\\n]{0,15}(?:有限|稀缺|冇[广廣]泛[記记][录錄])"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "知識截止日期免責聲明",
+        "zh-Hans": "知识截止日期免责声明",
+        "yue-Hant": "知識截止日期免責聲明",
+        "yue-Hans": "知识截止日期免责声明",
+        "en": "Knowledge cutoff disclaimers"
+      },
+      "notes": {
+        "zh-Hant": "文中出現「我的知識截止日期」、「截至我的訓練更新」或「基於目前可用資訊」等表明模型身分、資料受限的聲明。",
+        "zh-Hans": "文中出现「我的知识截止日期」、「截至我的训练更新」或「基于目前可用信息」等表明模型身份、资料受限的声明。",
+        "yue-Hant": "文中出現「我嘅知識截止日期」、「截至我嘅訓練更新」或者「根據目前可用資料」等表明模型身分、資料受限嘅聲明。",
+        "yue-Hans": "文中出现「我嘅知识截止日期」、「截至我嘅训练更新」或者「根据目前可用资料」等表明模型身分、资料受限嘅声明。",
+        "en": "Include statements such as “my knowledge cutoff,” “as of my training update,” or “based on currently available information” that disclose a model identity or data limitation."
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.2,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 7.2,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "weight": 0.2,
+      "negative_weight": 0.75,
+      "positive": [
+        "[你您][說说]得(?:完全|非常|太)正[确確]",
+        "(?:好[問问][題题]|[問问]得太好了)[！!]",
+        "[这這]是一[个個](?:非常|很|[极極]其)?(?:好的|深刻的|有洞察力的)[問问][題题]",
+        "[你您]的(?:[觀观][点點]|[見见]解|洞察)[^。！？\\n]{0,10}(?:非常深刻|很有[价價]值|令人[欽钦]佩)",
+        "你(?:[講讲]|[講讲]得|[話话]得)(?:完全|非常|好|太)?(?:啱|正[确確])",
+        "(?:[問问]得好|好[問问][題题])[！!]",
+        "呢[个個][係系]一[个個](?:非常|好|[极極]其)?(?:好嘅|深刻嘅|有洞察力嘅)[問问][題题]",
+        "你嘅(?:[觀观][点點]|[見见]解|洞察)[^。！？\\n]{0,10}(?:好深刻|好有[价價]值|令人[欽钦]佩)"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "諂媚或卑躬屈膝的語氣",
+        "zh-Hans": "谄媚或卑躬屈膝的语气",
+        "yue-Hant": "諂媚或卑躬屈膝的語氣",
+        "yue-Hans": "谄媚或卑躬屈膝的语气",
+        "en": "Sycophantic tone"
+      },
+      "notes": {
+        "zh-Hant": "出現「你說得完全正確」、「好問題！」或「這是一個非常有洞察力的問題」等直接誇獎讀者或其提問的句子。",
+        "zh-Hans": "出现「你说得完全正确」、「好问题！」或「这是一个非常有洞察力的问题」等直接夸奖读者或其提问的句子。",
+        "yue-Hant": "出現「你講得完全啱」、「好問題！」或者「呢個係一個非常有洞察力嘅問題」等直接讚讀者或者佢提問嘅句子。",
+        "yue-Hans": "出现「你讲得完全啱」、「好问题！」或者「呢个系一个非常有洞察力嘅问题」等直接赞读者或者佢提问嘅句子。",
+        "en": "Directly praise the reader or the prompt with phrases such as “you are completely right,” “great question,” or “this is a very insightful question.”"
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.0,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 6.0,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "weight": 0.14,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:[为為爲]了[实實][现現][这這]一目[标標]|在[这這][个個][时時][間间][点點]|值得注意的是|不可否[認认]的是|需要指出的是)",
+        "由[于於][^。！？\\n]{1,25}的事[实實]",
+        "在[^。！？\\n]{1,25}的情[况況]下",
+        "具有[^。！？\\n]{1,18}的能力",
+        "(?:[为為爲]咗[实實][现現]呢[个個]目[标標]|喺呢[个個][时時][間间][点點]|值得注意嘅[係系]|不可否[認认]嘅[係系]|需要指出嘅[係系])",
+        "由[于於][^。！？\\n]{1,25}嘅事[实實]",
+        "喺[^。！？\\n]{1,25}嘅情[况況]下",
+        "具有[^。！？\\n]{1,18}嘅能力",
+        "(?:[較较]|更|最)(?:[穩稳]妥|合理|全面|[準准][確确])的?[結结][論论](?:是|在[於于])",
+        "(?:[較较]|更|比[較较])[穩稳]妥",
+        "{{degree}}{{quality}}(?:的|嘅)[^，,。！？；;\\n]{0,10}{{analysis_noun}}",
+        "{{degree}}{{quality}}(?:地|噉|咁)?{{analysis_verb}}"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "填充短語與段首概括",
+        "zh-Hans": "填充短语与段首概括",
+        "yue-Hant": "填充短語同段頭概括",
+        "yue-Hans": "填充短语同段头概括",
+        "en": "Filler phrases and paragraph-opening framing"
+      },
+      "notes": {
+        "zh-Hant": "段落開頭使用「值得注意的是」、「需要指出的是」、「在這個時間點」、「不可否認的是」等空泛的開場語；或者「較穩妥的結論是」等預先下定論的說法。",
+        "zh-Hans": "段落开头使用「值得注意的是」、「需要指出的是」、「在这个时间点」、「不可否认的是」等空泛的开场语；或者「较稳妥的结论是」等预先下定论的说法。",
+        "yue-Hant": "段落開頭使用「值得注意嘅係」、「需要指出嘅係」、「喺呢個時間點」、「不可否認嘅係」等空泛開場語；或者「比較穩妥嘅結論係」等預先落定論嘅講法。",
+        "yue-Hans": "段落开头使用「值得注意嘅系」、「需要指出嘅系」、「喺呢个时间点」、「不可否认嘅系」等空泛开场语；或者「比较稳妥嘅结论系」等预先落定论嘅讲法。",
+        "en": "Open a paragraph with empty framing such as “it is worth noting,” “it should be pointed out,” “at this point in time,” or “it cannot be denied,” or pre-judge the analysis with “the more cautious conclusion is.”"
+      },
+      "saturation_frequency": 3.0,
+      "paragraph_patterns": {
+        "minimum_paragraphs": 3,
+        "repeat_prior": 2.0,
+        "saturation_frequency": 15.0,
+        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
+        "position": "start",
+        "patterns": [
+          "^[關关][於于][^。！？\\n]{1,60}(?:不(?:完全)?一致|不同[層层]次|不同[^。！？\\n]{0,8}(?:表述|[敘叙]述|[觀观][點点]))",
+          "^(?:[較较]|更|最)(?:[穩稳]妥|合理|全面|[準准][確确])的?[結结][論论](?:是|在[於于])",
+          "^(?:[這这]一|[這这][種种])[^。！？\\n]{1,30}(?:含[義义]|意[義义]|[關关][係系])[^。！？\\n]{0,20}不(?:盡|尽|完全)?相同",
+          "^(?:[從从]|就)[^。！？\\n]{1,25}(?:角度|[層层]面)[來来](?:看|[說说])",
+          "^(?:[總总][體体](?:而言|[來来][說说])|概括而言|[總总]的[來来][說说]|整[體体]而言|大致[來来][說说])",
+          "^(?:[講讲]到|[關关][於于])[^。！？\\n]{1,35}(?:有唔同|唔一致|唔同[層层]次)",
+          "^(?:比較|比较|較|较)(?:[穩稳]陣|[穩稳]阵|合理)嘅[結结][論论][係系]"
+        ],
+        "description": "Repeated paragraph-opening framing or self-evaluation expressions; no inference about subsequent semantic development."
+      },
+      "weight_levels": [
+        {
+          "weight": 0.7,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 4.2,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ],
+      "local_scoring": {
+        "method": "clause_families",
+        "clause_separator": "[，,；;。！？!?\\r\\n]+",
+        "base_factor": 0.25,
+        "cooccurrence_prior": 1.0,
+        "families": [
+          {
+            "id": "conditional",
+            "patterns": [
+              "^(?:在|喺)[\\s\\S]*(?:的|嘅)情[況况]下$|^具有[\\s\\S]*(?:的|嘅)能力$"
+            ],
+            "scale": true
+          },
+          {
+            "id": "quality",
+            "patterns": [
+              "(?:[較较]|更|比[較较])[穩稳]妥"
+            ],
+            "scale": false,
+            "match": "search"
+          }
+        ],
+        "default_family": "filler"
+      }
+    },
+    {
+      "id": 23,
+      "weight": 0.2,
+      "negative_weight": 0.75,
+      "negative": [],
+      "names": {
+        "zh-Hant": "過度限定與防禦性措辭",
+        "zh-Hans": "过度限定与防御性措辞",
+        "yue-Hant": "過度限定同防禦性措辭",
+        "yue-Hans": "过度限定同防御性措辞",
+        "en": "Excessive hedging and defensive qualifications"
+      },
+      "notes": {
+        "zh-Hant": "在同一句或相鄰句子中堆疊「可能」、「似乎」、「有可能」、「或許」、「可以被認為」等含糊詞語；或者「不能據此推定」、「不宜視為」、「不足以證明」或「需要分開判斷」等自我設限的說法。",
+        "zh-Hans": "在同一句或相邻句子中堆叠「可能」、「似乎」、「有可能」、「或许」、「可以被认为」等含糊词语；或者「不能据此推定」、「不宜视为」、「不足以证明」或「需要分开判断」等自我设限的说法。",
+        "yue-Hant": "喺同一句或者相鄰句子入面堆疊「可能」、「似乎」、「有可能」、「或者」、「可以被認為」等含糊詞語；或者「唔可以單靠呢點推定」、「唔適宜視為」、「不足以證明」或者「需要分開判斷」等自我設限嘅講法。",
+        "yue-Hans": "喺同一句或者相邻句子入面堆叠「可能」、「似乎」、「有可能」、「或者」、「可以被认为」等含糊词语；或者「唔可以单靠呢点推定」、「唔适宜视为」、「不足以证明」或者「需要分开判断」等自我设限嘅讲法。",
+        "en": "Stack hedges such as “possibly,” “seemingly,” “there is a possibility,” “perhaps,” or “can be considered” in one or adjacent sentences; also flag self-limiting phrases such as “cannot be inferred from this alone,” “should not be regarded as,” “is insufficient to prove,” or “requires separate judgment.”"
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 1.0,
+          "start_ratio": 0.0625,
+          "full_ratio": 0.25,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 6.0,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        }
+      ],
+      "positive_subtypes": [
+        {
+          "id": "stacked_hedges",
+          "patterns": [
+            "(?:可能|[潛潜]在地|可以被[認认][为為爲]|似乎|或[許许])(?:[，, ]|[^。！？\\n]){0,8}(?:可能|[潛潜]在地|可以被[認认][为為爲]|似乎|或[許许])(?:[，, ]|[^。！？\\n]){0,8}(?:可能|[潛潜]在地|可以被[認认][为為爲]|似乎|或[許许])",
+            "(?:可能也[許许]|或[許许]可能|可以[潛潜]在地可能)",
+            "(?:可能|[潛潜]在地|可以被[認认][为為爲]|似乎|或者|有可能)(?:[^。！？\\n]){0,8}(?:可能|[潛潜]在地|可以被[認认][为為爲]|似乎|或者)(?:[^。！？\\n]){0,8}(?:可能|[潛潜]在地|可以被[認认][为為爲]|似乎|或者)"
+          ]
+        },
+        {
+          "id": "other_qualifications",
+          "patterns": [
+            "(?:宜|[應应])[視视][為为][^。！？\\n]{1,65}[，,](?:而非|而不是)[^。！？\\n]{1,65}",
+            "(?:但|不[過过]|然而)[^。！？\\n]{0,55}(?:仍|尚)?(?:缺少|缺乏|未有|[冇没]有|[冇没]|尚無|尚无)[^。！？\\n]{0,35}(?:材料|[資资]料|[檔档]案|[證证][據据])[^。！？\\n]{0,30}(?:[對对][應应]|[確确][認认]|支持|佐[證证])",
+            "(?:現有|现有|目前|已有)[^。！？\\n]{0,12}(?:[資资]料|材料|[證证][據据])[^。！？\\n]{0,12}(?:不足以|不能|未能)[^。！？\\n]{0,15}(?:[斷断]定|推定|[確确][認认]|重建)",
+            "尚未形成[^。！？\\n]{1,65}(?:公開|公开|完整)的?[資资]料[^。！？\\n]{0,60}(?:不能|不宜)[^。！？\\n]{1,45}",
+            "(?:尚無|尚无|未有|[冇没]有)[^。！？\\n]{0,40}(?:共同|雙方|双方|一致)[^。！？\\n]{0,15}[確确][認认][^。！？\\n]{0,20}",
+            "{{limitation}}{{clause_gap}}{{judgment}}[^，,。！？；;\\n]{0,35}",
+            "{{evidence}}{{clause_gap}}{{obligation}}{{clause_gap}}{{separation}}[^，,。！？；;\\n]{0,25}",
+            "(?:宜|[應应])[視视][為为]{{clause_gap}}[，,](?:而非|而不是){{clause_gap}}",
+            "{{limitation}}[^。！？\\n]{0,30}(?:[脫脱][離离]|忽略|跳[過过])[^。！？\\n]{0,30}(?:用[來来]|用於|用于|描述|提供|[概槪]括)[^。！？\\n]{0,35}",
+            "(?:需要|仍[須须]|仍需|必[須须]|[應应][當当]?|要)[^，,。！？\\n]{0,15}(?:分[開开]|分[別别]|[區区]分)[^，,。！？\\n]{0,12}(?:判[斷断]|理解|分析|考察|看待|[評评]估)",
+            "{{limitation}}{{clause_gap}}(?:代替|替代|取代|[給给]出|提供|解[釋释]|描述|[概槪]括|混[為为]|[歸归]因|[說说]明|判[斷断]|[當当]作|[睇看]成)[^，,。！？；;\\n]{0,45}",
+            "(?:不足以|未足以|不能(?:[僅仅](?:靠|[憑凭])|只靠)?|唔足以|唔可以(?:淨係靠|净系靠)?){{clause_gap}}(?:[達达]成|[維维]持|保障|保[證证]|[確确]保|保持)[^，,。！？；;\\n]{0,45}",
+            "{{limitation}}[^，,。！？；;\\n]{0,30}(?:作[為为]|支持)[^，,。！？；;\\n]{0,60}",
+            "{{limitation}}(?:把|[將将])[^。！？\\n]{1,55}(?:分配|套用|推[廣广]|[應应]用|[概槪]括)[^。！？\\n]{0,25}(?:全[體体]|全部|所有|每[個个]|人人)",
+            "(?:[會会]|可能)[^。！？\\n]{0,35}(?:[誤误]作|[誤误][當当]|[誤误][認认][為为]|混同|混淆)[^。！？\\n]{0,45}",
+            "(?:需要|仍需|[應应][當当]?|必[須须]|也要|亦要|仲要)(?:同[時时]|注意|特[別别])?避免[^。！？\\n]{1,75}",
+            "(?:[將将]|把)[^。！？\\n]{1,40}(?:都|一[概槪]|全部|一律)[^。！？\\n]{1,40}[，,](?:[會会]|可能|容易)[^。！？\\n]{0,35}(?:[誤误]|混淆|忽略|掩[蓋盖])[^。！？\\n]{0,35}",
+            "(?:唔可以|唔[應应][該该]?)[^。！？\\n]{0,25}(?:當成|当成|支持)[^。！？\\n]{0,45}",
+            "(?:要|仲要|需要)(?:同[時时])?避免[^。！？\\n]{0,35}(?:[當当]成|代替|套用|[誤误][當当])[^。！？\\n]{0,35}",
+            "{{limitation}}{{clause_gap}}(?:代表|意味[著着住]?|涵[蓋盖])[^，,。！？；;\\n]{1,65}",
+            "{{limitation}}{{clause_gap}}(?:[對对][應应]|表示)[^，,。！？；;\\n]{1,65}"
+          ]
+        }
+      ],
+      "local_scoring": {
+        "method": "hedge_stack",
+        "clause_separator": "[，,；;。！？!?\\r\\n]+",
+        "target_subtype": "stacked_hedges",
+        "hit_prior": 2.0,
+        "hit_power": 2.0,
+        "patterns": [
+          "可以被[認认][為为爲]|[潛潜]在地|有可能|可能|似乎|或[許许]|也[許许]|或者"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "weight": 0.16,
+      "negative_weight": 0.75,
+      "positive": [
+        "(?:未[來来](?:看起[來来]|一片)?光明|未[來来]可期|激[动動]人心的[时時]代即[将將]到[來来])",
+        "(?:追求卓越的旅程|向正[确確]方向[迈邁]出的重要一步|共同[创創]造美好未[來来])",
+        "(?:[开開][启啓]|[譜谱][写寫])[^。！？\\n]{0,12}(?:新篇章|[輝辉]煌篇章)",
+        "未[來来](?:睇落|一片)?光明",
+        "(?:追求卓越嘅旅程|向正[确確]方向[迈邁]出嘅重要一步|一[齊齐][创創]造美好未[來来])"
+      ],
+      "negative": [],
+      "names": {
+        "zh-Hant": "通用積極結論",
+        "zh-Hans": "通用积极结论",
+        "yue-Hant": "通用積極結論",
+        "yue-Hans": "通用积极结论",
+        "en": "Generic positive conclusions"
+      },
+      "notes": {
+        "zh-Hant": "以「未來光明」、「未來可期」、「追求卓越的旅程」、「朝正確方向的一步」或「共同創造美好未來」等空泛樂觀的語句收尾。",
+        "zh-Hans": "以「未来光明」、「未来可期」、「追求卓越的旅程」、「朝正确方向的一步」或「共同创造美好未来」等空泛乐观的语句收尾。",
+        "yue-Hant": "以「未來光明」、「未來可期」、「追求卓越嘅旅程」、「向正確方向行出嘅一步」或者「一齊創造美好未來」等空泛樂觀語句收尾。",
+        "yue-Hans": "以「未来光明」、「未来可期」、「追求卓越嘅旅程」、「向正确方向行出嘅一步」或者「一齐创造美好未来」等空泛乐观语句收尾。",
+        "en": "End with empty optimism such as “a bright future,” “the future looks promising,” “a journey toward excellence,” “a step in the right direction,” or “creating a better future together.”"
+      },
+      "saturation_frequency": 3.0,
+      "weight_levels": [
+        {
+          "weight": 0.8,
+          "start_ratio": 0.25,
+          "full_ratio": 1.0,
+          "count_prior": 4.0
+        },
+        {
+          "weight": 4.8,
+          "start_ratio": 1.0,
+          "full_ratio": 3.0,
+          "count_prior": 4.0
+        }
+      ]
+    }
+  ],
+  "matching": "All patterns apply to every input, independently of interface language. Explicit character classes support mixed scripts without rewriting input; phrase alternatives cover selected Mandarin and Cantonese wording, not exhaustive dialect understanding.",
+  "regex_fragments": {
+    "clause_gap": "[^，,。！？；;\\n]{0,65}",
+    "limitation": "不能|不宜|不[應应](?:[該该])?|不足以|未足以|[無无]法|尚不能|唔可以|唔[應应][該该]?|唔足以",
+    "judgment": "[歸归]入|[歸归][類类]|判定|[斷断]定|推定|推[斷断]|[證证]明|[確确][認认]|[視视][為为]|[當当]作|[當当]成|等同|化[約约]|理解[為为]|解[釋释][為为]|[概槪]括[為为]|[劃划]分|分割|重建|比[較较]|混同",
+    "separation": "[區区]分|分[開开]|分清|分[別别]判[斷断]|分[別别]理解",
+    "obligation": "仍[須须]|仍需|需要|[應应][當当]?|必[須须]|要",
+    "inference": "[說说]明|表明|反映(?:出|了)?|意味[著着住]?|[顯显]示|揭示|解[釋释]|理解|[視视][為为]|界定|[區区]分|[證证]明|[歸归][類类]|[歸归]入|象[徵征]",
+    "reasoning_link": "由此|因此|因而|[從从]而|[據据]此|所以",
+    "evidence": "[證证][據据]|[資资]料|材料|[檔档]案|文本|[記记][錄录]|[數数]字|[數数][據据]|[讀读]法|年代|[題题]材|[語语]境|[詮诠][釋释]|分析|判[斷断]|[結结][論论]",
+    "quality": "[穩稳]妥|[穩稳]陣|[穩稳]阵|全面|合理|[準准][確确]|審慎|审慎",
+    "degree": "[較较]|更|最|比[較较]",
+    "analysis_noun": "[結结][論论]|描述|解[釋释]|理解|[概槪]括|判[斷断]|表述|[說说]法",
+    "analysis_verb": "[說说]明|解[釋释]|理解|[概槪]括|描述|判[斷断]|表述",
+    "contrast_not": "而非(?!住宅(?:物[業业])?[稅税]率(?:通常|一般|往往)?(?:[顯显]著|明[顯显])?(?:高[於于]|低[於于]))"
+  },
+  "regex_fragment_usage": "Use {{fragment_name}} inside regex pattern arrays. Each fragment is expanded as a noncapturing group before compilation. Nested or undefined references are rejected. Input text is never converted or semantically interpreted.",
+  "interactions": [
+    {
+      "id": "editorial_residue",
+      "kind": "context",
+      "names": {
+        "zh-Hant": "自指詞與寫作殘留組合",
+        "zh-Hans": "自指词与写作残留组合",
+        "yue-Hant": "自指詞同寫作殘留組合",
+        "yue-Hans": "自指词同写作残留组合",
+        "en": "Self-reference and writing residue"
+      },
+      "config": {
+        "cooccurs_with_rules": [
+          20,
+          21,
+          23,
+          24
+        ],
+        "scope": "sentence",
+        "max_distance": 60,
+        "description": "Only primitive same-sentence matches are referenced. Pair strength = context weight * source weight * boundary factors / (1+gap/distance_scale). Repeated punctuation applies repeated attenuation; overlapping boundary patterns use the strongest attenuation per character region. Select the strongest pair per sentence. Sum event strengths to obtain a character-normalized frequency, then apply the independent three-level scoring settings. Add this interaction evidence to direct evidence explicitly; no extra interaction cap or feedback from source scores.",
+        "contexts": [
+          {
+            "patterns": [
+              "本回答|[這这]個回答|呢個回答"
+            ],
+            "weight": 1.0
+          },
+          {
+            "patterns": [
+              "[條条]目|本文|呢篇文"
+            ],
+            "weight": 0.8
+          },
+          {
+            "patterns": [
+              "本段|本[節节]|此[處处]|呢段文字"
+            ],
+            "weight": 0.5
+          }
+        ],
+        "source_weights": {
+          "20": 1.0,
+          "21": 0.8,
+          "23": 0.6,
+          "24": 0.5
+        },
+        "distance_scale": 30.0,
+        "boundaries": [
+          {
+            "patterns": [
+              "[，,]"
+            ],
+            "factor": 0.7
+          },
+          {
+            "patterns": [
+              "[；;]"
+            ],
+            "factor": 0.3
+          },
+          {
+            "patterns": [
+              "[：:]"
+            ],
+            "factor": 0.6
+          },
+          {
+            "patterns": [
+              "—+"
+            ],
+            "factor": 0.5
+          }
+        ],
+        "scoring": {
+          "weight": 0.12,
+          "weight_levels": [
+            {
+              "weight": 0.6,
+              "start_ratio": 0.25,
+              "full_ratio": 1.0,
+              "count_prior": 4.0
+            },
+            {
+              "weight": 3.6,
+              "start_ratio": 1.0,
+              "full_ratio": 3.0,
+              "count_prior": 4.0
+            }
+          ],
+          "saturation_frequency": 3.0
+        }
+      }
+    },
+    {
+      "id": "tail_qualification",
+      "kind": "tail_surge",
+      "names": {
+        "zh-Hant": "尾端突增與限定",
+        "zh-Hans": "尾端突增与限定",
+        "yue-Hant": "尾段突增同限定",
+        "yue-Hans": "尾段突增同限定",
+        "en": "Terminal surge with qualification"
+      },
+      "config": {
+        "surge_rule": 3,
+        "source_rule": 23,
+        "source_weight": 1.0,
+        "deduplication_group": "terminal_commentary",
+        "minimum_paragraphs": 3,
+        "scoring": {
+          "weight": 0.05,
+          "weight_levels": [
+            {
+              "weight": 0.25,
+              "start_ratio": 0.25,
+              "full_ratio": 1.0,
+              "count_prior": 4.0
+            },
+            {
+              "weight": 1.0,
+              "start_ratio": 1.0,
+              "full_ratio": 3.0,
+              "count_prior": 4.0
+            }
+          ],
+          "saturation_frequency": 10.0
+        }
+      }
+    },
+    {
+      "id": "tail_reframing",
+      "kind": "tail_surge",
+      "names": {
+        "zh-Hant": "尾端突增與否定澄清",
+        "zh-Hans": "尾端突增与否定澄清",
+        "yue-Hant": "尾段突增同否定澄清",
+        "yue-Hans": "尾段突增同否定澄清",
+        "en": "Terminal surge with negative reframing"
+      },
+      "config": {
+        "surge_rule": 3,
+        "source_rule": 9,
+        "source_weight": 1.0,
+        "deduplication_group": "terminal_commentary",
+        "minimum_paragraphs": 3,
+        "scoring": {
+          "weight": 0.05,
+          "weight_levels": [
+            {
+              "weight": 0.25,
+              "start_ratio": 0.25,
+              "full_ratio": 1.0,
+              "count_prior": 4.0
+            },
+            {
+              "weight": 1.0,
+              "start_ratio": 1.0,
+              "full_ratio": 3.0,
+              "count_prior": 4.0
+            }
+          ],
+          "saturation_frequency": 10.0
+        }
+      }
+    },
+    {
+      "id": "opening_closing_template",
+      "kind": "opening_closing",
+      "names": {
+        "zh-Hant": "段首概括與段尾解釋配對",
+        "zh-Hans": "段首概括与段尾解释配对",
+        "yue-Hant": "段頭概括同段尾解釋配對",
+        "yue-Hans": "段头概括同段尾解释配对",
+        "en": "Repeated opening/closing pairs"
+      },
+      "config": {
+        "opening_rule": 22,
+        "closing_rule": 3,
+        "minimum_paragraphs": 3,
+        "repeat_prior": 2.0,
+        "scoring": {
+          "weight": 0.05,
+          "weight_levels": [
+            {
+              "weight": 0.25,
+              "start_ratio": 0.25,
+              "full_ratio": 1.0,
+              "count_prior": 4.0
+            },
+            {
+              "weight": 1.0,
+              "start_ratio": 1.0,
+              "full_ratio": 3.0,
+              "count_prior": 4.0
+            }
+          ],
+          "saturation_frequency": 10.0
+        }
+      }
+    },
+    {
+      "id": "viewpoint_qualified_synthesis",
+      "kind": "sequence_extension",
+      "names": {
+        "zh-Hant": "觀點序列與澄清限定收束",
+        "zh-Hans": "观点序列与澄清限定收束",
+        "yue-Hant": "觀點序列同澄清限定收尾",
+        "yue-Hans": "观点序列同澄清限定收尾",
+        "en": "Viewpoint sequence with qualifying synthesis"
+      },
+      "config": {
+        "target_rule": 11,
+        "stage": "synthesis",
+        "source_rules": [
+          9,
+          23
+        ]
+      }
+    }
+  ],
+  "windowing": {
+    "target_characters": 6000,
+    "minimum_characters": 4500,
+    "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+    "aggregation": "maximum_substantial_window",
+    "description": "Score paragraph-aligned windows in both directions. Each window has 4500–6000 non-whitespace characters; documents up to the minimum length are scored whole. Above the minimum, always generate candidates; the whole document is also eligible when within the target length, avoiding a mode switch at the target length. Split oversized paragraphs at sentence boundaries, marking artificial edges so they cannot create paragraph-opening/closing signals. All regex, structural and interaction denominators are local. Return the highest-scoring window and absolute source offsets. No table/content classification is performed."
+  }
+}
