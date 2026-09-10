@@ -7,7 +7,7 @@ export const site = {
   email: 'gao.qingzh@northeastern.edu',
   links: [
     { label: 'GitHub', href: 'https://github.com/QZGao' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/quinn-gao' },
+    // { label: 'LinkedIn', href: 'https://www.linkedin.com/in/quinn-gao' },
     { label: 'English blog', href: 'https://quinn.supergrey.uk/' },
     { label: 'Chinese blog', href: 'https://blog.supergrey.uk/' },
   ],
