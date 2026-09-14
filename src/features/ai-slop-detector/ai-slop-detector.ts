@@ -56,31 +56,36 @@ const UI: Record<Language, Record<string, string>> = {
   },
 };
 
-const PAGE_COPY: Record<Language, { title: string; summary: string; documentTitle: string }> = {
+const PAGE_COPY: Record<Language, { title: string; summary: string; documentTitle: string, language: string }> = {
   'zh-Hant': {
     title: '中文 AI slop 偵測',
     summary: '使用正規表示式比對，檢查中文文字中反覆出現的 AI 寫作風格訊號。此工具不適用於議論文體，或其他邏輯性較強的文章。',
     documentTitle: '中文 AI slop 偵測 | SuperGrey',
+    language: '介面語言',
   },
   'zh-Hans': {
     title: '中文 AI slop 检测',
     summary: '使用正则表达式匹配，检查中文文字中反复出现的 AI 写作风格信号。此工具不适用于议论文体，或其他逻辑性较强的文章。',
     documentTitle: '中文 AI slop 检测 | SuperGrey',
+    language: '界面语言',
   },
   'yue-Hant': {
     title: '中文 AI slop 偵測',
     summary: '用正則表達式配對，檢查中文文字入面反覆出現嘅 AI 寫作風格訊號。呢個工具唔適用於議論文體，或者其他邏輯性較強嘅文章。',
     documentTitle: '中文 AI slop 偵測 | SuperGrey',
+    language: '介面語言',
   },
   'yue-Hans': {
     title: '中文 AI slop 检测',
     summary: '用正则表达式配对，检查中文文字入面反复出现嘅 AI 写作风格信号。呢个工具唔适用于议论文体，或者其他逻辑性较强嘅文章。',
     documentTitle: '中文 AI slop 检测 | SuperGrey',
+    language: '界面语言',
   },
   en: {
     title: 'Chinese AI slop detector',
     summary: 'Rule-based regex matching for recurring Chinese AI-writing style signals. This tool is not suitable for argumentative writing or other highly logical articles.',
     documentTitle: 'Chinese AI slop detector | SuperGrey',
+    language: 'Interface language',
   },
 };
 
@@ -248,6 +253,7 @@ export function initAiSlopDetector(root: HTMLElement): () => void {
   const clear = root.querySelector<HTMLButtonElement>('[data-action="clear"]');
   const output = root.querySelector<HTMLElement>('[data-role="output"]');
   const score = root.querySelector<HTMLElement>('[data-role="score"]');
+  const languageLabel = root.querySelector<HTMLElement>('[data-role="language-label"]');
   const scoreLabel = root.querySelector<HTMLElement>('[data-role="score-label"]');
   const inputLabel = root.querySelector<HTMLElement>('[data-role="input-label"]');
   const evidenceHeading = root.querySelector<HTMLElement>('[data-role="evidence-heading"]');
@@ -257,12 +263,13 @@ export function initAiSlopDetector(root: HTMLElement): () => void {
   const pageTitle = document.querySelector<HTMLElement>('[data-project-title="ai-slop-detector"]');
   const pageSummary = document.querySelector<HTMLElement>('[data-project-summary="ai-slop-detector"]');
   const languageSelect = root.querySelector<HTMLSelectElement>('[data-role="language"]');
-  if (!input || !button || !clear || !output || !score || !scoreLabel || !inputLabel || !evidenceHeading || !breakdownHeading || !breakdown || !caveat || !languageSelect || !pageTitle || !pageSummary) throw new Error('AI slop detector is missing a required element.');
+  if (!input || !button || !clear || !output || !score || !languageLabel || !scoreLabel || !inputLabel || !evidenceHeading || !breakdownHeading || !breakdown || !caveat || !languageSelect || !pageTitle || !pageSummary) throw new Error('AI slop detector is missing a required element.');
   const inputEl = input;
   const buttonEl = button;
   const clearEl = clear;
   const outputEl = output;
   const scoreEl = score;
+  const languageLabelEl = languageLabel;
   const scoreLabelEl = scoreLabel;
   const inputLabelEl = inputLabel;
   const evidenceHeadingEl = evidenceHeading;
@@ -289,6 +296,7 @@ export function initAiSlopDetector(root: HTMLElement): () => void {
     const copy = UI[language];
     inputEl.placeholder = copy.input;
     inputLabelEl.textContent = copy.input;
+    languageLabelEl.textContent = copy.language;
     evidenceHeadingEl.textContent = copy.evidence;
     breakdownHeadingEl.textContent = copy.breakdown;
     caveatEl.textContent = copy.caveat;
