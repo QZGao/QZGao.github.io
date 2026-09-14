@@ -59,27 +59,27 @@ const UI: Record<Language, Record<string, string>> = {
 const PAGE_COPY: Record<Language, { title: string; summary: string; documentTitle: string }> = {
   'zh-Hant': {
     title: '中文 AI slop 偵測',
-    summary: '使用正規表示式比對，檢查中文文字中反覆出現的 AI 寫作風格訊號。',
+    summary: '使用正規表示式比對，檢查中文文字中反覆出現的 AI 寫作風格訊號。此工具不適用於議論文體，或其他邏輯性較強的文章。',
     documentTitle: '中文 AI slop 偵測 | SuperGrey',
   },
   'zh-Hans': {
     title: '中文 AI slop 检测',
-    summary: '使用正则表达式匹配，检查中文文字中反复出现的 AI 写作风格信号。',
+    summary: '使用正则表达式匹配，检查中文文字中反复出现的 AI 写作风格信号。此工具不适用于议论文体，或其他逻辑性较强的文章。',
     documentTitle: '中文 AI slop 检测 | SuperGrey',
   },
   'yue-Hant': {
     title: '中文 AI slop 偵測',
-    summary: '用正則表達式配對，檢查中文文字入面反覆出現嘅 AI 寫作風格訊號。',
+    summary: '用正則表達式配對，檢查中文文字入面反覆出現嘅 AI 寫作風格訊號。呢個工具唔適用於議論文體，或者其他邏輯性較強嘅文章。',
     documentTitle: '中文 AI slop 偵測 | SuperGrey',
   },
   'yue-Hans': {
     title: '中文 AI slop 检测',
-    summary: '用正则表达式配对，检查中文文字入面反复出现嘅 AI 写作风格信号。',
+    summary: '用正则表达式配对，检查中文文字入面反复出现嘅 AI 写作风格信号。呢个工具唔适用于议论文体，或者其他逻辑性较强嘅文章。',
     documentTitle: '中文 AI slop 检测 | SuperGrey',
   },
   en: {
     title: 'Chinese AI slop detector',
-    summary: 'Rule-based regex matching for recurring Chinese AI-writing style signals.',
+    summary: 'Rule-based regex matching for recurring Chinese AI-writing style signals. This tool is not suitable for argumentative writing or other highly logical articles.',
     documentTitle: 'Chinese AI slop detector | SuperGrey',
   },
 };
