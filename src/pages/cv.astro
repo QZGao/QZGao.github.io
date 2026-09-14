@@ -10,6 +10,11 @@ interface CvEntry {
   detail: string;
 }
 
+interface SkillGroup {
+  title: string;
+  detail: string;
+}
+
 const byOrder = (a: CvEntry, b: CvEntry) => a.order - b.order;
 
 const education = ([
@@ -32,6 +37,36 @@ const experience = ([
   { order: 2, year: '2026–', title: 'Software Engineer', detail: 'Hacks/Hackers' },
   { order: 3, year: '2025', title: 'QA & Testing Engineer', detail: 'Evenness' },
 ] satisfies CvEntry[]).sort(byOrder);
+
+const academicService = ([
+  {
+    order: 1,
+    year: '2026',
+    title: 'Reviewer',
+    detail: '3rd International Conference on Applied Computational Intelligence and Systems Modeling',
+  },
+  {
+    order: 2,
+    year: '2026',
+    title: 'Reviewer',
+    detail: '4th International Conference on Artificial Intelligence, Blockchain and Internet of Things',
+  },
+] satisfies CvEntry[]).sort(byOrder);
+
+const skills = [
+  {
+    title: 'Computation & Machine Learning',
+    detail: 'High-performance computing, numerical modeling, generative and predictive modeling (VAEs, diffusion models), reinforcement learning',
+  },
+  {
+    title: 'Programming Languages',
+    detail: 'Python, C/C++, C# (.NET Framework, Unity), Java, JavaScript/TypeScript (React, Vue)',
+  },
+  {
+    title: 'Computing & Infrastructure',
+    detail: 'Linux, Git, SVN, Docker, CI/CD, AWS, GCP, Cloudflare, LaTeX',
+  },
+] satisfies SkillGroup[];
 ---
 
 <SiteLayout title="Curriculum vitae" description="Curriculum vitae for Quinn Gao, physics researcher and scientific software developer.">
@@ -75,32 +110,35 @@ const experience = ([
       </div>
     </section>
 
+    <section class="cv-section" aria-labelledby="publications-heading">
+      <h2 id="publications-heading">Publications</h2>
+      <p><a href="/research/">See the list.</a></p>
+    </section>
+
+    <!-- <section class="cv-section" aria-labelledby="academic-service-heading">
+      <h2 id="academic-service-heading">Academic service</h2>
+      <div>
+        {academicService.map((entry) => (
+          <article class="cv-entry">
+            <p class="cv-entry__date"><InlineMarkdown content={entry.year} /></p>
+            <div>
+              <h3>{entry.title}</h3>
+              <p>{entry.detail}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section> -->
+
     <section class="cv-section" aria-labelledby="skills-heading">
       <h2 id="skills-heading">Skills</h2>
       <div class="skill-list">
-        <div class="skill-group">
-          <h3>Computation & Machine Learning</h3>
-          <p>
-            High-performance computing,
-            numerical modeling,
-            generative and predictive modeling (VAEs, diffusion models), reinforcement learning
-          </p>
-        </div>
-
-        <div class="skill-group">
-          <h3>Programming Languages</h3>
-          <p>
-            Python,
-            C/C++, C# (.NET Framework, Unity), Java, JavaScript/TypeScript (React, Vue)
-          </p>
-        </div>
-
-        <div class="skill-group">
-          <h3>Computing &amp; Infrastructure</h3>
-          <p>
-            Linux, Git, SVN, Docker, CI/CD, AWS, GCP, Cloudflare, LaTeX
-          </p>
-        </div>
+        {skills.map((skill) => (
+          <div class="skill-group">
+            <h3>{skill.title}</h3>
+            <p>{skill.detail}</p>
+          </div>
+        ))}
       </div>
     </section>
   </div>
