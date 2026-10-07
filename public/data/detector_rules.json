@@ -140,7 +140,7 @@
       "saturation_frequency": 10.0,
       "method": "logic_surge",
       "density": {
-        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "paragraph_separator": "[\\r\\n]+(?:[ \\t]*[\\r\\n]+)*",
         "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
         "clause_separator": "[，,；;：:]+|—{1,2}",
         "minimum_unit_characters": 8,
@@ -263,7 +263,7 @@
         "minimum_paragraphs": 3,
         "repeat_prior": 2.0,
         "saturation_frequency": 15.0,
-        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "paragraph_separator": "[\\r\\n]+(?:[ \\t]*[\\r\\n]+)*",
         "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
         "position": "end",
         "patterns": [
@@ -860,7 +860,7 @@
       },
       "saturation_frequency": 3.0,
       "sequence_patterns": {
-        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "paragraph_separator": "[\\r\\n]+(?:[ \\t]*[\\r\\n]+)*",
         "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
         "minimum_paragraphs": 3,
         "repeat_prior": 2.0,
@@ -1375,7 +1375,7 @@
         "minimum_paragraphs": 3,
         "repeat_prior": 2.0,
         "saturation_frequency": 15.0,
-        "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+        "paragraph_separator": "[\\r\\n]+(?:[ \\t]*[\\r\\n]+)*",
         "sentence_separator": "[。！？!?]+[”’」』\\\"]*|(?<!\\d)\\.(?!\\d)[”’\\\"]*(?=\\s|$)",
         "position": "start",
         "patterns": [
@@ -1820,7 +1820,7 @@
   "windowing": {
     "target_characters": 6000,
     "minimum_characters": 4500,
-    "paragraph_separator": "\\r?\\n[ \\t]*\\r?\\n(?:[ \\t]*\\r?\\n)*",
+    "paragraph_separator": "[\\r\\n]+(?:[ \\t]*[\\r\\n]+)*",
     "description": "Score paragraph-aligned windows in both directions. Each window has 4500–6000 non-whitespace characters; documents up to the minimum length are scored whole. Above the minimum, always generate candidates; the whole document is also eligible when within the target length, avoiding a mode switch at the target length. Split oversized paragraphs at sentence boundaries, marking artificial edges so they cannot create paragraph-opening/closing signals. All regex, structural and interaction denominators are local. Return the highest-scoring window and absolute source offsets. No table/content classification is performed."
   },
   "candidate_scoring": {
@@ -3405,7 +3405,7 @@
       "reporting_prefix_patterns": [
         "(?:例如|比如|假[設设]|假如|示例|[樣样]例|例句|原[話话]|[說说][：:]|[寫写]道[：:]|回答[：:])[^。！？!?\\n]{0,20}$"
       ],
-      "boundary_pattern": "[。！？!?\\n]",
+      "boundary_pattern": "[。！？!?]|[\\r\\n]+(?:[ \\t]*[\\r\\n]+)*",
       "maximum_gap": 160,
       "maximum_boundaries": 1,
       "weight": 1.2,

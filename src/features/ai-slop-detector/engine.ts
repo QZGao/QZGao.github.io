@@ -1238,7 +1238,7 @@ function textSpanContexts(text: Text, config: Rules): R[] {
       for (const pattern of item._patterns as Pattern[])
         for (const m of pattern.finditer(text)) {
           let b = Math.min(text.length, m.end + item.maximum_characters);
-          const boundary = new Pattern('\\n\\s*\\n', false).search(text.slice(m.end, b));
+          const boundary = config.windowing._paragraph_separator.search(text.slice(m.end, b));
           if (boundary) b = m.end + boundary.start;
           emit(m.start, b, {
             cue: { start: m.start, end: m.end, text: m.group() },
@@ -1286,7 +1286,7 @@ function textSpanContexts(text: Text, config: Rules): R[] {
         const left = Math.max(sentences[Math.max(0, i - 2)][0], a - item.maximum_characters),
           previous = text.slice(left, a);
         if (
-          new Pattern('\\n\\s*\\n', false).search(previous) ||
+          config.windowing._paragraph_separator.search(previous) ||
           !item._scope_patterns.some((p: Pattern) => p.search(previous))
         )
           continue;
@@ -1798,8 +1798,11 @@ function cumulativeMeasure(text: Text, feature: R, sentences: R[], quoteContext?
       ([, y]) =>
         a - y >= 0 &&
         a - y <= feature.maximum_gap &&
-        [...new Pattern('[。！？!?\\n]', false).finditer(body.slice(y, a))].length <=
-          feature.maximum_boundaries,
+        [
+          ...new Pattern('[。！？!?]|[\\r\\n]+(?:[ \\t]*[\\r\\n]+)*', false).finditer(
+            body.slice(y, a),
+          ),
+        ].length <= feature.maximum_boundaries,
     );
     if (parents.length) {
       const x = parents.at(-1)![0];
