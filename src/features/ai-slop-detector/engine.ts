@@ -2057,8 +2057,34 @@ function cadence(text: Text, config: Rules): R {
   const options = config.candidate_scoring.cadence,
     density = config.rules.find((g) => g.id === 3)!.density,
     edges = config._window_edges ?? {},
-    lengths: number[] = [];
-  for (const [a, b] of splitSpans(text, 0, text.length, density._paragraph_separator)) {
+    paragraphs = splitSpans(text, 0, text.length, density._paragraph_separator),
+    labelConfig = options.list_labels,
+    labels = paragraphs.map(([a, b]) => {
+      const match = labelConfig._pattern.search(text.slice(a, b));
+      return match &&
+        !match.group('marker') &&
+        labelConfig._exclude_lead_in.search(match.group('label'))
+        ? undefined
+        : match;
+    });
+  const excluded = new Set<number>();
+  let run: number[] = [];
+  for (let i = 0; i <= paragraphs.length; i++) {
+    if (i < labels.length && labels[i]) run.push(i);
+    else {
+      if (run.length >= labelConfig.minimum_run) for (const index of run) excluded.add(index);
+      run = [];
+    }
+  }
+  const lengths: number[] = [],
+    labelSpans: R[] = [];
+  for (const [i, [start, b]] of paragraphs.entries()) {
+    let a = start;
+    if (excluded.has(i)) {
+      const end = a + labels[i].end;
+      labelSpans.push({ start: a, end, text: text.slice(a, end) });
+      a = end;
+    }
     if (
       !density._sentence_separator.search(text, a, b) &&
       !density._clause_separator.search(text, a, b)
@@ -2076,21 +2102,27 @@ function cadence(text: Text, config: Rules): R {
       sentence_count: n,
       sample_cv: null,
       signal: 0,
+      adjusted_signal: 0,
       reliability: 0,
       factor: 1,
+      labels: labelSpans,
     };
   const total = sum(lengths),
     squares = sum(lengths.map((x) => x * x));
   const variation = Math.sqrt((n * squares - total * total) / (n * (n - 1))) / (total / n);
   const signal = Math.max(-1, Math.min(1, (options.center_cv - variation) / options.cv_half_width)),
+    mix = options.smoothstep_mix,
+    adjusted = signal > 0 ? (1 - mix) * signal + mix * (3 * signal ** 2 - 2 * signal ** 3) : signal,
     supported = Math.min(n, options.reliability_cap),
     reliability = (supported - 1) / (supported + options.reliability_prior);
   return {
     sentence_count: n,
     sample_cv: variation,
     signal,
+    adjusted_signal: adjusted,
     reliability,
-    factor: Math.max(options.minimum_factor, 1 + options.strength * reliability * signal),
+    factor: Math.max(options.minimum_factor, 1 + options.strength * reliability * adjusted),
+    labels: labelSpans,
   };
 }
 

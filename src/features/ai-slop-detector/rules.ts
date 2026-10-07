@@ -593,6 +593,13 @@ export function loadRules(input: unknown, requested: string = 'zh-Hant'): Rules 
   }
   const candidate = config.candidate_scoring;
   if (candidate) {
+    const c = candidate.cadence,
+      list = c.list_labels;
+    for (const key of ['pattern', 'exclude_lead_in'])
+      list[`_${key}`] = patterns([list[key]], 'cadence', key)[0];
+    if (number(c.smoothstep_mix, 'cadence.smoothstep_mix', true) > 1)
+      invalid('cadence.smoothstep_mix');
+    integer(list.minimum_run, 'cadence.list_labels.minimum_run');
     const n = candidate.negative_subtypes;
     byId.get(9)!.local_scoring = {
       method: 'candidate_negative_subtypes',

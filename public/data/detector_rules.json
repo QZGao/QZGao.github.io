@@ -1872,7 +1872,13 @@
       "reliability_cap": 8,
       "reliability_prior": 3,
       "strength": 2.0,
-      "minimum_factor": 0.5
+      "minimum_factor": 0.5,
+      "smoothstep_mix": 0.5,
+      "list_labels": {
+        "pattern": "^(?P<marker>[-*•]\\s+|[0-9一二三四五六七八九十]+[.、．）)]\\s*)?(?P<label>(?!_)\\w[\\w /／·・-]{0,11}(?:[（(][^（）()\\r\\n]{1,40}[）)])?)(?<!\\d)[。:：](?!\\d)\\s*(?=\\S)",
+        "exclude_lead_in": "^(?:我|你|您|妳|他|她|它|佢|而|但|同[樣样]|打[個个]比方|[總总]之|因此|所以|然[後后]|不[過过])",
+        "minimum_run": 3
+      }
     }
   },
   "additional_features": [
