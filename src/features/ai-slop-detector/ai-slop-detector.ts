@@ -6,7 +6,6 @@ import {
   escapeHtml,
   renderBreakdown,
   renderTooltip,
-  scopeText,
   type Highlight,
 } from './presentation';
 
@@ -44,10 +43,6 @@ export function initAiSlopDetector(root: HTMLElement): () => void {
   error.setAttribute('role', 'alert');
   error.hidden = true;
   required('.detector__actions').after(error);
-  const scope = document.createElement('p');
-  scope.className = 'detector__scope';
-  scope.hidden = true;
-  required('.detector__score-line').after(scope);
   const tooltip = document.createElement('div');
   tooltip.id = 'detector-tooltip';
   tooltip.className = 'detector__tooltip';
@@ -173,8 +168,6 @@ export function initAiSlopDetector(root: HTMLElement): () => void {
       : `<li>${escapeHtml(copy.noEvidence)}</li>`;
     displayedHighlights = highlights;
     breakdown.innerHTML = renderBreakdown(text, highlights);
-    scope.textContent = scopeText(result, language);
-    scope.hidden = !scope.textContent;
     output.hidden = false;
     lastText = text;
   };
@@ -339,7 +332,6 @@ export function initAiSlopDetector(root: HTMLElement): () => void {
     for (const [target, type, handler, capture] of listeners)
       target.removeEventListener(type, handler, capture);
     tooltip.remove();
-    scope.remove();
     error.remove();
   };
 }

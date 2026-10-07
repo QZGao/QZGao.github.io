@@ -24,10 +24,6 @@ function format(language: Language, key: keyof typeof messages.en.evidence, args
   );
 }
 const fixed = (value: number): string => Number(value.toFixed(4)).toString();
-export function scopeText(result: Result, language: Language): string {
-  return result.window_count > 1 ? format(language, 'scope', result.scoring_window) : '';
-}
-
 export function evidenceRows(
   result: Result,
   language: Language,
@@ -131,7 +127,7 @@ export function buildHighlights(
       b.result.score - a.result.score ||
       a.window.start - b.window.start,
   );
-  for (const { result, window } of ordered) {
+  for (const { result } of ordered) {
     const add = (kind: string, g: R, event: R, l: 1 | 2 | 3, note = ''): void => {
       if (!(event.start < event.end)) return;
       const key = `${kind}:${g.id}:${event.start}:${event.end}`;
@@ -189,7 +185,6 @@ export function buildHighlights(
       for (const r of event.local_scoring?.refinements ?? [])
         if (r.id === 'shared_expression')
           reason.details.push(format(language, 'shared', { value: r.source_rule }));
-      if (!winner(window)) reason.details.push(messages[language].evidence.other);
       marks.push({
         start: event.start,
         end: event.end,

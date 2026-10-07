@@ -31,9 +31,7 @@
       "base": "基本",
       "one": "第一級",
       "two": "第二級",
-      "other": "此處位於最高分片段之外。",
       "shared": "與第 {value} 組共享否定核心，已折減重複貢獻。",
-      "scope": "分數來自字元 {start}–{end} 的片段；全文標記也包含其他片段的命中。",
       "family": "否定形式：{name}（等效 {count} 次）",
       "context": "{name}（此處係數 ×{factor}）",
       "reported": "已按署名引述降低此詞的權重。"
@@ -95,9 +93,7 @@
       "base": "基本",
       "one": "第一级",
       "two": "第二级",
-      "other": "此处位于最高分片段之外。",
       "shared": "与第 {value} 组共享否定核心，已折减重复贡献。",
-      "scope": "分数来自字符 {start}–{end} 的片段；全文标记也包含其他片段的命中。",
       "family": "否定形式：{name}（等效 {count} 次）",
       "context": "{name}（此处系数 ×{factor}）",
       "reported": "已按署名引述降低此词的权重。"
@@ -159,9 +155,7 @@
       "base": "基本",
       "one": "第一級",
       "two": "第二級",
-      "other": "呢度喺最高分片段以外。",
       "shared": "同第 {value} 組共用否定核心，已經折減重複貢獻。",
-      "scope": "分數來自字元 {start}–{end} 嘅片段；全文標記亦包括其他片段嘅命中。",
       "family": "否定形式：{name}（等效 {count} 次）",
       "context": "{name}（呢度嘅係數 ×{factor}）",
       "reported": "已按有署名嘅引述調低呢個詞嘅權重。"
@@ -223,9 +217,7 @@
       "base": "基本",
       "one": "第一级",
       "two": "第二级",
-      "other": "呢度喺最高分片段以外。",
       "shared": "同第 {value} 组共用否定核心，已经折减重复贡献。",
-      "scope": "分数来自字元 {start}–{end} 嘅片段；全文标记亦包括其他片段嘅命中。",
       "family": "否定形式：{name}（等效 {count} 次）",
       "context": "{name}（呢度嘅系数 ×{factor}）",
       "reported": "已按有署名嘅引述调低呢个词嘅权重。"
@@ -287,9 +279,7 @@
       "base": "Base",
       "one": "Level 1",
       "two": "Level 2",
-      "other": "This location is outside the highest-scoring passage.",
       "shared": "Shares the negative expression with rule {value}; duplicate evidence is discounted.",
-      "scope": "Score from characters {start}–{end}. Highlights also include other scored passages.",
       "family": "Negation form: {name} ({count} equivalent matches)",
       "context": "{name} (local multiplier ×{factor})",
       "reported": "This phrase has reduced weight within an attributed statement."
