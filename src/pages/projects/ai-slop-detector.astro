@@ -1,8 +1,10 @@
 ---
 import { getEntry } from 'astro:content';
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
+import messages from '../../features/ai-slop-detector/i18n.json';
 
 const project = await getEntry('projects', 'ai-slop-detector');
+const copy = messages.en.interface;
 
 if (!project) throw new Error('Missing AI slop detector project metadata.');
 ---
@@ -10,30 +12,30 @@ if (!project) throw new Error('Missing AI slop detector project metadata.');
 <ProjectLayout project={project} tool>
   <div class="detector" data-ai-slop-detector>
     <div class="detector__toolbar">
-      <label for="detector-language" data-role="language-label">Interface language</label>
+      <label for="detector-language" data-role="language-label">{copy.language}</label>
       <select id="detector-language" data-role="language"></select>
     </div>
 
     <div class="detector__editor">
-      <label for="detector-input" data-role="input-label">Paste Chinese text</label>
+      <label for="detector-input" data-role="input-label">{copy.input}</label>
       <textarea id="detector-input" data-role="input" rows="14" spellcheck="false"></textarea>
       <div class="detector__actions">
-        <button type="button" data-action="analyze">Analyze text</button>
-        <button type="button" class="button-secondary" data-action="clear">Clear</button>
+        <button type="button" data-action="analyze">{copy.analyze}</button>
+        <button type="button" class="button-secondary" data-action="clear">{copy.clear}</button>
       </div>
     </div>
 
     <section class="detector__output" data-role="output" hidden aria-labelledby="detector-result-heading">
       <div class="detector__score-line">
         <div>
-          <h2 id="detector-result-heading" data-role="score-label">AI writing style signal</h2>
-          <p class="detector__caveat" data-role="caveat">This score is a style signal, not a verdict about who wrote the text.</p>
+          <h2 id="detector-result-heading" data-role="score-label">{copy.score}</h2>
+          <p class="detector__caveat" data-role="caveat">{copy.caveat}</p>
         </div>
-        <strong class="detector__score" data-role="score">0.0%</strong>
+        <strong class="detector__score" data-role="score" aria-live="polite">0.00%</strong>
       </div>
-      <h3 data-role="evidence-heading">Main evidence</h3>
+      <h3 data-role="evidence-heading">{copy.evidence}</h3>
       <ul class="detector__hits" data-role="hits"></ul>
-      <h3 data-role="breakdown-heading">Breakdown</h3>
+      <h3 data-role="breakdown-heading">{copy.breakdown}</h3>
       <div class="detector__breakdown" data-role="breakdown" tabindex="0"></div>
     </section>
   </div>
@@ -126,7 +128,7 @@ if (!project) throw new Error('Missing AI slop detector project metadata.');
     padding-left: 1.2rem;
   }
 
-  .detector__hits li {
+  .detector__hits :global(li) {
     display: flex;
     justify-content: space-between;
     gap: var(--space-3);
@@ -134,25 +136,22 @@ if (!project) throw new Error('Missing AI slop detector project metadata.');
     border-bottom: 1px solid var(--rule);
   }
 
-  .detector__hits li > span {
-    display: grid;
-    gap: 0.1rem;
+  .detector__hits :global(li > span) {
+    display: block;
     min-width: 0;
   }
 
-  .detector__hits small {
+  .detector__hits :global(small) {
     color: var(--ink-soft);
     font-size: var(--step--1);
     line-height: 1.4;
   }
 
-  .detector__hits strong {
+  .detector__hits :global(strong) {
     font-variant-numeric: tabular-nums;
   }
 
   .detector__breakdown {
-    max-height: 34rem;
-    overflow: auto;
     padding: var(--space-3);
     border: 1px solid var(--rule);
     background: var(--paper-light);
@@ -167,6 +166,7 @@ if (!project) throw new Error('Missing AI slop detector project metadata.');
     text-decoration-line: underline;
     text-decoration-thickness: 0.16em;
     text-underline-offset: 0.12em;
+    text-decoration-skip-ink: none;
   }
 
   :global(.detector__mark--1) { text-decoration-color: #d2a900; }
@@ -175,20 +175,72 @@ if (!project) throw new Error('Missing AI slop detector project metadata.');
 
   :global(.detector__tooltip) {
     position: fixed;
-    z-index: 2;
-    width: max-content;
-    max-width: min(24rem, 80vw);
-    padding: 0.5rem 0.65rem;
+    z-index: 1000;
+    width: min(28rem, calc(100vw - 1.5rem));
+    padding: 1rem 1.1rem;
     border: 1px solid var(--rule-strong);
     background: var(--paper);
     color: var(--ink);
     box-shadow: 0 0.35rem 1rem rgb(0 0 0 / 0.14);
     font-family: var(--font-sans);
     font-size: var(--step--1);
-    line-height: 1.35;
-    white-space: pre-line;
-    pointer-events: none;
+    line-height: 1.55;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-height: min(38rem, calc(100dvh - 1.5rem));
+    overflow-y: auto;
+    pointer-events: auto;
   }
+
+  :global(.detector__tooltip-rule + .detector__tooltip-rule) {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+  :global(.detector__tooltip-heading) { display: flex; align-items: start; gap: 0.75rem; }
+  :global(.detector__tooltip-title) { flex: 1; min-width: 0; font-size: 1rem; line-height: 1.4; }
+  :global(.detector__tooltip-level) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid var(--rule);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  :global(.detector__tooltip-level::before) {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--level-color);
+  }
+  :global(.detector__tooltip-level--1) { --level-color: #d2a900; }
+  :global(.detector__tooltip-level--2) { --level-color: #e07b18; }
+  :global(.detector__tooltip-level--3) { --level-color: #c43b3b; }
+  :global(.detector__tooltip-note) { margin: 0.65rem 0 0; }
+  :global(.detector__tooltip-metrics) {
+    margin: 0.75rem 0 0;
+    display: grid;
+    gap: 0.2rem;
+    font-size: 0.8125rem;
+  }
+  :global(.detector__tooltip-metrics > div) { display: flex; justify-content: space-between; gap: 1rem; }
+  :global(.detector__tooltip-metrics dt) { color: var(--ink-soft); }
+  :global(.detector__tooltip-metrics dd) { margin: 0; font-variant-numeric: tabular-nums; }
+  :global(.detector__tooltip-detail) {
+    margin: 0.7rem 0 0;
+    padding-left: 0.6rem;
+    border-left: 2px solid var(--rule-strong);
+    color: var(--ink-soft);
+    font-size: 0.8125rem;
+  }
+
+  :global(.detector__tooltip[hidden]) { display: none; }
+  :global(.detector__scope) { color: var(--ink-soft); font-size: var(--step--1); }
+  :global(.detector__error) { color: var(--ink); }
 
   @media (max-width: 40rem) {
     .detector__toolbar,
